@@ -1,7 +1,7 @@
 var debug = false;
 var TeamSpeakClient = require("node-teamspeak"), util = require("util");
 
-var cl = new TeamSpeakClient("fra01.mainvoice.net");
+var cl = new TeamSpeakClient("85.236.107.21");
 var database;
 var sendCommand = function(command, args, cb) {
 	cl.send(command, args, function(err, response) {
@@ -23,7 +23,7 @@ var info = function() {
 
 	// connect to server
 	cl.send("use", {
-		port : 7026
+		port : 11317
 	}, function(err, response) {
 		if (debug) {
 			console.log("err:", err);
@@ -59,12 +59,10 @@ var info = function() {
 			}
 		});
 
-		// update clientinfos to another table
 
-		// update server info
-
-		// ask server and pt them to third table
-
+	});
+	cl.send("quit", {}, function(err, response) {
+		
 	});
 
 }

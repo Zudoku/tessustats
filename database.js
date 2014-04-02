@@ -41,7 +41,7 @@ module.exports = {
 				row = arr[i];
 				line = line + row.date + "\t";
 				for (var j = 0; j < mus.length; j++) {
-					line += (row[mus[j]] | 0) + "\t";
+					line += ((row[mus[j]]/(24*12))*100| 0) + "\t";
 				}
 				line += "\n";
 			}
