@@ -70,9 +70,10 @@ var info = function() {
 module.exports = {
 	setdb : function(db) {
 		database = db;
-		setInterval(info, 300000); // 5 min 300 000
+		//DISABLE THIS TO GET THE SERVER WORKING ( SERVER MOVED )
+		//setInterval(info, 300000); // 5 min 300 000
 	},
 	scan : function(){
-		info();
+		//info();
 	}
 }

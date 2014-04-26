@@ -16,9 +16,6 @@ app.get('/allusers', function(req, res){
 	database.allUsersData(res);
   
 });
-app.get('/intopark',function(req,res){
-	res.send('/pages/intopark.html');
-});
 app.get('/user/:databaseid',function(req,res){
 	database.getUserData(res,req.params.databaseid);
 	
