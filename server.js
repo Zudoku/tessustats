@@ -33,7 +33,7 @@ app.get('/user/:databaseid',function(req,res){
 
 console.log("Server starting!");
 
-app.listen(webserver_port);
+app.listen(webserver_port,'127.0.0.1');
 
 console.log("Server running at ",webserver_port);
 

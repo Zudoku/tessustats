@@ -81,6 +81,8 @@ var clientInfo = function(userObject,callback){
 	sendCommand("clientinfo", {clid: userObject.clid},function(response,err){
 		if(err){
 			console.log(util.inspect(err));
+			setTimeout(callback,TIME_BETWEEN_QUERIES);
+			return;
 		}
 		userObject.os=response.client_platform;
 		userObject.country=response.client_country;
@@ -96,6 +98,8 @@ var serverGroupByClientID = function(userObject,callback){
 	sendCommand("servergroupsbyclientid",{cldbid : userObject.clientdatabaseid}, function(response,err){
 		if(err){
 			console.log(util.inspect(err));
+			setTimeout(callback,TIME_BETWEEN_QUERIES);
+			return;
 		}
 		var channelrank=response.name;
 		userObject.rank = channelrank;
@@ -119,6 +123,7 @@ var loginToServerQuery = function(callback) {
 	sendCommand("login", loginArgs,function(response,err){
 		if(err){
 			console.log(util.inspect(err));
+			return;
 		}
 
 		var useArgs = {
@@ -127,6 +132,7 @@ var loginToServerQuery = function(callback) {
 		sendCommand("use",useArgs, function(response,err){
 			if(err){
 				console.log(util.inspect(err));
+				return;
 			}
 			callback();
 
