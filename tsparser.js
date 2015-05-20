@@ -49,6 +49,12 @@ var handleClientList = function(clientlist,dateValue,index,callback){
 		return;
 	}
 	var clientObject = clientlist[index];
+	var clientType = clientObject.client_type;
+	//Do not log serverquery clients
+	if(clientType == 1){
+		setTimeout(handleClientList,TIME_BETWEEN_QUERIES,clientlist,dateValue,++index,callback);
+		return;
+	}
 	var databaseidValue = clientObject.client_database_id;
 	var nicknameValue = clientObject.client_nickname;
 	var clidValue = clientObject.clid;
@@ -94,7 +100,7 @@ var serverGroupByClientID = function(userObject,callback){
 		var channelrank=response.name;
 		userObject.rank = channelrank;
 		database.updateUserData(userObject.nickname,userObject.clientdatabaseid,userObject.os,userObject.country,
-			userObject.clientversion,userObject.totalconnections,userObject.channelrank);
+			userObject.clientversion,userObject.totalconnections,userObject.rank);
 		setTimeout(callback,TIME_BETWEEN_QUERIES);
 	});
 };
@@ -136,10 +142,13 @@ module.exports = {
 	setdb : function(db) {
 		database = db;
 		//DISABLE THIS TO GET THE SERVER WORKING ( SERVER MOVED )
-		//setInterval(info, 300000); // 5 min 300 000
+		//// 5 min 300 000
 	},
 	scan : function(){
 		loginToServerQuery(doScan);
 
+	},
+	keepScanning : function(time){
+		setInterval(loginToServerQuery, time,doScan);
 	}
 }

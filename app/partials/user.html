@@ -1,8 +1,8 @@
 <div class="container">
 	<h1><span class="label label-default"> Name: {{user.nickname}}</span></h1>
 	<ul class="list-group"style ="width: 60%;">
-		<li class="list-group-item">Server group: {{user.channelrank}}</li>
-		<li class="list-group-item">Country: {{user.country}}</li>
+		<li class="list-group-item">Server rank: {{user.channelrank}}</li>
+		<li class="list-group-item">Country: {{user.country}} <span class="famfamfam-flag-{{user.flagCode}}"></span></li>
 		<li class="list-group-item">Operation System: {{user.os}}</li>
 		<li class="list-group-item">Client version: {{user.clientversion}}</li>
 		<li class="list-group-item">Total connections: {{user.totalconnections}}</li>

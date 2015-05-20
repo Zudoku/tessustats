@@ -1,7 +1,7 @@
 
 var webserver_port = 3700;
 
-
+var TIMEOUT_BETWEEN_SCANS = 300000;
 
 var express = require('express');
 var app = express();
@@ -15,7 +15,7 @@ tsparser.setdb(database);
 console.log("Database configured!");
 
 app.use("/app/", express.static(__dirname + '/app'));
-app.use("/intopark/", express.static(__dirname + '/intopark'));
+//app.use("/intopark/", express.static(__dirname + '/intopark'));
 app.get('/chartdata', function(req, res){
 	res.set('Content-Type', 'text/plain');
 	database.chartData(res);
@@ -36,4 +36,7 @@ console.log("Server starting!");
 app.listen(webserver_port);
 
 console.log("Server running at ",webserver_port);
+
+console.log("Starting scanning TS every " + TIMEOUT_BETWEEN_SCANS + " Seconds");
+tsparser.keepScanning(TIMEOUT_BETWEEN_SCANS);
 

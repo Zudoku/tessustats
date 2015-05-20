@@ -51,28 +51,27 @@ module.exports = {
 			}
 
 			res.send(line);
-		}
+		};
 		var r;
-		db
-				.each(
-						"SELECT nickname, COUNT(*) as count,date(date)as date FROM online WHERE date>date('now','-7 days') GROUP BY nickname,date(date) ORDER BY date,nickname ASC;",
-						function(err, row) {
-							if (handledDate !== row.date) {
-								handledDate = row.date;
-								r = {};
-								r.date = row.date.replace(/-/g,'');
-								arr.push(r);
-							}
-							r[row.nickname] = row.count/1.44;
-							console.log(r);
+		db.each(
+			"SELECT nickname, COUNT(*) as count,date(date)as date FROM online WHERE date>date('now','-7 days') GROUP BY nickname,date(date) ORDER BY date,nickname ASC;",
+			function (err, row) {
+				if (handledDate !== row.date) {
+					handledDate = row.date;
+					r = {};
+					r.date = row.date.replace(/-/g, '');
+					arr.push(r);
+				}
+				r[row.nickname] = row.count / 1.44;
+				console.log(r);
 
-						}, print);
+			}, print);
 	},
 	selectAll : function(res) {
 		var arr = [];
 		var print = function() {
 			res.send(arr);
-		}
+		};
 
 		db.each("SELECT * FROM online", function(err, row) {
 			arr.push(row);
@@ -83,7 +82,7 @@ module.exports = {
 		var arr = [];
 		var print = function() {
 			res.send(arr);
-		}
+		};
 
 		db.each("SELECT nickname,COUNT(*) as times,clientid FROM online GROUP BY nickname ORDER BY times DESC;", function(err, row) {
 			arr.push(row);
@@ -93,7 +92,7 @@ module.exports = {
 		var arr = [];
 		var print = function() {
 			console.log(arr);
-		}
+		};
 		db.each("SELECT nickname,clientid FROM online GROUP BY clientid;", function(err, row) {
 			arr.push(row);
 		},print);
@@ -101,8 +100,16 @@ module.exports = {
 	getUserData:function(res,databaseid){
 		var arr = [];
 		var print = function() {
+			//Add the flagCode
+			try{
+				arr[0].flagCode = arr[0].country.toLowerCase();
+			}catch(error){
+				console.log(error);
+			}
 			res.send(arr[0]);
-		}
+			util = require("util");
+			//console.log(util.inspect(arr[0]));
+		};
 		db.each("SELECT * FROM userdata WHERE databaseid = ? ",[databaseid], function(err, row) {
 			arr.push(row);
 			console.log("one row in the bank");
