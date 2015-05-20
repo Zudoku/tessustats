@@ -3,6 +3,7 @@ var DATABASE_PATH = 'db';
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(DATABASE_PATH);
 
+//http://i.imgur.com/PHlR21R.png
 
 console.log("Database found: \n",db);
 
