@@ -2,7 +2,7 @@
   "name": "TessuStats",
   "dependencies": {
     "express": "3.x",
-    "node-teamspeak": "0.1.3",
+    "node-teamspeak": "1.0.10",
     "sqlite3":"2.2.0"
   }
 }

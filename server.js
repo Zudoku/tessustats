@@ -1,9 +1,19 @@
+
+var webserver_port = 3700;
+
+
+
 var express = require('express');
 var app = express();
 var database=require('./database.js');
 var tsparser=require('./tsparser.js');
 
+console.log("Modules loaded succesfully!");
+
 tsparser.setdb(database);
+
+console.log("Database configured!");
+
 app.use("/app/", express.static(__dirname + '/app'));
 app.use("/intopark/", express.static(__dirname + '/intopark'));
 app.get('/chartdata', function(req, res){
@@ -21,5 +31,9 @@ app.get('/user/:databaseid',function(req,res){
 	
 });
 
+console.log("Server starting!");
 
-app.listen(3700);
+app.listen(webserver_port);
+
+console.log("Server running at ",webserver_port);
+

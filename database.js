@@ -1,7 +1,10 @@
-var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database('db');
+var DATABASE_PATH = 'db';
 
-console.log(db);
+var sqlite3 = require('sqlite3').verbose();
+var db = new sqlite3.Database(DATABASE_PATH);
+
+
+console.log("Database found: \n",db);
 
 function ISODateString(d) {
 	function pad(n) {
