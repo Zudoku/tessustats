@@ -141,7 +141,7 @@ module.exports = {
 			}
 			res.send(arr[0]);
 		};
-		db.each("SELECT * FROM userdata WHERE databaseid = ? ",[databaseid], function(err, row) {
+		db.each("SELECT * FROM userdata WHERE databaseid = ? ;",[databaseid], function(err, row) {
 			arr.push(row);
 		},print);
 	},

@@ -68,7 +68,7 @@ var handleClientList = function(clientlist,dateValue,index,callback){
 		country : '',
 		clientversion : '',
 		totalconnections : '',
-		clientdatabaseid : databaseidValue,
+		databaseid : databaseidValue,
 		rank : '',
 		lastconnected : '',
 		bytesuploadedmonth: '',
