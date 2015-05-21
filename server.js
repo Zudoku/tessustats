@@ -31,6 +31,10 @@ app.get('/user/:databaseid',function(req,res){
 	database.getUserData(res,req.params.databaseid);
 	
 });
+
+app.get('/latestrecord/:databaseid',function(req,res){
+	database.getUsersLastRecord(res,req.params.databaseid);
+});
 //Redirect / to /app/
 app.get('/', function(req,res){
 	res.redirect('/app/');

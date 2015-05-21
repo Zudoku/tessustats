@@ -129,6 +129,20 @@ module.exports = {
 		db.each("SELECT nickname,databaseid FROM online GROUP BY clientid;", function(err, row) {
 			arr.push(row);
 		},print);
+	},getUsersLastRecord : function(res,databaseid){
+		var arr = [];
+		var print = function() {
+			if(arr.length >= 1){
+				res.send(arr[0]);
+			}
+			else{
+				res.send('');
+			}
+
+		};
+		db.each("SELECT *,COUNT(*) as times FROM online  WHERE databaseid = ? ORDER BY times DESC;",[databaseid], function(err, row) {
+			arr.push(row);
+		},print);
 	},
 	getUserData:function(res,databaseid){
 		var arr = [];

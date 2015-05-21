@@ -9,3 +9,16 @@ body {
   padding: 30px 100px;
   text-align: left;
 }
+.nopadding{
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.smallpadding{
+  padding: 3px;
+}
+.nomarginbottom{
+  margin-bottom: 0px;
+}
+.smallmarginbottom{
+  margin-bottom: 10px;
+}

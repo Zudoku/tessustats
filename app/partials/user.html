@@ -1,16 +1,87 @@
 <div class="container">
-	<h1><span class="label label-default"> Name: {{user.nickname}}</span></h1>
-	<div class="row">
-	<div class="col-md-4" >
-	<ul class="list-group">
-		<li class="list-group-item">Server rank: {{user.rank}}</li>
-		<li class="list-group-item">Country: {{user.country}} <span class="famfamfam-flag-{{user.flagCode}}"></span></li>
-		<li class="list-group-item">Operation System: {{user.os}}</li>
-		<li class="list-group-item">Client version: {{user.clientversion}}</li>
-		<li class="list-group-item">Total connections: {{user.totalconnections}}</li>
-		{{user.badges}}
-	</ul>
-	</div>
+    <div class="row">
+        <div class="col-xs-12 ">
+            <h1><span class="label label-default"> Name: {{user.nickname}}</span></h1>
+        </div>
 
-	</div>
+    </div>
+    <br>
+    <br>
+
+    <div class="row">
+        <div class="col-xs-4 ">
+            <h3 style="margin:0px;"><span class="label label-info" > Basic info</span></h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 ">
+            <div class="panel panel-default ">
+                <div class="panel-body ">
+                    <div class="row smallmarginbottom" >
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Server rank:</strong> {{user.rank}}
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Operating system:</strong> {{user.os}}
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Client version:</strong> {{user.clientversion}}
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom ">
+                            <strong>Country:</strong> {{user.country}} <span class="famfamfam-flag-{{user.flagCode}}"></span>
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Online:</strong> {{}}?
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Total connections to server:</strong> {{user.totalconnections}}
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Times scanned:</strong> {{allusersrecord.times}}
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Activity rank:</strong> {{allusersrecord.activityrank}}
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Badges:</strong> {{user.badges}}
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Talkpower:</strong> {{user.talkpower}}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4 ">
+            <h3 style="margin:0px;"><span class="label label-info" > Last record </span></h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 ">
+            <div class="panel panel-default ">
+                <div class="panel-body ">
+                    <div class="row smallmarginbottom" >
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Last seen:</strong> {{record.date}}
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Channel:</strong> {{record.channel}}
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Microphone:</strong> {{record.inputmutedstring}}
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Speakers:</strong> {{record.outputmutedstring}}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
