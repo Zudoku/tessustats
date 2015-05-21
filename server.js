@@ -1,5 +1,6 @@
 
 var webserver_port = 3700;
+var webserver_bind = '127.0.0.1';
 
 var TIMEOUT_BETWEEN_SCANS = 300000;
 
@@ -37,9 +38,9 @@ app.get('/', function(req,res){
 
 console.log("Server starting!");
 
-app.listen(webserver_port,'127.0.0.1');
+app.listen(webserver_port,webserver_bind);
 
-console.log("Server running at ",webserver_port);
+console.log("Server running at ",webserver_bind,":",webserver_port);
 
 console.log("Starting scanning TS every " + TIMEOUT_BETWEEN_SCANS + " Seconds");
 tsparser.keepScanning(TIMEOUT_BETWEEN_SCANS);
