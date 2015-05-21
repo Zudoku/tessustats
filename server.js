@@ -30,6 +30,10 @@ app.get('/user/:databaseid',function(req,res){
 	database.getUserData(res,req.params.databaseid);
 	
 });
+//Redirect / to /app/
+app.get('/', function(req,res){
+	res.redirect('/app/');
+});
 
 console.log("Server starting!");
 
