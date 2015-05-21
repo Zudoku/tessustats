@@ -1,6 +1,8 @@
 <div class="container">
 	<h1><span class="label label-default"> Name: {{user.nickname}}</span></h1>
-	<ul class="list-group"style ="width: 60%;">
+	<div class="row">
+	<div class="col-md-4" >
+	<ul class="list-group">
 		<li class="list-group-item">Server rank: {{user.rank}}</li>
 		<li class="list-group-item">Country: {{user.country}} <span class="famfamfam-flag-{{user.flagCode}}"></span></li>
 		<li class="list-group-item">Operation System: {{user.os}}</li>
@@ -8,4 +10,7 @@
 		<li class="list-group-item">Total connections: {{user.totalconnections}}</li>
 		{{user.badges}}
 	</ul>
+	</div>
+
+	</div>
 </div>

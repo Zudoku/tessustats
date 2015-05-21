@@ -2,7 +2,7 @@ var DATABASE_PATH = 'db';
 
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(DATABASE_PATH);
-
+var util = require("util");;
 //http://i.imgur.com/PHlR21R.png
 
 /*
@@ -55,7 +55,7 @@ module.exports = {
 	addOnlineRecord : function(onlineRecordObject) {
 		var formatDate = ISODateString(onlineRecordObject.date);
 
-		console.log(onlineRecordObject.databaseid, onlineRecordObject.nickname, "Added to database");
+		console.log(onlineRecordObject.databaseid, onlineRecordObject.nickname, 'Added to database');
 		db.run('INSERT INTO online (databaseid,nickname,date,inputmuted,outputmuted,channel) VALUES (?,?,?,?,?,?)',
 			onlineRecordObject.databaseid, onlineRecordObject.nickname, formatDate,
 			onlineRecordObject.inputmuted,onlineRecordObject.outputmuted,onlineRecordObject.channel);
@@ -161,6 +161,7 @@ module.exports = {
 						userObject.bytesdownloadedtotal,userObject.talkpower,userObject.badges);
 				}else{
 					console.log('Updating existing user!');
+					console.log(util.inspect(userObject));
 					db.run("UPDATE userdata SET nickname = ?,os = ?,country = ?,clientversion = ?,totalconnections = ?,rank = ?,lastconnected = ?," +
 						"bytesuploadedmonth = ?,bytesdownloadedmonth = ?,bytesuploadedtotal = ?,bytesdownloadedtotal,talkpower = ?,badges = ? WHERE databaseid = ?",
 						userObject.nickname,userObject.os,userObject.country,userObject.clientversion,userObject.totalconnections,
