@@ -105,15 +105,26 @@ var clientInfo = function(userObject,onlineRecordObject,callback){
 			return;
 		}
 		//Save the onlinerecord to database
+		onlineRecordObject.inputmuted = (response.client_input_muted === 1)? true : false;
+		onlineRecordObject.outputmuted = (response.client_output_muted === 1)? true : false;
+		onlineRecordObject.channel = response.client_channel_group_id;
+
+		database.addOnlineRecord(onlineRecordObject);
 
 
 
-
-		console.log(util.inspect(response));
+		//console.log(util.inspect(response));
 		userObject.os=response.client_platform;
 		userObject.country=response.client_country;
 		userObject.clientversion=response.client_version;
 		userObject.totalconnections=response.client_totalconnections;
+		userObject.lastconnected = response.client_lastconnected;
+		userObject.bytesuploadedmonth = response.client_month_bytes_uploaded;
+		userObject.bytesdownloadedmonth = response.client_month_bytes_downloaded;
+		userObject.bytesuploadedtotal = response.client_total_bytes_uploaded;
+		userObject.bytesdownloadedtotal = response.client_total_bytes_downloaded;
+		userObject.talkpower = response.client_talk_power;
+		userObject.badges = response.client_badges;
 
 
 		setTimeout(serverGroupByClientID,TIME_BETWEEN_QUERIES,userObject,callback);
@@ -128,10 +139,9 @@ var serverGroupByClientID = function(userObject,callback){
 			setTimeout(callback,TIME_BETWEEN_QUERIES);
 			return;
 		}
-		var channelrank=response.name;
-		userObject.rank = channelrank;
-		database.updateUserData(userObject.nickname,userObject.clientdatabaseid,userObject.os,userObject.country,
-			userObject.clientversion,userObject.totalconnections,userObject.rank);
+		userObject.rank = response.name
+
+		database.updateUserData(userObject);
 		setTimeout(callback,TIME_BETWEEN_QUERIES);
 	});
 };

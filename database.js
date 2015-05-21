@@ -150,7 +150,7 @@ module.exports = {
 		console.log('Handling client ',userObject.nickname);
 
 		db.serialize(function() {
-			db.get("SELECT * FROM userdata WHERE databaseid = ?;",clientdatabaseid,function(err,row){
+			db.get("SELECT * FROM userdata WHERE databaseid = ?;",userObject.databaseid,function(err,row){
 				if(row===undefined){
 					console.log('Found new user!');
 					db.run("INSERT INTO userdata (databaseid,nickname,os,country,clientversion,totalconnections," +
@@ -163,9 +163,9 @@ module.exports = {
 					console.log('Updating existing user!');
 					db.run("UPDATE userdata SET nickname = ?,os = ?,country = ?,clientversion = ?,totalconnections = ?,rank = ?,lastconnected = ?," +
 						"bytesuploadedmonth = ?,bytesdownloadedmonth = ?,bytesuploadedtotal = ?,bytesdownloadedtotal,talkpower = ?,badges = ? WHERE databaseid = ?",
-						userObject.databaseid,userObject.nickname,userObject.os,userObject.country,userObject.clientversion,userObject.totalconnections,
+						userObject.nickname,userObject.os,userObject.country,userObject.clientversion,userObject.totalconnections,
 						userObject.rank,userObject.lastconnected,userObject.bytesuploadedmonth,userObject.bytesdownloadedmonth,userObject.bytesuploadedtotal,
-						userObject.bytesdownloadedtotal,userObject.talkpower,userObject.badges);
+						userObject.bytesdownloadedtotal,userObject.talkpower,userObject.badges,userObject.databaseid);
 				}
 			});
 		});
