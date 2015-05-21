@@ -161,9 +161,9 @@ module.exports = {
 						userObject.bytesdownloadedtotal,userObject.talkpower,userObject.badges);
 				}else{
 					console.log('Updating existing user!');
-					console.log(util.inspect(userObject));
+
 					db.run("UPDATE userdata SET nickname = ?,os = ?,country = ?,clientversion = ?,totalconnections = ?,rank = ?,lastconnected = ?," +
-						"bytesuploadedmonth = ?,bytesdownloadedmonth = ?,bytesuploadedtotal = ?,bytesdownloadedtotal,talkpower = ?,badges = ? WHERE databaseid = ?",
+						"bytesuploadedmonth = ?,bytesdownloadedmonth = ?,bytesuploadedtotal = ?,bytesdownloadedtotal = ?,talkpower = ?,badges = ? WHERE databaseid = ?",
 						userObject.nickname,userObject.os,userObject.country,userObject.clientversion,userObject.totalconnections,
 						userObject.rank,userObject.lastconnected,userObject.bytesuploadedmonth,userObject.bytesdownloadedmonth,userObject.bytesuploadedtotal,
 						userObject.bytesdownloadedtotal,userObject.talkpower,userObject.badges,userObject.databaseid);
@@ -175,4 +175,3 @@ module.exports = {
 	}
 
 }
-
