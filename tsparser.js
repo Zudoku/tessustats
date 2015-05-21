@@ -133,7 +133,7 @@ var clientInfo = function(userObject,onlineRecordObject,callback){
 	});
 };
 var serverGroupByClientID = function(userObject,callback){
-	sendCommand("servergroupsbyclientid",{cldbid : userObject.clientdatabaseid}, function(response,err){
+	sendCommand("servergroupsbyclientid",{cldbid : userObject.databaseid}, function(response,err){
 		if(err){
 			console.log(util.inspect(err));
 			setTimeout(callback,TIME_BETWEEN_QUERIES);

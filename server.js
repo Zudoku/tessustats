@@ -18,7 +18,7 @@ app.use("/app/", express.static(__dirname + '/app'));
 //app.use("/intopark/", express.static(__dirname + '/intopark'));
 app.get('/chartdata', function(req, res){
 	res.set('Content-Type', 'text/plain');
-	database.chartData(res);
+	database.getActivityChartData(res);
   
 });
 app.get('/allusers', function(req, res){
