@@ -5,6 +5,41 @@ var db = new sqlite3.Database(DATABASE_PATH);
 
 //http://i.imgur.com/PHlR21R.png
 
+/*
+ DROP TABLE online;
+ DROP TABLE userdata;
+
+ CREATE TABLE online
+ (
+ databaseid INTEGER,
+ nickname var char(20),
+ date datetime,
+ inputmuted BOOLEAN,
+ outputmuted BOOLEAN,
+ channel INTEGER
+ );
+
+ CREATE TABLE userdata
+ (
+ databaseid INTEGER,
+ nickname var char(20),
+ os TEXT,
+ country TEXT,
+ clientversion TEXT,
+ totalconnections INTEGER,
+ rank TEXT,
+ lastconnected INTEGER,
+ bytesuploadedmonth INTEGER,
+ bytesdownloadedmonth INTEGER,
+ bytesuploadedtotal INTEGER,
+ bytesdownloadedtotal INTEGER,
+ talkpower INTEGER,
+ badges TEXT
+ );
+
+
+ */
+
 console.log("Database found: \n",db);
 
 function ISODateString(d) {
@@ -17,23 +52,21 @@ function ISODateString(d) {
 }
 
 module.exports = {
-	addRow : function(clientidvalue, nicknamevalue, datevalue) {
-		var formatDate = ISODateString(datevalue);
-		// dont log ourselves ;)
-		if (nicknamevalue.indexOf("Unknown from") != -1) {
-			return;
-		}
-		console.log(clientidvalue, nicknamevalue, datevalue, 'added to db');
-		db.run('INSERT INTO online (clientid,nickname,date) VALUES (?,?,?)',
-				clientidvalue, nicknamevalue, formatDate);
+	addOnlineRecord : function(onlineRecordObject) {
+		var formatDate = ISODateString(onlineRecordObject.date);
+
+		console.log(onlineRecordObject.databaseid, onlineRecordObject.nickname, "Added to database");
+		db.run('INSERT INTO online (databaseid,nickname,date,inputmuted,outputmuted,channel) VALUES (?,?,?,?,?,?)',
+			onlineRecordObject.databaseid, onlineRecordObject.nickname, formatDate,
+			onlineRecordObject.inputmuted,onlineRecordObject.outputmuted,onlineRecordObject.channel);
 
 	},
 	close : function() {
 		db.close();
 	},
-	chartData : function(res) {
+	getActivityChartData : function(res) {
 		var arr = [];
-		var mus = ['Aeas','Arnold','GeKKo','Masa','Purkkiv'];
+		var mus = ['Arnold','Rivenation','Masa','Antti'];
 		var line=("date\t" + mus[0] + '\t' + mus[1] + '\t' + mus[2] + '\t'
 				+ mus[3] + '\t' + mus[4]+'\n');
 		var handledDate = null;
@@ -84,7 +117,7 @@ module.exports = {
 			res.send(arr);
 		};
 
-		db.each("SELECT nickname,COUNT(*) as times,clientid FROM online GROUP BY nickname ORDER BY times DESC;", function(err, row) {
+		db.each("SELECT nickname,COUNT(*) as times,databaseid FROM online GROUP BY nickname ORDER BY times DESC;", function(err, row) {
 			arr.push(row);
 		}, print);
 	},
@@ -93,7 +126,7 @@ module.exports = {
 		var print = function() {
 			console.log(arr);
 		};
-		db.each("SELECT nickname,clientid FROM online GROUP BY clientid;", function(err, row) {
+		db.each("SELECT nickname,databaseid FROM online GROUP BY clientid;", function(err, row) {
 			arr.push(row);
 		},print);
 	},
@@ -107,27 +140,32 @@ module.exports = {
 				console.log(error);
 			}
 			res.send(arr[0]);
-			util = require("util");
-			//console.log(util.inspect(arr[0]));
 		};
 		db.each("SELECT * FROM userdata WHERE databaseid = ? ",[databaseid], function(err, row) {
 			arr.push(row);
-			console.log("one row in the bank");
 		},print);
 	},
-	updateUserData: function(nickname,clientdatabaseid,os,country,clientversion,totalconnections,channelrank){
-		console.log('Handling client ',nickname);
+	updateUserData: function(userObject){
+		//nickname,clientdatabaseid,os,country,clientversion,totalconnections,channelrank
+		console.log('Handling client ',userObject.nickname);
 
 		db.serialize(function() {
 			db.get("SELECT * FROM userdata WHERE databaseid = ?;",clientdatabaseid,function(err,row){
 				if(row===undefined){
-					console.log('Client doesn\'t exist!');
-					db.run("INSERT INTO userdata (databaseid,nickname,os,country,clientversion,totalconnections,channelrank) VALUES (?,?,?,?,?,?,?)",
-						clientdatabaseid,nickname,os,country,clientversion,totalconnections,channelrank);
+					console.log('Found new user!');
+					db.run("INSERT INTO userdata (databaseid,nickname,os,country,clientversion,totalconnections," +
+						"rank,lastconnected,bytesuploadedmonth,bytesdownloadedmonth,bytesuploadedtotal,bytesdownloadedtotal,talkpower,badges)" +
+						" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+						userObject.databaseid,userObject.nickname,userObject.os,userObject.country,userObject.clientversion,userObject.totalconnections,
+						userObject.rank,userObject.lastconnected,userObject.bytesuploadedmonth,userObject.bytesdownloadedmonth,userObject.bytesuploadedtotal,
+						userObject.bytesdownloadedtotal,userObject.talkpower,userObject.badges);
 				}else{
-					console.log('Updating existing client!');
-					db.run("UPDATE userdata SET nickname = ?,os = ?,country = ?,clientversion = ?,totalconnections = ?,channelrank = ? WHERE databaseid = ?",
-							nickname,os,country,clientversion,totalconnections,channelrank,clientdatabaseid);
+					console.log('Updating existing user!');
+					db.run("UPDATE userdata SET nickname = ?,os = ?,country = ?,clientversion = ?,totalconnections = ?,rank = ?,lastconnected = ?," +
+						"bytesuploadedmonth = ?,bytesdownloadedmonth = ?,bytesuploadedtotal = ?,bytesdownloadedtotal,talkpower = ?,badges = ? WHERE databaseid = ?",
+						userObject.databaseid,userObject.nickname,userObject.os,userObject.country,userObject.clientversion,userObject.totalconnections,
+						userObject.rank,userObject.lastconnected,userObject.bytesuploadedmonth,userObject.bytesdownloadedmonth,userObject.bytesuploadedtotal,
+						userObject.bytesdownloadedtotal,userObject.talkpower,userObject.badges);
 				}
 			});
 		});

@@ -55,9 +55,12 @@ var handleClientList = function(clientlist,dateValue,index,callback){
 		setTimeout(handleClientList,TIME_BETWEEN_QUERIES,clientlist,dateValue,++index,callback);
 		return;
 	}
-	var databaseidValue = clientObject.client_database_id;
-	var nicknameValue = clientObject.client_nickname;
-	var clidValue = clientObject.clid;
+	var databaseidValue = clientObject.client_database_id; //BOTH
+	var nicknameValue = clientObject.client_nickname; //BOTH
+
+	var clidValue = clientObject.clid; // userdata
+
+
 	var userObject = {
 		nickname : nicknameValue,
 		clid : clidValue,
@@ -66,28 +69,52 @@ var handleClientList = function(clientlist,dateValue,index,callback){
 		clientversion : '',
 		totalconnections : '',
 		clientdatabaseid : databaseidValue,
-		rank : ''
+		rank : '',
+		lastconnected : '',
+		bytesuploadedmonth: '',
+		bytesdownloadedmonth: '',
+		bytesuploadedtotal: '',
+		bytesdownloadedtotal: '',
+		talkpower : '',
+		badges : ''
+
 	};
 
-	database.addRow(databaseidValue, nicknameValue, dateValue);
+	var onlineRecordObject = {
+		databaseid : databaseidValue,
+		nickname : nicknameValue,
+		date : dateValue,
+		inputmuted : '',
+		outputmuted : '',
+		channel : ''
+	};
 
-	setTimeout(clientInfo,TIME_BETWEEN_QUERIES,userObject,function(){
+	//database.addRow(databaseidValue, nicknameValue, dateValue);
+
+	setTimeout(clientInfo,TIME_BETWEEN_QUERIES,userObject,onlineRecordObject,function(){
 		setTimeout(handleClientList,TIME_BETWEEN_QUERIES,clientlist,dateValue,++index,callback);
 	});
 
 
 };
-var clientInfo = function(userObject,callback){
+var clientInfo = function(userObject,onlineRecordObject,callback){
 	sendCommand("clientinfo", {clid: userObject.clid},function(response,err){
 		if(err){
 			console.log(util.inspect(err));
 			setTimeout(callback,TIME_BETWEEN_QUERIES);
 			return;
 		}
+		//Save the onlinerecord to database
+
+
+
+
+		console.log(util.inspect(response));
 		userObject.os=response.client_platform;
 		userObject.country=response.client_country;
 		userObject.clientversion=response.client_version;
 		userObject.totalconnections=response.client_totalconnections;
+
 
 		setTimeout(serverGroupByClientID,TIME_BETWEEN_QUERIES,userObject,callback);
 
