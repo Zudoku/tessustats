@@ -1,5 +1,98 @@
 <div class="container">
-<div id="serverchart"> </div>
+<br><br><br><br>
+<div class="row">
+        <div class="col-xs-4 ">
+            <h3 style="margin:0px;"><span class="label label-info" > Server info</span></h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 ">
+            <div class="panel panel-default ">
+                <div class="panel-body ">
+                    <div class="row smallmarginbottom" >
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Server name:</strong> 
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Server welcome message:</strong>
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Server platform:</strong> 
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom ">
+                            <strong>Server version:</strong>
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Average ping:</strong> 
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Packet loss:</strong>
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Server uptime:</strong>
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Server status:</strong>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-4 ">
+            <h3 style="margin:0px;"><span class="label label-info" > Server activity</span></h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 ">
+            <div class="panel panel-default ">
+                <div class="panel-body ">
+                    <div class="row smallmarginbottom" >
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>At this moment:</strong> # online!
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Data from:</strong>
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Max clients:</strong> 
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom ">
+                            <strong>Most clients seen:</strong>
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Average clients:</strong> 
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Median clients:</strong>
+                        </div>
+                        <div class="col-xs-12 smallmarginbottom">
+                            <h3>Activity chart:</strong>
+                        </div>
+                        <div class="col-xs-12 smallmarginbottom">
+                            <div class="btn-group  " role="group" aria-label="...">
+  								<button type="button" class="btn btn-danger crazybutton">24 Hours</button>
+  								<button type="button" class="btn btn-danger crazybutton">7 days</button>
+  								<button type="button" class="btn btn-danger crazybutton">All time</button>
+                        	</div>
+                        </div>
+                        
+                        
+                        
+						<div id="serverchart"> </div>
+						<div class="col-xs-12 smallmarginbottom">
+                            <h3>Time heatmap:</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 <script>
 
 var margin = {top: 20, right: 80, bottom: 30, left: 50},
@@ -92,6 +185,4 @@ d3.tsv("/chartData", function(error, data) {
 });
 
 </script>
-
-hello world
 </div>

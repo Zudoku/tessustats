@@ -16,7 +16,7 @@ var cl = new TeamSpeakClient("178.62.185.179");
 cl.send("login", {client_login_name: "Rivenation", client_login_password: "BUrZfIBV"}, function(err, response, rawResponse){
     console.log(util.inspect(rawResponse));
     cl.send("use", { sid: 1}, function(err, response, rawResponse){
-        cl.send("channellist",{}, function(err, response, rawResponse){
+        cl.send("serverinfo",{}, function(err, response, rawResponse){
             console.log(util.inspect(response));
         });
     });

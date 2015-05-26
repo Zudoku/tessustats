@@ -22,3 +22,8 @@ body {
 .smallmarginbottom{
   margin-bottom: 10px;
 }
+
+.crazybutton{
+	background-color:#333;
+	border-color:#000;
+}
