@@ -11,25 +11,25 @@
                 <div class="panel-body ">
                     <div class="row smallmarginbottom" >
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Server name:</strong> 
+                            <strong>Server name:</strong>  {{serverdata.name}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Server welcome message:</strong>
+                            <strong>Server welcome message:</strong> {{serverdata.welcomemessage}}
                         </div>
-                        <div class="col-xs-6 smallmarginbottom">
-                            <strong>Server platform:</strong> 
+                        <div class="col-xs-6 smallmarginbottom"> 
+                            <strong>Server platform:</strong> {{serverdata.platform}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom ">
-                            <strong>Server version:</strong>
+                            <strong>Server version:</strong> {{serverdata.version}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Average ping:</strong> 
+                            <strong>Average ping:</strong> {{serverdata.ping}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Packet loss:</strong>
+                            <strong>Packet loss:</strong> {{serverdata.packetloss}}%
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Server uptime:</strong>
+                            <strong>Server uptime:</strong> {{serverdata.uptime}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
                             <strong>Server status:</strong>
@@ -58,7 +58,7 @@
                             <strong>Data from:</strong>
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Max clients:</strong> 
+                            <strong>Max clients:</strong> {{serverdata.maxclients}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom ">
                             <strong>Most clients seen:</strong>
@@ -128,7 +128,7 @@ var svg = d3.select("#serverchart").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.tsv("/chartData", function(error, data) {
+d3.tsv("/query/chartData", function(error, data) {
   color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
 
   data.forEach(function(d) {

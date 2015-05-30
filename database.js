@@ -37,6 +37,23 @@ var util = require("util");;
  badges TEXT
  );
 
+CREATE TABLE serverdata
+(
+name TEXT,
+welcomemessage TEXT,
+platform TEXT,
+version TEXT,
+ping INTEGER,
+packetloss REAL,
+maxclients INTEGER,
+uptime INTEGER,
+id INTEGER
+);
+
+INSERT INTO serverdata 
+(name,welcomemessage,platform,version,ping,packetloss,maxclients,uptime,id)
+values
+('tempname','welcome','platform xyz','version xyz',100,0.55,32,10000,1);
 
  */
 
@@ -117,7 +134,7 @@ module.exports = {
 			res.send(arr);
 		};
 
-		db.each("SELECT nickname,COUNT(*) as times,databaseid FROM online GROUP BY nickname ORDER BY times DESC;", function(err, row) {
+		db.each("SELECT nickname,COUNT(*) as times,databaseid FROM online GROUP BY databaseid ORDER BY times DESC;", function(err, row) {
 			arr.push(row);
 		}, print);
 	},
@@ -159,8 +176,22 @@ module.exports = {
 			arr.push(row);
 		},print);
 	},
+	getServerData : function(res){
+		var arr = [];
+		var print = function() {
+			res.send(arr[0]);
+		};
+		db.each("SELECT * FROM serverdata WHERE id = 1;", function(err, row) {
+			arr.push(row);
+		},print);
+	},
+	insertServerData : function(serverObject){
+		console.log('Updating Server information!');
+		db.run("UPDATE serverdata SET name = ?, welcomemessage = ?, platform = ?, version = ?, ping = ?, packetloss = ?, maxclients = ?, uptime = ? WHERE id = 1",
+				serverObject.name,serverObject.welcomemessage,serverObject.platform,serverObject.version,
+				serverObject.ping,serverObject.packetloss,serverObject.maxclients,serverObject.uptime);
+	},
 	updateUserData: function(userObject){
-		//nickname,clientdatabaseid,os,country,clientversion,totalconnections,channelrank
 		console.log('Handling client ',userObject.nickname);
 
 		db.serialize(function() {

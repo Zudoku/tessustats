@@ -43,6 +43,7 @@ var scanClients = function(callback){
 		});
 	});
 };
+
 var handleClientList = function(clientlist,dateValue,index,callback){
 	if(index == clientlist.length){
 		callback();
@@ -107,13 +108,10 @@ var clientInfo = function(userObject,onlineRecordObject,callback){
 		//Save the onlinerecord to database
 		onlineRecordObject.inputmuted = (response.client_input_muted === 1)? true : false;
 		onlineRecordObject.outputmuted = (response.client_output_muted === 1)? true : false;
-		onlineRecordObject.channel = response.client_channel_group_id;
+		onlineRecordObject.channel = 'unknown';
 
 		database.addOnlineRecord(onlineRecordObject);
 
-
-
-		//console.log(util.inspect(response));
 		userObject.os=response.client_platform;
 		userObject.country=response.client_country;
 		userObject.clientversion=response.client_version;
@@ -145,12 +143,37 @@ var serverGroupByClientID = function(userObject,callback){
 		setTimeout(callback,TIME_BETWEEN_QUERIES);
 	});
 };
+var scanServer = function(callback){
+	sendCommand("serverinfo", {}, function(response,err) {
+		if(err){
+			console.log(util.inspect(err));
+			callback();
+			return;
+		}
+		var serverObject = {
+				name : response.virtualserver_name,
+				welcomemessage : response.virtualserver_welcomemessage,
+				platform : response.virtualserver_platform,
+				version : response.virtualserver_version,
+				ping : response.virtualserver_total_ping,
+				packetloss : response.virtualserver_total_packetloss_total,
+				maxclients: response.virtualserver_maxclients,
+				uptime : response.virtualserver_uptime,
+		};
+		database.insertServerData(serverObject);
+		
+	});
+};
 
+var scanChannels = function(){
+	
+};
 
 var doScan = function(){
 	scanClients(function(){
-		console.log("Scan complete!");
+		scanServer();
 	});
+	
 };
 var loginToServerQuery = function(callback) {
 	var loginArgs = {
@@ -184,8 +207,6 @@ var loginToServerQuery = function(callback) {
 module.exports = {
 	setdb : function(db) {
 		database = db;
-		//DISABLE THIS TO GET THE SERVER WORKING ( SERVER MOVED )
-		//// 5 min 300 000
 	},
 	scan : function(){
 		loginToServerQuery(doScan);

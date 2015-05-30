@@ -16,23 +16,26 @@ tsparser.setdb(database);
 console.log("Database configured!");
 
 app.use("/app/", express.static(__dirname + '/app'));
-//app.use("/intopark/", express.static(__dirname + '/intopark'));
-app.get('/chartdata', function(req, res){
+app.get('/query/chartdata', function(req, res){
 	res.set('Content-Type', 'text/plain');
 	database.getActivityChartData(res);
   
 });
-app.get('/allusers', function(req, res){
+app.get('/query/allusers', function(req, res){
 	
 	database.allUsersData(res);
   
 });
-app.get('/user/:databaseid',function(req,res){
+app.get('/query/user/:databaseid',function(req,res){
 	database.getUserData(res,req.params.databaseid);
 	
 });
+app.get('/query/serverdata',function(req,res){
+	database.getServerData(res);
+	
+});
 
-app.get('/latestrecord/:databaseid',function(req,res){
+app.get('/query/latestrecord/:databaseid',function(req,res){
 	database.getUsersLastRecord(res,req.params.databaseid);
 });
 //Redirect / to /app/
@@ -46,6 +49,6 @@ app.listen(webserver_port,webserver_bind);
 
 console.log("Server running at ",webserver_bind,":",webserver_port);
 
-console.log("Starting scanning TS every " + TIMEOUT_BETWEEN_SCANS + " Seconds");
+console.log("Starting scanning TS every " + TIMEOUT_BETWEEN_SCANS + " seconds");
 tsparser.keepScanning(TIMEOUT_BETWEEN_SCANS);
 
