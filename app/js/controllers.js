@@ -9,7 +9,7 @@ var ismultiple = function(number){
 	else{
 		return '';
 	}
-}
+};
 
 angular.module('myApp.controllers', [])
 
@@ -41,13 +41,49 @@ angular.module('myApp.controllers', [])
 	    data.uptime = dayString + hourString + minuteString + secondString;
 		
 		$scope.serverdata = data;
+		
+		var lastScanResource = $http.get('/query/lastscan').success(function(data) {
+			var scanDate = moment.utc(data.date).toDate();
+			
+			data.dateFormatted = scanDate.toLocaleString();//moment(scanDate).format('YYYY-MM-DD HH:mm:ss');
+			$scope.lastScan = data;
+			$scope.lastScanStyle = (data.success === 'Online')? 'success' : 'danger';
+			
+		});
+		var lastScanClients = $http.get('/query/lastscanclients').success(function(data) {
+			$scope.usersOnlineNow = data.length;
+		});
+		
+		
 	});
 	
 	
 } ])
 .controller('usersCtrl', ['$scope','$http','$location', function($scope, $http,$location) {
-	var userResource = $http.get('/query/allusers').success(function(data) {
-		$scope.users = data;
+	var userResource = $http.get('/query/allusers').success(function(usersdata) {
+		
+		var lastScanClients = $http.get('/query/lastscanclients').success(function(data) {
+			$scope.users = usersdata;
+			//Go through all the clients that were in the last scan
+			for(var index = 0 ; index < data.length ; index++){
+				var handledClient = data[index];
+				//Find the client that has the same name
+				for(var allusersIndex = 0 ; allusersIndex < usersdata.length ; allusersIndex++){
+					if(usersdata[allusersIndex].databaseid === handledClient.databaseid){
+						//If it also has same name, give it green text
+						if(usersdata[allusersIndex].nickname === handledClient.nickname){
+							$scope.users[allusersIndex].textcolor = 'success';
+							console.log($scope.users[allusersIndex].textcolor);
+						}else{ //If only same databaseid, name has changed. Yellow text instead
+							$scope.users[allusersIndex].textcolor = 'danger';
+							console.log($scope.users[allusersIndex].textcolor);
+						}
+					}
+				}
+			}
+			
+		});
+		
 	});
 	
 	$scope.selectuser=function(clientid){
@@ -102,11 +138,25 @@ angular.module('myApp.controllers', [])
 	var userResource = $http.get('/query/user/'+$routeParams.databaseid).success(function(data) {
 		$scope.user = data;
 		var recordResource = $http.get('/query/latestrecord/'+$routeParams.databaseid).success(function(record) {
+			var scanDate = moment.utc(record.date).toDate();
+			record.date = scanDate.toLocaleString();//moment(scanDate).format('YYYY-MM-DD HH:mm:ss');
 			$scope.record = record;
 			$scope.record.inputmutedstring = (record.inputmuted === 1) ? 'Muted' : 'On' ;
 			$scope.record.outputmutedstring = (record.outputmuted === 1) ? 'Muted' : 'On' ;
+			
 		});
-
+		var lastscanclients = $http.get('/query/lastscanclients').success(function(lastscan) {
+			for(var index = 0; index < lastscan.length ; index++){
+				if(lastscan[index].databaseid === $scope.user.databaseid){
+					$scope.onlineRightNow = 'Online!';
+					$scope.onlineClass = 'text-success';
+				}
+			}
+			if($scope.onlineRightNow != 'Online!'){
+				$scope.onlineRightNow = 'offline';
+				$scope.onlineClass = 'text-warning';
+			}
+		});
 
 	});
 	var allusers = $http.get('/query/allusers').success(function(allusers) {
@@ -129,5 +179,6 @@ angular.module('myApp.controllers', [])
 
 		$scope.allusersrecord = foundAllUsersRecord;
 	});
+	
 	
 } ]);

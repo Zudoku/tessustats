@@ -4,8 +4,20 @@
     <h1 class="panel-title"> <strong>Users</strong> </h1>
   </div>
   <div class="panel-body">
-    <strong>All users sorted from the most active to the least active.</strong>
+  	<h4>Data</h4>
+    Below is a list of all users that have been on the TeamSpeak server since the making of this website (mid May 2015).
+    The data is grouped by the nickname of the user when it was seen online, but clicking the user will bring you to the clients latest statistics including their latest nickname if it has changed.
+    <h4>Understanding the table</h4>
+    Users are sorted from the most active to the least active.<br>
+    <strong>Times online</strong> column shows how many times the website has seen the client online total. Scan is made every 5 minutes.<br>
+    <strong><span class="text-success">Rows marked with this color</span></strong> indicate that the user is online right now!<br>
+    <strong><span class="text-warning">Rows marked with this color</span></strong> indicate that the user is online right now, but has changed their nickname!<br>
   </div>
+</div>
+
+<div class="alert alert-info" role="alert">
+<span class="glyphicon glyphicon-bullhorn" style="font-size:1.5em;" aria-hidden="true"> </span>
+  <a href="/#/about" class="alert-link"> For more information about how the site works click here! </a>
 </div>
 <table class="table table-hover">
 	<tr>
@@ -13,8 +25,8 @@
 	<th>Nickname</th>
 	<th>Times online</th>
 	</tr>
-	<tr ng-repeat="user in users" ng-click="selectuser(user.databaseid)">
-   		<td>{{$index + 1}}.</td><td> {{user.nickname}}</td><td>{{user.times}}</td>
+	<tr ng-class="user.textcolor" ng-repeat="user in users" ng-click="selectuser(user.databaseid)">
+   		<td >{{$index + 1}}.</td><td> {{user.nickname}}</td><td>{{user.times}}</td>
 	</tr>
 </table>
 </div>

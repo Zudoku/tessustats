@@ -38,6 +38,13 @@ app.get('/query/serverdata',function(req,res){
 app.get('/query/latestrecord/:databaseid',function(req,res){
 	database.getUsersLastRecord(res,req.params.databaseid);
 });
+app.get('/query/lastscan',function(req,res){
+	database.getLastScan(res);
+});
+app.get('/query/lastscanclients',function(req,res){
+	database.getLastScanClients(res);
+});
+
 //Redirect / to /app/
 app.get('/', function(req,res){
 	res.redirect('/app/');

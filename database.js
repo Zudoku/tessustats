@@ -55,6 +55,22 @@ INSERT INTO serverdata
 values
 ('tempname','welcome','platform xyz','version xyz',100,0.55,32,10000,1);
 
+CREATE TABLE lastscan
+(
+date datetime,
+success TEXT,
+id INTEGER
+);
+
+INSERT INTO lastscan
+(date,success,id)
+values
+('1900-01-01 11:11:11','Online',1);
+
+CREATE TABLE scans
+(
+date datetime
+);
  */
 
 console.log("Database found: \n",db);
@@ -72,7 +88,7 @@ module.exports = {
 	addOnlineRecord : function(onlineRecordObject) {
 		var formatDate = ISODateString(onlineRecordObject.date);
 
-		console.log(onlineRecordObject.databaseid, onlineRecordObject.nickname, 'Added to database');
+		console.log("Nickname: "+ onlineRecordObject.nickname +" DatabaseID: "+ onlineRecordObject.databaseid +" recorded online");
 		db.run('INSERT INTO online (databaseid,nickname,date,inputmuted,outputmuted,channel) VALUES (?,?,?,?,?,?)',
 			onlineRecordObject.databaseid, onlineRecordObject.nickname, formatDate,
 			onlineRecordObject.inputmuted,onlineRecordObject.outputmuted,onlineRecordObject.channel);
@@ -113,7 +129,7 @@ module.exports = {
 					arr.push(r);
 				}
 				r[row.nickname] = row.count / 1.44;
-				console.log(r);
+				//console.log(r);
 
 			}, print);
 	},
@@ -134,7 +150,7 @@ module.exports = {
 			res.send(arr);
 		};
 
-		db.each("SELECT nickname,COUNT(*) as times,databaseid FROM online GROUP BY databaseid ORDER BY times DESC;", function(err, row) {
+		db.each("SELECT nickname,COUNT(*) as times,databaseid FROM online GROUP BY nickname ORDER BY times DESC;", function(err, row) {
 			arr.push(row);
 		}, print);
 	},
@@ -192,12 +208,12 @@ module.exports = {
 				serverObject.ping,serverObject.packetloss,serverObject.maxclients,serverObject.uptime);
 	},
 	updateUserData: function(userObject){
-		console.log('Handling client ',userObject.nickname);
+		console.log('Saving clientinfo for user ',userObject.nickname, ' to database');
 
 		db.serialize(function() {
 			db.get("SELECT * FROM userdata WHERE databaseid = ?;",userObject.databaseid,function(err,row){
 				if(row===undefined){
-					console.log('Found new user!');
+					console.log('Inserting new user!');
 					db.run("INSERT INTO userdata (databaseid,nickname,os,country,clientversion,totalconnections," +
 						"rank,lastconnected,bytesuploadedmonth,bytesdownloadedmonth,bytesuploadedtotal,bytesdownloadedtotal,talkpower,badges)" +
 						" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -217,6 +233,37 @@ module.exports = {
 		});
 
 		
+	},
+	logScan : function(scanObject){
+		var formatDate = ISODateString(scanObject.date);
+		db.run("UPDATE lastscan SET date = ?, success = ? WHERE id = 1",
+				formatDate,scanObject.success);
+		db.run("INSERT INTO scans (date) values (?)",formatDate);
+		console.log('Scan logged!');
+	},
+	getLastScan : function(res){
+		var arr = [];
+		var print = function() {
+			res.send(arr[0]);
+		};
+		db.each("SELECT * FROM lastscan WHERE id = 1;", function(err, row) {
+			arr.push(row);
+		},print);
+	},
+	getLastScanClients : function(res){
+		var response = [];
+		var lastscan = [];
+		var print = function() {
+			res.send(response);
+		};
+		var queryclients = function() {
+			db.each("SELECT nickname,databaseid FROM online WHERE date = ?",lastscan[0].date, function(err, row) {
+				response.push(row);
+			},print);
+		};
+		db.each("SELECT * FROM lastscan WHERE id = 1;", function(err, row) {
+			lastscan.push(row);
+		},queryclients);
 	}
 
 }

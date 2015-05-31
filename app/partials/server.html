@@ -32,7 +32,7 @@
                             <strong>Server uptime:</strong> {{serverdata.uptime}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Server status:</strong>
+                            <strong>Server status: <span class="text-{{lastScanStyle}}">{{lastScan.success}}</span></strong>
                         </div>
 
                     </div>
@@ -52,22 +52,16 @@
                 <div class="panel-body ">
                     <div class="row smallmarginbottom" >
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>At this moment:</strong> # online!
+                            <strong>At this moment:</strong> {{usersOnlineNow}} online!
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Data from:</strong>
+                            <strong>Data from:</strong> {{lastScan.dateFormatted}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
                             <strong>Max clients:</strong> {{serverdata.maxclients}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom ">
                             <strong>Most clients seen:</strong>
-                        </div>
-                        <div class="col-xs-6 smallmarginbottom">
-                            <strong>Average clients:</strong> 
-                        </div>
-                        <div class="col-xs-6 smallmarginbottom">
-                            <strong>Median clients:</strong>
                         </div>
                         <div class="col-xs-12 smallmarginbottom">
                             <h3>Activity chart:</strong>

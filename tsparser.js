@@ -16,9 +16,11 @@ var TIME_BETWEEN_QUERIES = 1000;
 
 var database;
 
+var TIME_OF_QUERY = '';
+
 
 var sendCommand = function(command, args, cb) {
-	console.log(command,args);
+	console.log('Sending command: ',command,args);
 	cl.send(command, args, function(err, response, rawResponse) {
 		if (err) {
 			console.log("err:", command, err);
@@ -35,16 +37,16 @@ var sendCommand = function(command, args, cb) {
 
 var scanClients = function(callback){
 	sendCommand("clientlist", {}, function(response,err) {
-		var datevalue = new Date();
-		console.log(util.inspect(response));
-		setTimeout(handleClientList,TIME_BETWEEN_QUERIES,response,datevalue,0,function(){
+		
+		console.log(response.length +" clients to scan!");
+		setTimeout(handleClientList,TIME_BETWEEN_QUERIES,response,0,function(){
 			console.log("Client scan finished!");
 			callback();
 		});
 	});
 };
 
-var handleClientList = function(clientlist,dateValue,index,callback){
+var handleClientList = function(clientlist,index,callback){
 	if(index == clientlist.length){
 		callback();
 		return;
@@ -53,7 +55,8 @@ var handleClientList = function(clientlist,dateValue,index,callback){
 	var clientType = clientObject.client_type;
 	//Do not log serverquery clients
 	if(clientType == 1){
-		setTimeout(handleClientList,TIME_BETWEEN_QUERIES,clientlist,dateValue,++index,callback);
+		console.log("Skipping serverquery user");
+		setTimeout(handleClientList,TIME_BETWEEN_QUERIES,clientlist,++index,callback);
 		return;
 	}
 	var databaseidValue = clientObject.client_database_id; //BOTH
@@ -84,16 +87,14 @@ var handleClientList = function(clientlist,dateValue,index,callback){
 	var onlineRecordObject = {
 		databaseid : databaseidValue,
 		nickname : nicknameValue,
-		date : dateValue,
+		date : TIME_OF_QUERY,
 		inputmuted : '',
 		outputmuted : '',
 		channel : ''
 	};
 
-	//database.addRow(databaseidValue, nicknameValue, dateValue);
-
 	setTimeout(clientInfo,TIME_BETWEEN_QUERIES,userObject,onlineRecordObject,function(){
-		setTimeout(handleClientList,TIME_BETWEEN_QUERIES,clientlist,dateValue,++index,callback);
+		setTimeout(handleClientList,TIME_BETWEEN_QUERIES,clientlist,++index,callback);
 	});
 
 
@@ -161,17 +162,31 @@ var scanServer = function(callback){
 				uptime : response.virtualserver_uptime,
 		};
 		database.insertServerData(serverObject);
+		console.log('Serverdata scan finished!');
+		callback();
 		
 	});
+	
 };
 
 var scanChannels = function(){
 	
 };
-
+var logScan = function(success){
+	console.log('Logging scan!');
+	
+	var scanObject = {
+			date : TIME_OF_QUERY,
+			success : (success === true)? 'Online' : 'Offline',
+	};
+	
+	database.logScan(scanObject);
+}
 var doScan = function(){
 	scanClients(function(){
-		scanServer();
+		scanServer(function(){
+			logScan(true);
+		});
 	});
 	
 };
@@ -180,18 +195,21 @@ var loginToServerQuery = function(callback) {
 		client_login_name : SERVERQUERY_LOGIN_NAME,
 		client_login_password : SERVERQUERY_LOGIN_PASSWORD
 	};
+	TIME_OF_QUERY = new Date();
 	sendCommand("login", loginArgs,function(response,err){
 		if(err){
 			console.log(util.inspect(err));
+			logScan(false);
 			return;
 		}
-
+		
 		var useArgs = {
 			sid : VIRTUAL_SERVER_ID
 		}
 		sendCommand("use",useArgs, function(response,err){
 			if(err){
 				console.log(util.inspect(err));
+				logscan(false);
 				return;
 			}
 			callback();
