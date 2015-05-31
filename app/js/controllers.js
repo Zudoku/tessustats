@@ -75,7 +75,7 @@ angular.module('myApp.controllers', [])
 							$scope.users[allusersIndex].textcolor = 'success';
 							console.log($scope.users[allusersIndex].textcolor);
 						}else{ //If only same databaseid, name has changed. Yellow text instead
-							$scope.users[allusersIndex].textcolor = 'danger';
+							$scope.users[allusersIndex].textcolor = 'warning';
 							console.log($scope.users[allusersIndex].textcolor);
 						}
 					}
