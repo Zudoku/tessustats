@@ -41,6 +41,11 @@ angular.module('myApp.controllers', [])
 	    data.uptime = dayString + hourString + minuteString + secondString;
 		
 		$scope.serverdata = data;
+		$scope.mostClientsTooltip = function(){
+			console.log("mouse over");
+			$('#mostclienttime').tooltip();
+			
+		};
 		
 		var lastScanResource = $http.get('/query/lastscan').success(function(data) {
 			var scanDate = moment.utc(data.date).toDate();
@@ -54,6 +59,12 @@ angular.module('myApp.controllers', [])
 			$scope.usersOnlineNow = data.length;
 		});
 		
+		var lastScanClients = $http.get('/query/getmostclientsseen').success(function(data) {
+			$scope.mostclientsseen = data;
+			var scanDate = moment.utc(data.date).toDate();
+			
+			$scope.mostclientsseen.date = scanDate.toLocaleString();//moment(scanDate).format('YYYY-MM-DD HH:mm:ss');
+		});
 		
 	});
 	

@@ -44,6 +44,9 @@ app.get('/query/lastscan',function(req,res){
 app.get('/query/lastscanclients',function(req,res){
 	database.getLastScanClients(res);
 });
+app.get('/query/getmostclientsseen',function(req,res){
+	database.getMostClientsSeen(res);
+});
 
 //Redirect / to /app/
 app.get('/', function(req,res){

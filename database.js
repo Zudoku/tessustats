@@ -264,6 +264,16 @@ module.exports = {
 		db.each("SELECT * FROM lastscan WHERE id = 1;", function(err, row) {
 			lastscan.push(row);
 		},queryclients);
+	},
+	getMostClientsSeen : function(res){
+		var arr = [];
+		var print = function() {
+			res.send(arr[0]);
+		};
+		db.each("SELECT date,COUNT(*) as times FROM online GROUP BY date ORDER BY times DESC;", function(err, row) {
+			arr.push(row);
+		},print);
 	}
+	
 
 }
