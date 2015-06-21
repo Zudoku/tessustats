@@ -97,42 +97,88 @@ module.exports = {
 	close : function() {
 		db.close();
 	},
-	getActivityChartData : function(res) {
-		var arr = [];
-		var mus = ['Arnold','Rivenation','Masa','Antti'];
-		var line=("date\t" + mus[0] + '\t' + mus[1] + '\t' + mus[2] + '\t'
-				+ mus[3] + '\t' + mus[4]+'\n');
-		var handledDate = null;
+	getActivityChartDataDay : function(res) {
+		var queryResult = [];
+		var scans = [];
+		var response="0,1,2,3,time\n";
 		var rowString;
-		var x = 0;
 		var print = function() {
-			
-			for (var i = 0; i < arr.length; i++) {
-				row = arr[i];
-				line = line + row.date + "\t";
-				for (var j = 0; j < mus.length; j++) {
-					line += ((row[mus[j]]/(24*12))*100| 0) + "\t";
+			var dictionary = {};
+			for (var i = 0; i < queryResult.length; i++) { //For every scan
+				if(dictionary[queryResult[i].date] != null){
+					dictionary[queryResult[i].date].push(queryResult[i]);
+				}else{
+					var a = [];
+					a.push(queryResult[i]);
+					dictionary[queryResult[i].date] = a;
 				}
-				line += "\n";
 			}
-
-			res.send(line);
+			for (var i = 0; i < scans.length; i++) {
+				var dateObject = Date.parse(scans[i])/1000;
+				if(dictionary[dateObject.toString()] != null){
+					var a = dictionary[dateObject.toString()];
+					for(var activity = 0 ; activity < 4 ; activity++){
+						
+						var matchfound = false;
+						var toAdd = "0";
+						for(var index = 0 ; index < a.length;  index++){
+							if(a[index].activity === activity){
+								toAdd = a[index].count.toString();
+								matchfound = true;
+								break;
+							}
+						}
+						if(activity === 0){
+							response = response + toAdd;
+						}else{
+							response = response +"," + toAdd;
+						}
+						
+					}
+				}else{
+					response = response + "0,0,0,0";
+				}
+				response = response +"," + dateObject + "\n";
+			}
+			
+			
+			res.send(response);
 		};
+		var queryScans = function(){
+			db.each("SELECT date FROM scans WHERE date>date('now','-1 days') ORDER BY date;",
+					function(err,row){
+				scans.push(row.date);
+			},print);
+		};
+		
 		var r;
 		db.each(
-			"SELECT nickname, COUNT(*) as count,date(date)as date FROM online WHERE date>date('now','-7 days') GROUP BY nickname,date(date) ORDER BY date,nickname ASC;",
+			"SELECT inputmuted,outputmuted, COUNT(*) as count,date as date FROM online WHERE date>date('now','-1 days') GROUP BY date,inputmuted,outputmuted ORDER BY date;",
 			function (err, row) {
-				if (handledDate !== row.date) {
-					handledDate = row.date;
-					r = {};
-					r.date = row.date.replace(/-/g, '');
-					arr.push(r);
-				}
-				r[row.nickname] = row.count / 1.44;
-				//console.log(r);
-
-			}, print);
+				r = {};
+				var dateObject = Date.parse(row.date)/1000;
+				r.date = dateObject;
+				var activity = 0;
+				if(row.inputmuted && row.outputmuted){activity = 3;}
+				if(row.inputmuted && !row.outputmuted){activity = 2;}
+				if(!row.inputmuted && row.outputmuted){activity = 1;}
+				r.activity = activity;
+				r.count = row.count;
+				
+				queryResult.push(r);
+			}, queryScans);
 	},
+	getScanTimesDay : function(res){
+		var scans = {};
+		scans.scanTimes = [];
+		var print = function() {
+			res.send(scans);
+		};
+		db.each("SELECT date FROM scans WHERE date>date('now','-1 days') ORDER BY date;",
+					function(err,row){scans.scanTimes.push(row.date);},print);
+		
+	}
+	,
 	selectAll : function(res) {
 		var arr = [];
 		var print = function() {
