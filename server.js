@@ -16,11 +16,17 @@ tsparser.setdb(database);
 console.log("Database configured!");
 
 app.use("/app/", express.static(__dirname + '/app'));
-app.get('/query/chartdata', function(req, res){
+app.get('/query/serverActivityChartDay', function(req, res){
 	res.set('Content-Type', 'text/plain');
-	database.getActivityChartData(res);
+	database.getActivityChartDataDay(res);
   
 });
+app.get('/query/scanTimesDay', function(req, res){
+	res.set('Content-Type', 'text/plain');
+	database.getScanTimesDay(res);
+  
+});
+
 app.get('/query/allusers', function(req, res){
 	
 	database.allUsersData(res);

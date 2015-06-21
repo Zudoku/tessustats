@@ -66,17 +66,11 @@
                         <div class="col-xs-12 smallmarginbottom">
                             <h3>Activity chart:</h3>
                         </div>
-                        <div class="col-xs-12 smallmarginbottom">
-                            <div class="btn-group  " role="group" aria-label="...">
-  								<button type="button" class="btn btn-danger crazybutton">24 Hours</button>
-  								<button type="button" class="btn btn-danger crazybutton">7 days</button>
-  								<button type="button" class="btn btn-danger crazybutton">All time</button>
-                        	</div>
-                        </div>
                         
                         
                         
-						<div id="serverchart"> </div>
+                        
+						<div id="serverchart" style="height:500px;margin-bottom: 100px;"> </div>
 						<div class="col-xs-12 smallmarginbottom">
                             <h3 > 
                             	Time heatmap: 
@@ -92,96 +86,56 @@
 
 <script>
 
-var margin = {top: 20, right: 80, bottom: 30, left: 50},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+//Date Activity Amount
 
-var parseDate = d3.time.format("%Y%m%d").parse;
-
-var x = d3.time.scale()
-    .range([0, width]);
-
-var y = d3.scale.linear()
-    .range([height, 0]);
-
-var color = d3.scale.category10();
-
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left");
-
-var line = d3.svg.line()
-    .interpolate("basis")
-    .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.temperature); });
-
-var svg = d3.select("#serverchart").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-d3.tsv("/query/chartData", function(error, data) {
-  color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
-
-  data.forEach(function(d) {
-    d.date = parseDate(d.date);
-  });
-
-  var cities = color.domain().map(function(name) {
-    return {
-      name: name,
-      values: data.map(function(d) {
-        return {date: d.date, temperature: +d[name]};
-      })
-    };
-  });
-
-  x.domain(d3.extent(data, function(d) { return d.date; }));
-	//Activity sidebar scale 
-  y.domain([
-    d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.temperature; }); }),
-    d3.max(cities, function(c) { return 100 })
-  ]);
-
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Activity (%)");
-
-  var city = svg.selectAll(".nickname")
-      .data(cities)
-    .enter().append("g")
-      .attr("class", "city");
-
-  city.append("path")
-      .attr("class", "line")
-      .attr("d", function(d) { return line(d.values); })
-      .style("stroke", function(d) { return color(d.name); });
-
-  city.append("text")
-      .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")"; })
-      .attr("x", 3)
-      .attr("dy", ".35em")
-      .text(function(d) { return d.name; });
+var chart = c3.generate({
+	bindto: '#serverchart',
+  	data: {
+  		url: '/query/serverActivityChartDay',
+		type: 'bar',
+		groups: [
+		            ['0','1','2','3',]
+		],
+		names : {
+		    0: 'Active',
+		    1: 'Speakers muted',
+		    2: 'Headphones muted',
+		    3: 'Speakers and headphones muted',
+		},
+		x : 'time',
+		
+		
+		
+    	
+  	},
+  	axis: {
+  	  x: {
+  	    localtime: true,
+  	  	tick: {
+  	  		format: function (x) { 
+  	  			var date = new Date(x*1000);
+  	  			return date.toLocaleString();
+  	  		}
+  	  		
+  	    },
+  	    show: false
+  	  }
+  	},
+  	padding: {
+  	  bottom: 40
+  	},
+  	size: {
+  	  height: 440
+  	}
+  	
+  	
 });
 
+
+
+
 </script>
+
 <script>
 $(document).ready(function(){
     $("[rel=tooltip]").tooltip({ placement: 'right'});
