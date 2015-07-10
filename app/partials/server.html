@@ -1,141 +1,105 @@
 <div class="container">
-<br><br><br><br>
-<div class="row">
-        <div class="col-xs-4 ">
-            <h3 style="margin:0px;"><span class="label label-info" > Server info</span></h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12 ">
-            <div class="panel panel-default ">
-                <div class="panel-body ">
-                    <div class="row smallmarginbottom" >
-                        <div class="col-xs-6 smallmarginbottom">
-                            <strong>Server name:</strong>  {{serverdata.name}}
-                        </div>
-                        <div class="col-xs-6 smallmarginbottom">
-                            <strong>Server welcome message:</strong> {{serverdata.welcomemessage}}
-                        </div>
-                        <div class="col-xs-6 smallmarginbottom"> 
-                            <strong>Server platform:</strong> {{serverdata.platform}}
-                        </div>
-                        <div class="col-xs-6 smallmarginbottom ">
-                            <strong>Server version:</strong> {{serverdata.version}}
-                        </div>
-                        <div class="col-xs-6 smallmarginbottom">
-                            <strong>Average ping:</strong> {{serverdata.ping}}
-                        </div>
-                        <div class="col-xs-6 smallmarginbottom">
-                            <strong>Packet loss:</strong> {{serverdata.packetloss}}%
-                        </div>
-                        <div class="col-xs-6 smallmarginbottom">
-                            <strong>Server uptime:</strong> {{serverdata.uptime}}
-                        </div>
-                        <div class="col-xs-6 smallmarginbottom">
-                            <strong>Server status: <span class="text-{{lastScanStyle}}">{{lastScan.success}}</span></strong>
-                        </div>
+	<br>
+	<br>
+	<br>
+	<br>
+	<div class="row">
+		<div class="col-xs-4 ">
+			<h3 style="margin: 0px;">
+				<span class="label label-info"> Server info</span>
+			</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 ">
+			<div class="panel panel-default ">
+				<div class="panel-body ">
+					<div class="row smallmarginbottom">
+						<div class="col-xs-6 smallmarginbottom">
+							<strong>Server name:</strong> {{serverdata.name}}
+						</div>
+						<div class="col-xs-6 smallmarginbottom">
+							<strong>Server welcome message:</strong>
+							{{serverdata.welcomemessage}}
+						</div>
+						<div class="col-xs-6 smallmarginbottom">
+							<strong>Server platform:</strong> {{serverdata.platform}}
+						</div>
+						<div class="col-xs-6 smallmarginbottom ">
+							<strong>Server version:</strong> {{serverdata.version}}
+						</div>
+						<div class="col-xs-6 smallmarginbottom">
+							<strong>Average ping:</strong> {{serverdata.ping}}
+						</div>
+						<div class="col-xs-6 smallmarginbottom">
+							<strong>Packet loss:</strong> {{serverdata.packetloss}}%
+						</div>
+						<div class="col-xs-6 smallmarginbottom">
+							<strong>Server uptime:</strong> {{serverdata.uptime}}
+						</div>
+						<div class="col-xs-6 smallmarginbottom">
+							<strong>Server status: <span
+								class="text-{{lastScanStyle}}">{{lastScan.success}}</span></strong>
+						</div>
 
-                    </div>
-                </div>
-            </div>
+					</div>
+				</div>
+			</div>
 
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-4 ">
-            <h3 style="margin:0px;"><span class="label label-info" > Server activity</span></h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12 ">
-            <div class="panel panel-default ">
-                <div class="panel-body ">
-                    <div class="row smallmarginbottom" >
-                        <div class="col-xs-6 smallmarginbottom">
-                            <strong>At this moment:</strong> {{usersOnlineNow}} online!
-                        </div>
-                        <div class="col-xs-6 smallmarginbottom">
-                            <strong>Data from:</strong> {{lastScan.dateFormatted}}
-                        </div>
-                        <div class="col-xs-6 smallmarginbottom">
-                            <strong>Max clients:</strong> {{serverdata.maxclients}}
-                        </div>
-                        <div class="col-xs-6 smallmarginbottom ">
-                            <strong>Most clients seen:</strong> {{mostclientsseen.times}} <i class="icon-ok-sign" rel="tooltip" title="{{mostclientsseen.date}}" id="mostclienttime"> <span class="glyphicon glyphicon-time text-info"></span> </i>
-                        </div>
-                        <div class="col-xs-12 smallmarginbottom">
-                            <h3>Activity chart:</h3>
-                        </div>
-                        
-                        
-                        
-                        
-						<div id="serverchart" style="height:500px;margin-bottom: 100px;"> </div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-4 ">
+			<h3 style="margin: 0px;">
+				<span class="label label-info"> Server activity</span>
+			</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 ">
+			<div class="panel panel-default ">
+				<div class="panel-body ">
+					<div class="row smallmarginbottom">
+						<div class="col-xs-6 smallmarginbottom">
+							<strong>At this moment:</strong> {{usersOnlineNow}} online!
+						</div>
+						<div class="col-xs-6 smallmarginbottom">
+							<strong>Data from:</strong> {{lastScan.dateFormatted}}
+						</div>
+						<div class="col-xs-6 smallmarginbottom">
+							<strong>Max clients:</strong> {{serverdata.maxclients}}
+						</div>
+						<div class="col-xs-6 smallmarginbottom ">
+							<strong>Most clients seen:</strong> {{mostclientsseen.times}} <i
+								class="icon-ok-sign" rel="tooltip"
+								title="{{mostclientsseen.date}}" id="mostclienttime"> <span
+								class="glyphicon glyphicon-time text-info"></span>
+							</i>
+						</div>
 						<div class="col-xs-12 smallmarginbottom">
-                            <h3 > 
-                            	Time heatmap: 
-                            	
-                             </h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
+							<h3>Activity chart:</h3>
+						</div>
+						<div class="col-xs-12 smallmarginbottom">
+							<div class="btn-group  " role="group" aria-label="adb">
+								<button type="button"  class="btn btn-danger crazybutton" ng-Click="loadActivityGraphDay()">24
+									Hours</button>
+								<button type="button" class="btn btn-danger crazybutton" ng-Click="loadActivityGraphWeek()">7
+									days</button>
+								<button type="button" class="btn btn-danger crazybutton" ng-Click="loadActivityGraphMonth()">Month</button>
+							</div>
+						</div>
 
-        </div>
-    </div>
+						</div>
+						<div class="col-xs-12 smallmarginbottom">
+							<div id="serverchart" style="height: 500px; margin-bottom: 100px;">
+							
+						</div>
+					</div>
+				</div>
+			</div>
 
-<script>
-
-//Date Activity Amount
-
-var chart = c3.generate({
-	bindto: '#serverchart',
-  	data: {
-  		url: '/query/serverActivityChartDay',
-		type: 'bar',
-		groups: [
-		            ['0','1','2','3',]
-		],
-		names : {
-		    0: 'Active',
-		    1: 'Speakers muted',
-		    2: 'Headphones muted',
-		    3: 'Speakers and headphones muted',
-		},
-		x : 'time',
-		
-		
-		
-    	
-  	},
-  	axis: {
-  	  x: {
-  	    localtime: true,
-  	  	tick: {
-  	  		format: function (x) { 
-  	  			var date = new Date(x*1000);
-  	  			return date.toLocaleString();
-  	  		}
-  	  		
-  	    },
-  	    show: false
-  	  }
-  	},
-  	padding: {
-  	  bottom: 40
-  	},
-  	size: {
-  	  height: 440
-  	}
-  	
-  	
-});
-
-
-
-
-</script>
-
+		</div>
+	</div>
 <script>
 $(document).ready(function(){
     $("[rel=tooltip]").tooltip({ placement: 'right'});

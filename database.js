@@ -97,11 +97,26 @@ module.exports = {
 	close : function() {
 		db.close();
 	},
-	getActivityChartDataDay : function(res) {
+	getActivityChartDataDay : function(res,identifier) {
 		var queryResult = [];
 		var scans = [];
-		var response="0,1,2,3,time\n";
+		var response="0,1,2,time\n";
 		var rowString;
+		//Query datetime range
+		var timelineStart = "";
+		var timelineEnd = "";
+		
+		if(identifier === "month"){
+			timelineStart = "datetime('now','-1 months')";
+			timelineEnd = "datetime('now')";
+		}else if(identifier === "week"){
+			timelineStart = "datetime('now','-7 days')";
+			timelineEnd = "datetime('now')";
+		}else{
+			timelineStart = "datetime('now','-1 days')";
+			timelineEnd = "datetime('now')";
+		}
+		
 		var print = function() {
 			var dictionary = {};
 			for (var i = 0; i < queryResult.length; i++) { //For every scan
@@ -117,7 +132,7 @@ module.exports = {
 				var dateObject = Date.parse(scans[i])/1000;
 				if(dictionary[dateObject.toString()] != null){
 					var a = dictionary[dateObject.toString()];
-					for(var activity = 0 ; activity < 4 ; activity++){
+					for(var activity = 0 ; activity < 3 ; activity++){
 						
 						var matchfound = false;
 						var toAdd = "0";
@@ -136,7 +151,7 @@ module.exports = {
 						
 					}
 				}else{
-					response = response + "0,0,0,0";
+					response = response + "0,0,0";
 				}
 				response = response +"," + dateObject + "\n";
 			}
@@ -144,24 +159,27 @@ module.exports = {
 			
 			res.send(response);
 		};
+		//This is not optimal at all. I could not find a way to insert the values using ? or anything. It is safe though either way since it only adds a string constant into it.
+		var scanQueryString = "SELECT date FROM scans WHERE "+timelineStart+"<date AND date<"+timelineEnd+" ORDER BY date;";
 		var queryScans = function(){
-			db.each("SELECT date FROM scans WHERE date>date('now','-1 days') ORDER BY date;",
+			db.each(scanQueryString,
 					function(err,row){
 				scans.push(row.date);
 			},print);
 		};
 		
 		var r;
+		//This is not optimal at all. I could not find a way to insert the values using ? or anything. It is safe though either way since it only adds a string constant into it and not user input.
+		var onlineQueryString = "SELECT inputmuted,outputmuted, COUNT(*) as count,date as date FROM online WHERE "+timelineStart+"<date AND date<"+timelineEnd+" GROUP BY date,inputmuted,outputmuted ORDER BY date;";
 		db.each(
-			"SELECT inputmuted,outputmuted, COUNT(*) as count,date as date FROM online WHERE date>date('now','-1 days') GROUP BY date,inputmuted,outputmuted ORDER BY date;",
+			onlineQueryString,
 			function (err, row) {
 				r = {};
 				var dateObject = Date.parse(row.date)/1000;
 				r.date = dateObject;
 				var activity = 0;
-				if(row.inputmuted && row.outputmuted){activity = 3;}
-				if(row.inputmuted && !row.outputmuted){activity = 2;}
-				if(!row.inputmuted && row.outputmuted){activity = 1;}
+				if(row.inputmuted && row.outputmuted || !row.inputmuted && row.outputmuted){activity = 2;}
+				if(row.inputmuted && !row.outputmuted){activity = 1;}
 				r.activity = activity;
 				r.count = row.count;
 				

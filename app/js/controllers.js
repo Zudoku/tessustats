@@ -39,13 +39,78 @@ angular.module('myApp.controllers', [])
 	    var secondString = (seconds === 0)? '' : seconds + ' second' + ismultiple(seconds) + ' ';
 	    
 	    data.uptime = dayString + hourString + minuteString + secondString;
-		
+
 		$scope.serverdata = data;
 		$scope.mostClientsTooltip = function(){
 			console.log("mouse over");
 			$('#mostclienttime').tooltip();
 			
 		};
+		
+		$scope.chart = null
+		$scope.showChart = function(){
+			console.log("showing chart");
+			$scope.chart = c3.generate({
+				bindto: '#serverchart',
+			  	data: {
+			  		url: '/query/serverActivityChart/day',
+					type: 'bar',
+					groups: [
+					            ['0','1','2']
+					],
+					names : {
+					    0: 'Active',
+					    1: 'Microphone muted',
+					    2: 'Speakers and headphones muted'
+					},
+					x : 'time',
+			  	},
+			  	axis: {
+			  	  x: {
+			  	    localtime: true,
+			  	  	tick: {
+			  	  		format: function (x) { 
+			  	  			var date = new Date(x*1000);
+			  	  			return date.toLocaleString();
+			  	  		}
+			  	  		
+			  	    },
+			  	    show: false
+			  	  }
+			  	},
+			  	padding: {
+			  	  bottom: 40
+			  	},
+			  	size: {
+			  	  height: 440
+			  	}
+			});
+		};
+		$scope.showChart()
+		
+		$scope.loadActivityGraphDay = function(){
+			$scope.chart.load({
+				url: '/query/serverActivityChart/day',
+				unload: true          
+			
+			});
+		}
+		$scope.loadActivityGraphWeek = function(){
+			$scope.chart.load({
+				url: '/query/serverActivityChart/week',
+				unload: true          
+			
+			});
+		}
+		$scope.loadActivityGraphMonth = function(){
+			$scope.chart.load({
+				url: '/query/serverActivityChart/month',
+				unload: true          
+			
+			});
+		}
+
+		
 		
 		var lastScanResource = $http.get('/query/lastscan').success(function(data) {
 			var scanDate = moment.utc(data.date).toDate();
