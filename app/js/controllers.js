@@ -10,35 +10,41 @@ var ismultiple = function(number){
 		return '';
 	}
 };
+/**
+ * Convert number of seconds to "X days Y hours Z minutes F seconds" String
+ */
+var getTimeFromSeconds = function(sec_num){
+	var secondsInHour = (60 * 60);
+	var secondsInDay = (secondsInHour * 24);
+	
+	var days    = Math.floor(sec_num / secondsInDay);
+	var hours   = Math.floor((sec_num - days * secondsInDay) / secondsInHour);
+    var minutes = Math.floor((sec_num - days * secondsInDay - (hours * secondsInHour)) / 60);
+    var seconds = sec_num - days * secondsInDay - (hours * secondsInHour) - (minutes * 60);
+    
+    var dayString = (days === 0)? '' : days + ' day' + ismultiple(days) + ' ';
+    var hourString = (hours === 0)? '' : hours + ' hour' + ismultiple(hours) + ' ';
+    var minuteString = (minutes === 0)? '' : minutes + ' minute' + ismultiple(minutes) + ' ';
+    var secondString = (seconds === 0)? '' : seconds + ' second' + ismultiple(seconds) + ' ';
+    
+    return (dayString + hourString + minuteString + secondString);
+	
+	
+};
 
 angular.module('myApp.controllers', [])
 
 
 .controller('basicCtrl', ['$scope','$http','$location', function($scope, $http,$location) {
 
-} ])
+} ]) //Angular Controller for the server page
 .controller('serverCtrl', ['$scope','$http','$location', function($scope, $http,$location) {
+	//Query the server data
 	var serverResource = $http.get('/query/serverdata').success(function(data) {
 		
-		//Convert seconds to time
+		//Convert seconds to human readable
 		var sec_num = data.uptime;
-		
-		
-		var secondsInHour = (60 * 60);
-		var secondsInDay = (secondsInHour * 24);
-		
-		
-		var days    = Math.floor(sec_num / secondsInDay);
-		var hours   = Math.floor((sec_num - days * secondsInDay) / secondsInHour);
-	    var minutes = Math.floor((sec_num - days * secondsInDay - (hours * secondsInHour)) / 60);
-	    var seconds = sec_num - days * secondsInDay - (hours * secondsInHour) - (minutes * 60);
-	    
-	    var dayString = (days === 0)? '' : days + ' day' + ismultiple(days) + ' ';
-	    var hourString = (hours === 0)? '' : hours + ' hour' + ismultiple(hours) + ' ';
-	    var minuteString = (minutes === 0)? '' : minutes + ' minute' + ismultiple(minutes) + ' ';
-	    var secondString = (seconds === 0)? '' : seconds + ' second' + ismultiple(seconds) + ' ';
-	    
-	    data.uptime = dayString + hourString + minuteString + secondString;
+	    data.uptime = getTimeFromSeconds(sec_num)
 
 		$scope.serverdata = data;
 		$scope.mostClientsTooltip = function(){
@@ -73,7 +79,6 @@ angular.module('myApp.controllers', [])
 			  	  			var date = new Date(x*1000);
 			  	  			return date.toLocaleString();
 			  	  		}
-			  	  		
 			  	    },
 			  	    show: false
 			  	  }
@@ -86,8 +91,9 @@ angular.module('myApp.controllers', [])
 			  	}
 			});
 		};
-		$scope.showChart()
-		
+		//Load the chart on page load too.
+		$scope.showChart() 
+		//A function to change activity-chart's timeframe to 24 hours
 		$scope.loadActivityGraphDay = function(){
 			$scope.chart.load({
 				url: '/query/serverActivityChart/day',
@@ -95,6 +101,7 @@ angular.module('myApp.controllers', [])
 			
 			});
 		}
+		//A function to change activity-chart's timeframe to 7 days
 		$scope.loadActivityGraphWeek = function(){
 			$scope.chart.load({
 				url: '/query/serverActivityChart/week',
@@ -102,6 +109,7 @@ angular.module('myApp.controllers', [])
 			
 			});
 		}
+		//A function to change activity-chart's timeframe to 1 month
 		$scope.loadActivityGraphMonth = function(){
 			$scope.chart.load({
 				url: '/query/serverActivityChart/month',
@@ -109,9 +117,7 @@ angular.module('myApp.controllers', [])
 			
 			});
 		}
-
-		
-		
+		//Query the last scan time
 		var lastScanResource = $http.get('/query/lastscan').success(function(data) {
 			var scanDate = moment.utc(data.date).toDate();
 			
@@ -120,10 +126,11 @@ angular.module('myApp.controllers', [])
 			$scope.lastScanStyle = (data.success === 'Online')? 'success' : 'danger';
 			
 		});
+		//Query the amount of users online in the latest scan
 		var lastScanClients = $http.get('/query/lastscanclients').success(function(data) {
 			$scope.usersOnlineNow = data.length;
 		});
-		
+		//Query the amount of users has ever been in server
 		var lastScanClients = $http.get('/query/getmostclientsseen').success(function(data) {
 			$scope.mostclientsseen = data;
 			var scanDate = moment.utc(data.date).toDate();
@@ -161,7 +168,7 @@ angular.module('myApp.controllers', [])
 		});
 		
 	});
-	
+	//Function for clicking the user in the list
 	$scope.selectuser=function(clientid){
 		
 		$location.path('/user/'+clientid);

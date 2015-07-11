@@ -5,7 +5,7 @@ var db = new sqlite3.Database(DATABASE_PATH);
 var util = require("util");;
 //http://i.imgur.com/PHlR21R.png
 
-/*
+/* SQL script to create template DB file
  DROP TABLE online;
  DROP TABLE userdata;
 
@@ -85,6 +85,7 @@ function ISODateString(d) {
 }
 
 module.exports = {
+		//Adds online stamp for 1 user. Gets called when user is spotted on the server 
 	addOnlineRecord : function(onlineRecordObject) {
 		var formatDate = ISODateString(onlineRecordObject.date);
 
@@ -93,11 +94,11 @@ module.exports = {
 			onlineRecordObject.databaseid, onlineRecordObject.nickname, formatDate,
 			onlineRecordObject.inputmuted,onlineRecordObject.outputmuted,onlineRecordObject.channel);
 
-	},
+	},//Closes the database connection
 	close : function() {
 		db.close();
-	},
-	getActivityChartDataDay : function(res,identifier) {
+	},//Returns the activity chart data (CSV format, rows) for either day,week or month depending on identifier parameter
+	getActivityChartData : function(res,identifier) {
 		var queryResult = [];
 		var scans = [];
 		var response="0,1,2,time\n";
@@ -116,10 +117,14 @@ module.exports = {
 			timelineStart = "datetime('now','-1 days')";
 			timelineEnd = "datetime('now')";
 		}
-		
+		//make a CSV file out of the SQL queries , Gets executed last
+		//CSV file is in rows.In rows we have the number of  active , muted and all muted. Then we have timestamp row
+		//Because we have times when there isnt always atleasst one of each, we need to take that into consideration and fill that place with 0
 		var print = function() {
 			var dictionary = {};
-			for (var i = 0; i < queryResult.length; i++) { //For every scan
+			for (var i = 0; i < queryResult.length; i++) { 
+				//Put all online data into a dictionary where key is timestamp of scan
+				//and value is an array of all the values
 				if(dictionary[queryResult[i].date] != null){
 					dictionary[queryResult[i].date].push(queryResult[i]);
 				}else{
@@ -128,11 +133,11 @@ module.exports = {
 					dictionary[queryResult[i].date] = a;
 				}
 			}
-			for (var i = 0; i < scans.length; i++) {
+			for (var i = 0; i < scans.length; i++) { //Loop trough all the scans and go trough the dictionary with them
 				var dateObject = Date.parse(scans[i])/1000;
 				if(dictionary[dateObject.toString()] != null){
 					var a = dictionary[dateObject.toString()];
-					for(var activity = 0 ; activity < 3 ; activity++){
+					for(var activity = 0 ; activity < 3 ; activity++){ //Go trough active online, muted online , all muted online and comma separate them and add them to the response
 						
 						var matchfound = false;
 						var toAdd = "0";
@@ -151,15 +156,16 @@ module.exports = {
 						
 					}
 				}else{
-					response = response + "0,0,0";
+					response = response + "0,0,0"; //No-one was online
 				}
-				response = response +"," + dateObject + "\n";
+				response = response +"," + dateObject + "\n"; //Add the timestamp to the 4th row
 			}
 			
 			
 			res.send(response);
 		};
 		//This is not optimal at all. I could not find a way to insert the values using ? or anything. It is safe though either way since it only adds a string constant into it.
+		//query scans from the timeline, gets executed second
 		var scanQueryString = "SELECT date FROM scans WHERE "+timelineStart+"<date AND date<"+timelineEnd+" ORDER BY date;";
 		var queryScans = function(){
 			db.each(scanQueryString,
@@ -170,6 +176,7 @@ module.exports = {
 		
 		var r;
 		//This is not optimal at all. I could not find a way to insert the values using ? or anything. It is safe though either way since it only adds a string constant into it and not user input.
+		//query who was online from the timeline,gets executed first
 		var onlineQueryString = "SELECT inputmuted,outputmuted, COUNT(*) as count,date as date FROM online WHERE "+timelineStart+"<date AND date<"+timelineEnd+" GROUP BY date,inputmuted,outputmuted ORDER BY date;";
 		db.each(
 			onlineQueryString,
@@ -185,7 +192,7 @@ module.exports = {
 				
 				queryResult.push(r);
 			}, queryScans);
-	},
+	},//Get the scans made in 24 hours
 	getScanTimesDay : function(res){
 		var scans = {};
 		scans.scanTimes = [];
@@ -195,19 +202,7 @@ module.exports = {
 		db.each("SELECT date FROM scans WHERE date>date('now','-1 days') ORDER BY date;",
 					function(err,row){scans.scanTimes.push(row.date);},print);
 		
-	}
-	,
-	selectAll : function(res) {
-		var arr = [];
-		var print = function() {
-			res.send(arr);
-		};
-
-		db.each("SELECT * FROM online", function(err, row) {
-			arr.push(row);
-		}, print);
-
-	},
+	},//Get the user list of all visited clients
 	allUsersData:function(res){
 		var arr = [];
 		var print = function() {
@@ -217,7 +212,7 @@ module.exports = {
 		db.each("SELECT nickname,COUNT(*) as times,databaseid FROM online GROUP BY nickname ORDER BY times DESC;", function(err, row) {
 			arr.push(row);
 		}, print);
-	},
+	}, //Get all users latest nickname
 	allUsersID:function(){
 		var arr = [];
 		var print = function() {
@@ -226,7 +221,8 @@ module.exports = {
 		db.each("SELECT nickname,databaseid FROM online GROUP BY clientid;", function(err, row) {
 			arr.push(row);
 		},print);
-	},getUsersLastRecord : function(res,databaseid){
+	}, //Get the last record of the client with the parameter databaseid
+	getUsersLastRecord : function(res,databaseid){
 		var arr = [];
 		var print = function() {
 			if(arr.length >= 1){
@@ -240,7 +236,7 @@ module.exports = {
 		db.each("SELECT *,COUNT(*) as times FROM online  WHERE databaseid = ? ORDER BY times DESC;",[databaseid], function(err, row) {
 			arr.push(row);
 		},print);
-	},
+	}, //Gets the data of one user specified by parameter databaseid
 	getUserData:function(res,databaseid){
 		var arr = [];
 		var print = function() {
@@ -255,7 +251,7 @@ module.exports = {
 		db.each("SELECT * FROM userdata WHERE databaseid = ? ;",[databaseid], function(err, row) {
 			arr.push(row);
 		},print);
-	},
+	}, //Get the server statistics
 	getServerData : function(res){
 		var arr = [];
 		var print = function() {
@@ -264,13 +260,13 @@ module.exports = {
 		db.each("SELECT * FROM serverdata WHERE id = 1;", function(err, row) {
 			arr.push(row);
 		},print);
-	},
+	}, //Updates server statistics
 	insertServerData : function(serverObject){
 		console.log('Updating Server information!');
 		db.run("UPDATE serverdata SET name = ?, welcomemessage = ?, platform = ?, version = ?, ping = ?, packetloss = ?, maxclients = ?, uptime = ? WHERE id = 1",
 				serverObject.name,serverObject.welcomemessage,serverObject.platform,serverObject.version,
 				serverObject.ping,serverObject.packetloss,serverObject.maxclients,serverObject.uptime);
-	},
+	}, //Updates the users data check tsparser.js for the structure for userObject.
 	updateUserData: function(userObject){
 		console.log('Saving clientinfo for user ',userObject.nickname, ' to database');
 
@@ -297,14 +293,14 @@ module.exports = {
 		});
 
 		
-	},
+	}, //Logs new scan
 	logScan : function(scanObject){
 		var formatDate = ISODateString(scanObject.date);
 		db.run("UPDATE lastscan SET date = ?, success = ? WHERE id = 1",
 				formatDate,scanObject.success);
 		db.run("INSERT INTO scans (date) values (?)",formatDate);
 		console.log('Scan logged!');
-	},
+	},  //Get the information about the latest scan
 	getLastScan : function(res){
 		var arr = [];
 		var print = function() {
@@ -313,7 +309,7 @@ module.exports = {
 		db.each("SELECT * FROM lastscan WHERE id = 1;", function(err, row) {
 			arr.push(row);
 		},print);
-	},
+	}, //Get the users that were online when the last scan was
 	getLastScanClients : function(res){
 		var response = [];
 		var lastscan = [];
@@ -328,7 +324,7 @@ module.exports = {
 		db.each("SELECT * FROM lastscan WHERE id = 1;", function(err, row) {
 			lastscan.push(row);
 		},queryclients);
-	},
+	}, //Get the most clients ever seen on the server
 	getMostClientsSeen : function(res){
 		var arr = [];
 		var print = function() {

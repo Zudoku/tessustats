@@ -18,7 +18,7 @@ console.log("Database configured!");
 app.use("/app/", express.static(__dirname + '/app'));
 app.get('/query/serverActivityChart/:timeframe', function(req, res){
 	res.set('Content-Type', 'text/plain');
-	database.getActivityChartDataDay(res,req.params.timeframe);
+	database.getActivityChartData(res,req.params.timeframe);
   
 });
 app.get('/query/scanTimesDay', function(req, res){
