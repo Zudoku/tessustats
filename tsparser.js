@@ -55,6 +55,7 @@ var handleClientList = function(clientlist,index,callback){
 	if(clientObject == undefined){
 		console.log("No clients to scan.");
 		callback();
+		return;
 	}
 	var clientType = clientObject.client_type;
 	//Do not log serverquery clients
