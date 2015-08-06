@@ -1,3 +1,21 @@
 <div class="container content">
-
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h1 class="panel-title"> <strong>Countries</strong> </h1>
+  </div>
+  <div class="panel-body">
+	
+  </div>
+</div>
+<table class="table table-hover">
+	<tr>
+	<th>Country</th>
+	<th>Activity score</th>
+	<th>User count</th>
+	<th>Rank</th>
+	</tr>
+	<tr  ng-repeat="country in countries" ng-click="selectcountry(country.country)">
+   		<td >{{country.country}}</td><td >{{country.activityscore}}</td><td >{{country.users.length}}</td><td >{{$index +1}}.</td>
+	</tr>
+</table>
 </div>

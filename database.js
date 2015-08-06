@@ -333,7 +333,81 @@ module.exports = {
 		db.each("SELECT date,COUNT(*) as times FROM online GROUP BY date ORDER BY times DESC;", function(err, row) {
 			arr.push(row);
 		},print);
+	},
+	getAllCountries : function(res) {
+		var response = [];
+		var users = [];
+		var userdata = [];
+		var countries = []; //Contains the names of the countries
+		
+		var constructCountries = function(){
+			for(var i= 0; i< users.length;i++){
+				var currentUser = users[i];
+				var userCountry;
+				if(countries.indexOf(currentUser.country) < 0){
+					//Add a new country
+					countries.push(currentUser.country);
+					var country = {
+							users : [],
+							activityscore : 0,
+							country : currentUser.country
+					};
+					userCountry = country;
+					response.push(country);
+				}else{
+					//Search the existing country from the array.
+					for(var o=0;o < response.length; o++){
+						if(response[o].country == currentUser.country){
+							userCountry = response[o];
+							break;
+						}
+					}
+					if(userCountry == undefined){
+						console.log("Error finding the existing country");
+					}
+				}
+				for(var x = 0 ; x < userdata.length; x++){
+					if(currentUser.databaseid == userdata[x].databaseid){
+						userCountry.activityscore += userdata[x].times;
+						break;
+					}
+				}
+				//userCountry.activityscore += currentUser.totalconnections;
+				userCountry.users.push(currentUser.databaseid);
+			}
+			
+			print();
+		};
+		var print = function() {
+			//Sort with activityscore
+			response.sort(function (a,b){
+				if(a.activityscore > b.activityscore){
+					return -1;
+				}else if(a.activityscore < b.activityscore){
+					return 1;
+				}else{
+					return 0;
+				}
+			});
+			res.send(response);
+		};
+		var getUserData = function(){
+			db.each("SELECT COUNT(*) as times,databaseid FROM online GROUP BY databaseid ORDER BY times DESC;", function(err, row) {
+				userdata.push(row);
+			},constructCountries);
+		};
+		db.each("SELECT * FROM userdata;",function(err,row){
+			users.push(row);
+		},getUserData);
+	},
+	getUsersFromCountry : function(res,country){
+		var result = [];
+		var print = function() {
+			res.send(result);
+		};
+		db.each("SELECT nickname,databaseid FROM userdata WHERE country=?;",country,function(err,row){
+			result.push(row);
+		},print);
 	}
-	
 
 }

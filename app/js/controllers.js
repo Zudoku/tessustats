@@ -190,10 +190,29 @@ angular.module('myApp.controllers', [])
 } ])
 
 .controller('countryCtrl', ['$scope','$http','$location','$routeParams', function($scope, $http,$location,$routeParams) {
-		var countryResource = $http.get('/query/country/'+$routeParams.countrycode).success(function(data) {
-			$scope.country = data;
-
-		})
+		var countryResource = $http.get('/query/allcountries').success(function(data) {
+			
+			for(var x = 0; x < data.length; x++){
+				if(data[x].country == $routeParams.countrycode){
+					$scope.country = data[x];
+					$scope.rank = (x + 1);
+					var usersResource = $http.get('/query/allusers').success(function(alluserdata) {
+						var allusers = alluserdata.length
+						$scope.allusers = allusers;
+						$scope.userspercent = ($scope.country.users.length / allusers) * 100
+					});
+					break;
+				}
+			}
+		});
+		var usersResource = $http.get('/query/allClientsFromCountry/' + $routeParams.countrycode).success(function(data) {
+			$scope.usersFromCountry = data;
+		});
+		
+		
+		$scope.selectUser = function(databaseid){
+			$location.path('/user/'+databaseid);
+		};
 
 } ])
 

@@ -53,6 +53,12 @@ app.get('/query/lastscanclients',function(req,res){
 app.get('/query/getmostclientsseen',function(req,res){
 	database.getMostClientsSeen(res);
 });
+app.get('/query/allcountries',function(req,res){
+	database.getAllCountries(res);
+});
+app.get('/query/allClientsFromCountry/:country',function(req,res){
+	database.getUsersFromCountry(res,req.params.country);
+});
 
 //Redirect / to /app/
 app.get('/', function(req,res){
