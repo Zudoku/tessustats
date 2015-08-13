@@ -8,6 +8,10 @@ var util = require("util");;
 /* SQL script to create template DB file
  DROP TABLE online;
  DROP TABLE userdata;
+ DROP TALBE serverdata;
+ DROP TABLE scans;
+ DROP TABLE lastscan;
+ DROP TABLE channels
 
  CREATE TABLE online
  (
@@ -70,6 +74,25 @@ values
 CREATE TABLE scans
 (
 date datetime
+);
+
+CREATE TABLE channels
+(
+cid INTEGER,
+pid INTEGER,
+name TEXT,
+topic TEXT,
+description TEXT,
+passwordprotected INTEGER,
+orderT INTEGER,
+type TEXT,
+encryptedvoice INTEGER,
+secondsempty INTEGER
+);
+
+CREATE TABLE activeChannels
+(
+cid INTEGER
 );
  */
 
@@ -408,6 +431,32 @@ module.exports = {
 		db.each("SELECT nickname,databaseid FROM userdata WHERE country=?;",country,function(err,row){
 			result.push(row);
 		},print);
-	}
+	},
+	updateChannelData : function(channelDBObject){
+		db.serialize(function() {
+			db.get("SELECT * FROM channels WHERE cid = ?;",channelDBObject.cid,function(err,row){
+				if(row===undefined){
+					console.log('Inserting new channel');
+					db.run("INSERT INTO channels (cid,pid,name,topic,description,passwordprotected,orderT,type,encryptedvoice,secondsempty) VALUES (?,?,?,?,?,?,?,?,?,?)",
+							channelDBObject.cid,channelDBObject.pid,channelDBObject.name,channelDBObject.topic,channelDBObject.description,channelDBObject.passwordProtected,channelDBObject.order,
+							channelDBObject.type,channelDBObject.encryptedVoice,channelDBObject.secondsEmpty);
+				}else{
+					console.log('Updating existing channel');
+					db.run("UPDATE channels SET pid = ?, name = ?, topic = ?, description = ?, passwordprotected = ?, orderT = ?, type = ?, encryptedvoice = ?, secondsempty = ?",
+							channelDBObject.pid,channelDBObject.name,channelDBObject.topic,channelDBObject.description,channelDBObject.passwordProtected,channelDBObject.order,
+							channelDBObject.type,channelDBObject.encryptedVoice,channelDBObject.secondsEmpty);
+				}
+			});
+		});
+	},
+	getChannelNameFromCID : function(res,cid){
+		var result = [];
+		var print = function() {
+			res.send(result);
+		};
+		db.each("SELECT name FROM channels WHERE cid = ?;",cid,function(err,row){
+			result.push(row);
+		},print);
+	};
 
 }

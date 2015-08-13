@@ -12,7 +12,7 @@ var SERVERQUERY_LOGIN_PASSWORD = "BUrZfIBV"; //client_login_password
 
 var VIRTUAL_SERVER_ID = 1;
 
-var TIME_BETWEEN_QUERIES = 1000;
+var TIME_BETWEEN_QUERIES = 1000; //milliseconds
 
 var database;
 
@@ -66,7 +66,7 @@ var handleClientList = function(clientlist,index,callback){
 	}
 	var databaseidValue = clientObject.client_database_id; //BOTH
 	var nicknameValue = clientObject.client_nickname; //BOTH
-
+	var clientChannelValue = clientObject.cid; //Channel id
 	var clidValue = clientObject.clid; // userdata
 
 
@@ -95,7 +95,7 @@ var handleClientList = function(clientlist,index,callback){
 		date : TIME_OF_QUERY,
 		inputmuted : '',
 		outputmuted : '',
-		channel : ''
+		channel : clientChannelValue
 	};
 
 	setTimeout(clientInfo,TIME_BETWEEN_QUERIES,userObject,onlineRecordObject,function(){
@@ -114,7 +114,6 @@ var clientInfo = function(userObject,onlineRecordObject,callback){
 		//Save the onlinerecord to database
 		onlineRecordObject.inputmuted = (response.client_input_muted === 1)? true : false;
 		onlineRecordObject.outputmuted = (response.client_output_muted === 1)? true : false;
-		onlineRecordObject.channel = 'unknown';
 
 		database.addOnlineRecord(onlineRecordObject);
 
@@ -174,9 +173,63 @@ var scanServer = function(callback){
 	
 };
 
-var scanChannels = function(){
+var scanChannels = function(callback){
+	var index = 0;
+	sendCommand("channellist", {},function(response,err){
+		if(err){
+			console.log(util.inspect(err));
+			callback();
+			return;
+		}
+		setTimeout(channelInfo,TIME_BETWEEN_QUERIES,response,index,callback);
+	});
+};
+var channelInfo = function(channelList,index,callback){
+	var channelObject = channelList[index];
+	
+	if(channelObject == undefined){
+		callback();
+		return;
+	}
+	sendCommand("channelinfo", {cid: channelObject.cid},function(response,err){
+		if(err){
+			console.log(util.inspect(err));
+			setTimeout(channelInfo,TIME_BETWEEN_QUERIES,channelList,++index,callback);
+			return;
+		}
+		
+		var channelType = '';
+		if(response.channel_flag_permanent == 0 && response.channel_flag_semi_permanent == 0 ){
+			channelType = 'Temporary';
+		}
+		if(response.channel_flag_permanent == 1 && response.channel_flag_semi_permanent == 0 ){
+			channelType = 'Permanent';
+		}
+		if(response.channel_flag_permanent == 0 && response.channel_flag_semi_permanent == 1 ){
+			channelType = 'Semi-Permanent';
+		}
+		
+		var channelDBObject =  {
+			cid : channelObject.cid,
+			pid : response.pid,
+			name : response.channel_name,
+			topic : response.channel_topic,
+			description : response.channel_description,
+			passwordProtected : response.channel_flag_password,
+			order : response.channel_order,
+			type : channelType,
+			encryptedVoice : response.channel_codec_is_unencrypted,
+			secondsEmpty : response.seconds_empty
+		};
+		
+		database.updateChannelData(channelDBObject);
+		setTimeout(channelInfo,TIME_BETWEEN_QUERIES,channelList,++index,callback);
+		
+		
+	});
 	
 };
+
 var logScan = function(success){
 	console.log('Logging scan!');
 	
@@ -190,10 +243,11 @@ var logScan = function(success){
 var doScan = function(){
 	scanClients(function(){
 		scanServer(function(){
-			logScan(true);
+			scanChannels(function(){
+				logScan(true);
+			});
 		});
 	});
-	
 };
 var loginToServerQuery = function(callback) {
 	var loginArgs = {
