@@ -59,6 +59,12 @@ app.get('/query/allcountries',function(req,res){
 app.get('/query/allClientsFromCountry/:country',function(req,res){
 	database.getUsersFromCountry(res,req.params.country);
 });
+app.get('/query/getAllActiveChannels',function(req,res){
+	database.getAllActiveChannels(res);
+});
+app.get('/query/channel/:cid',function(req,res){
+	database.getChannelData(res,req.params.cid);
+});
 
 //Redirect / to /app/
 app.get('/', function(req,res){

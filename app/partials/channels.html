@@ -1,3 +1,29 @@
 <div class="container content">
-COMING SOON
+	<div class="panel panel-default">
+  		<div class="panel-heading">
+    		<h1 class="panel-title"> <strong>Active Channels</strong> </h1>
+  		</div>
+  		<div class="panel-body">
+  			Below is a list of all the current channels in the server.  By clicking the channel, you will be taken into a more in depth page of that channel. Temporary channels will have a <span class="text-warning">yellow</span> background.
+		</div>
+	</div>
+	<table class="table table-hover">
+		<tr>
+			<th>Server</th> 
+			<th>Population</th> 
+		</tr>
+  		<tr ng-repeat="channel in handleChannels(activeChannels)" ng-click="selectChannel(channel.cid)" ng-class="getTemporaryStyle(channel.cid)"> 
+  			<td > <div ng-class="channel.style">{{channel.name}} <span ng-hide="passwordChannel(channel.passwordprotected)" class="glyphicon glyphicon-lock" aria-hidden="true"></span></div> </td>
+  			<td>{{getPopulation(channel.cid)}}</td>
+  			
+  		</tr>
+	</table>
+	<div class="panel panel-default content">
+  		<div class="panel-heading">
+    		<h1 class="panel-title"> <strong >Inactive Channels</strong> </h1>
+  		</div>
+  		<div class="panel-body">
+  			
+		</div>
+	</div>
 </div>

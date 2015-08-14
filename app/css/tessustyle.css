@@ -33,3 +33,17 @@ body {
 .tessupanel .lead {
   margin-top: 10px;
 }
+.borderedcell {
+    border-bottom-style: solid;
+    border-width: 1px;
+}
+.borderedcell:hover {
+    background-color: #CCCCCC;
+}
+.sub {
+	padding-left: 50px;
+}
+.channelStyle {
+	padding-bottom: 5px;
+	padding-top: 5px;
+}

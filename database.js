@@ -90,7 +90,7 @@ encryptedvoice INTEGER,
 secondsempty INTEGER
 );
 
-CREATE TABLE activeChannels
+CREATE TABLE activechannels
 (
 cid INTEGER
 );
@@ -340,7 +340,7 @@ module.exports = {
 			res.send(response);
 		};
 		var queryclients = function() {
-			db.each("SELECT nickname,databaseid FROM online WHERE date = ?",lastscan[0].date, function(err, row) {
+			db.each("SELECT nickname,databaseid,channel FROM online WHERE date = ?",lastscan[0].date, function(err, row) {
 				response.push(row);
 			},print);
 		};
@@ -433,6 +433,7 @@ module.exports = {
 		},print);
 	},
 	updateChannelData : function(channelDBObject){
+		console.log('handling ' + channelDBObject.cid + ' ' + channelDBObject.name)
 		db.serialize(function() {
 			db.get("SELECT * FROM channels WHERE cid = ?;",channelDBObject.cid,function(err,row){
 				if(row===undefined){
@@ -442,9 +443,9 @@ module.exports = {
 							channelDBObject.type,channelDBObject.encryptedVoice,channelDBObject.secondsEmpty);
 				}else{
 					console.log('Updating existing channel');
-					db.run("UPDATE channels SET pid = ?, name = ?, topic = ?, description = ?, passwordprotected = ?, orderT = ?, type = ?, encryptedvoice = ?, secondsempty = ?",
+					db.run("UPDATE channels SET pid = ?, name = ?, topic = ?, description = ?, passwordprotected = ?, orderT = ?, type = ?, encryptedvoice = ?, secondsempty = ? WHERE cid = ?",
 							channelDBObject.pid,channelDBObject.name,channelDBObject.topic,channelDBObject.description,channelDBObject.passwordProtected,channelDBObject.order,
-							channelDBObject.type,channelDBObject.encryptedVoice,channelDBObject.secondsEmpty);
+							channelDBObject.type,channelDBObject.encryptedVoice,channelDBObject.secondsEmpty,channelDBObject.cid);
 				}
 			});
 		});
@@ -452,11 +453,111 @@ module.exports = {
 	getChannelNameFromCID : function(res,cid){
 		var result = [];
 		var print = function() {
-			res.send(result);
+			if(result.length != 0){
+				res.send(result[0]);
+			}else{
+				res.send([]);
+			}
+			
 		};
 		db.each("SELECT name FROM channels WHERE cid = ?;",cid,function(err,row){
 			result.push(row);
 		},print);
-	};
+	},
+	getAllActiveChannels : function(res){
+		var active = [];
+		var channels = [];
+		var result = [];
+		var queryIndex = 0;
+		var print = function() {
+			res.send(result);
+		};
+		var sort = function(){
+			for(var y = 0 ; y < channels.length; y++){
+				if(channels[y].pid == 0){
+					result.push(channels[y]);
+				}
+			}
+			
+			var childChannels = [];
+			for(var y = 0 ; y < channels.length; y++){
+				if(channels[y].pid != 0){
+					for(var f = 0 ; f < result.length; f++){
+						if(result[f].cid == channels[y].pid){
+							if(result[f].children == undefined){
+								result[f].children = [];
+								result[f].children.push(channels[y]);
+							}else{
+								result[f].children.push(channels[y]);
+							}
+							continue;
+						}
+					}
+				}
+			}
+			
+			result.sort(function (a,b){
+				if(a.orderT > b.orderT){
+					return 1;
+				}else if(a.orderT < b.orderT){
+					return -1;
+				}else{
+					return 0;
+				}
+			});
+			for(var b = 0 ; b < result.length ; b++){
+				var rootChannel = result[b];
+				if(rootChannel.children != undefined){
+					rootChannel.children.sort(function (a,b){
+						if(a.orderT > b.orderT){
+							return 1;
+						}else if(a.orderT < b.orderT){
+							return -1;
+						}else{
+							return 0;
+						}
+					});
+				}
+			}
+			
+			
+			print();
+			
+		}
+		var query = function(){
+			if(queryIndex >= active.length){
+				sort();
+				
+				return;
+			}
+			db.each("SELECT cid,pid,name,passwordprotected,orderT,type FROM channels WHERE cid = ?;",active[queryIndex],function(err,row){
+				channels.push(row);
+				queryIndex++;
+				
+			},query);
+		};
+		db.each("SELECT * FROM activechannels;",function(err,row){
+			active.push(row.cid);
+		},query);
+	},
+	getChannelData : function(res,cid){
+		var result = [];
+		var print = function() {
+			res.send(result[0]);
+		};
+		db.each("SELECT * FROM channels WHERE cid = ?;",cid,function(err,row){
+			result.push(row);
+		},print);
+	},
+	updateActiveChannels : function(activeChannels){
+		var inserting = function(){
+			for(var p= 0; p < activeChannels.length ; p++){
+				db.run("INSERT INTO activechannels (cid) VALUES (?)",activeChannels[p]);
+			}
+		};
+		db.run("DELETE FROM activechannels;",inserting);
+		
+		
+	}
 
 }

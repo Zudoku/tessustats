@@ -38,6 +38,12 @@ var sendCommand = function(command, args, cb) {
 var scanClients = function(callback){
 	sendCommand("clientlist", {}, function(response,err) {
 		
+		if(err){
+			console.log(util.inspect(err));
+			setTimeout(callback,TIME_BETWEEN_QUERIES);
+			return;
+		}
+		
 		console.log(response.length +" clients to scan!");
 		setTimeout(handleClientList,TIME_BETWEEN_QUERIES,response,0,function(){
 			console.log("Client scan finished!");
@@ -181,6 +187,11 @@ var scanChannels = function(callback){
 			callback();
 			return;
 		}
+		var activeChannels = [];
+		for(var t = 0 ; t < response.length ; t++){
+			activeChannels.push(response[t].cid);
+		}
+		database.updateActiveChannels(activeChannels);
 		setTimeout(channelInfo,TIME_BETWEEN_QUERIES,response,index,callback);
 	});
 };
@@ -221,7 +232,7 @@ var channelInfo = function(channelList,index,callback){
 			encryptedVoice : response.channel_codec_is_unencrypted,
 			secondsEmpty : response.seconds_empty
 		};
-		
+		console.log("Name " + channelDBObject.name + " cid " + channelDBObject.cid );
 		database.updateChannelData(channelDBObject);
 		setTimeout(channelInfo,TIME_BETWEEN_QUERIES,channelList,++index,callback);
 		

@@ -217,22 +217,100 @@ angular.module('myApp.controllers', [])
 } ])
 
 .controller('channelsCtrl', ['$scope','$http','$location', function($scope, $http,$location) {
-		var countryResource = $http.get('/query/allchannels').success(function(data) {
-			$scope.channels = data
-		})
-
-		$scope.selectchannel=function(channelname){
+		var activeChannelResource = $http.get('/query/getAllActiveChannels').success(function(data) {
+			$scope.activeChannels = data
+		});
+		
+		$scope.selectChannel=function(channelname){
 
 			$location.path('/channel/'+channelname);
 		}
-
+		$scope.handleChannels = function(channels){
+			var result = [];
+			for(var y=0;y < channels.length; y++){
+				if(channels[y].children == undefined){
+					result.push(channels[y]);
+				}else{
+					var children = channels[y].children;
+					//channels[y].children = undefined;
+					result.push(channels[y]);
+					
+					for(var h= 0; h < children.length; h++){
+						children[h].style="sub";
+						result.push(children[h]);
+					}
+				}
+			}
+			$scope.handledChannels = result;
+			return result;
+		};
+		$scope.passwordChannel = function(passwordprotected){
+			if(passwordprotected == 0){
+				return true;
+			}else{
+				return false;
+			}
+		};
+		var lastScanClientsResource = $http.get('/query/lastscanclients').success(function(data) {
+			var channelLastClientsList = [];
+			var channelsPopulated = [];
+			for(var y=0; y < data.length; y++){
+				var client = data[y];
+				if(channelsPopulated.indexOf(client.channel) == -1){
+					channelsPopulated.push(client.channel);
+					var channel = {
+							cid : client.channel,
+							clients : []
+					};
+					channel.clients.push(client);
+					channelLastClientsList.push(channel);
+				}else{
+					for(var i = 0 ; i < channelLastClientsList.length; i++){
+						if(channelLastClientsList[i].cid == client.channel){
+							channelLastClientsList[i].clients.push(client);
+							break;
+						}
+					}
+				}
+			}
+			$scope.lastScan = channelLastClientsList;
+		});
+		
+		$scope.getPopulation = function(cid){
+			var lastScan = $scope.lastScan;
+			if(lastScan == undefined){
+				return "0";
+			}
+			for(var y=0; y < lastScan.length; y++){
+				if(lastScan[y].cid == cid){
+					return "" + lastScan[y].clients.length;
+				}
+			}
+			return "0";
+		};
+		
+		$scope.getTemporaryStyle = function(cid){
+			for(var t =0 ; t < $scope.handledChannels.length ; t++){
+				if(cid == $scope.handledChannels[t].cid && $scope.handledChannels[t].type == "Temporary"){
+					return "warning";
+				}
+			}
+			return "";
+		};
 } ])
 
 .controller('channelCtrl', ['$scope','$http','$location','$routeParams', function($scope, $http,$location,$routeParams) {
 		var channelResource = $http.get('/query/channel/'+$routeParams.channelid).success(function(data) {
 			$scope.channel = data;
-
-		})
+			$scope.passwordString = ($scope.channel.passwordprotected == 0) ? "No password protection": "Password protection";
+			$scope.encryptionString = ($scope.channel.encryptedvoice == 0) ? "No voice encryption": "Voice encryption";
+			if($scope.channel.secondsempty == -1){
+				$scope.activity = "Active";
+			}else{
+				$scope.activity = "Empty for " + getTimeFromSeconds($scope.channel.secondsempty);
+			}
+			$scope.encryptionString = ($scope.channel.encryptedvoice == 0) ? "No voice encryption": "Voice encryption";
+		});
 
 } ])
 
