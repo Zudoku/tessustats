@@ -68,6 +68,12 @@ app.get('/query/channel/:cid',function(req,res){
 app.get('/query/getAllUsersCountry',function(req,res){
 	database.getAllUsersCountry(res);
 });
+app.get('/query/usersAmount',function(req,res){
+	database.getUsersAmount(res);
+});
+app.get('/query/scansAmount',function(req,res){
+	database.getScansAmount(res);
+});
 
 //Redirect / to /app/
 app.get('/', function(req,res){

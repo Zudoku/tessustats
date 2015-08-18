@@ -125,7 +125,7 @@ angular.module('myApp.controllers', [])
 			data.dateFormatted = scanDate.toLocaleString();//moment(scanDate).format('YYYY-MM-DD HH:mm:ss');
 			$scope.lastScan = data;
 			$scope.nextDate = nextDate;
-			$scope.lastScanStyle = (data.success === 'Online')? 'success' : 'danger';
+			$scope.lastScanStyle = (data[0].success === 'Online')? 'success' : 'danger';
 			
 		});
 		
@@ -154,8 +154,12 @@ angular.module('myApp.controllers', [])
 			$scope.mostclientsseen.date = scanDate.toLocaleString();//moment(scanDate).format('YYYY-MM-DD HH:mm:ss');
 		});
 		
-		
-		
+		var allScanClients = $http.get('/query/usersAmount').success(function(data) {
+			$scope.uniqueVisitors = data.users;
+		});
+		var allScans = $http.get('/query/scansAmount').success(function(data) {
+			$scope.scanAmount = data.scans;
+		});
 	});
 	
 	$scope.getNavigationClass = function(page){
@@ -182,10 +186,8 @@ angular.module('myApp.controllers', [])
 						//If it also has same name, give it green text
 						if(usersdata[allusersIndex].nickname === handledClient.nickname){
 							$scope.users[allusersIndex].textcolor = 'success';
-							console.log($scope.users[allusersIndex].textcolor);
 						}else{ //If only same databaseid, name has changed. Yellow text instead
 							$scope.users[allusersIndex].textcolor = 'warning';
-							console.log($scope.users[allusersIndex].textcolor);
 						}
 					}
 				}
@@ -196,6 +198,9 @@ angular.module('myApp.controllers', [])
 	});
 	var countriesResource = $http.get('/query/getAllUsersCountry').success(function(countriesData) {
 		$scope.usercountries = countriesData;
+	});
+	var allScanClients = $http.get('/query/usersAmount').success(function(data) {
+		$scope.uniqueVisitors = data.users;
 	});
 	
 	$scope.getCountry = function(clientid){

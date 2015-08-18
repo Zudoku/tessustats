@@ -575,6 +575,26 @@ module.exports = {
 			row.country = row.country.toLowerCase();
 			result.push(row);
 		},print);
+	},
+	getUsersAmount : function(res){
+		var result = [];
+		var print = function() {
+			var x = { users  : result.length};
+			res.send(x);
+		};
+		db.each("SELECT * FROM userdata;",function(err,row){
+			result.push(row);
+		},print);
+	},
+	getScansAmount : function(res){
+		var result = [];
+		var print = function() {
+			var x = { scans  : result.length};
+			res.send(x);
+		};
+		db.each("SELECT * FROM scans;",function(err,row){
+			result.push(row);
+		},print);
 	}
 
 }
