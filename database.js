@@ -71,6 +71,11 @@ INSERT INTO lastscan
 values
 ('1900-01-01 11:11:11','Online',1);
 
+INSERT INTO lastscan
+(date,success,id)
+values
+('1900-01-01 11:11:11','Online',2);
+
 CREATE TABLE scans
 (
 date datetime
@@ -319,17 +324,19 @@ module.exports = {
 	}, //Logs new scan
 	logScan : function(scanObject){
 		var formatDate = ISODateString(scanObject.date);
+		var formatDateEnd = ISODateString(new Date());
 		db.run("UPDATE lastscan SET date = ?, success = ? WHERE id = 1",
 				formatDate,scanObject.success);
+		db.run("UPDATE lastscan SET date = ? WHERE id = 2",formatDateEnd);
 		db.run("INSERT INTO scans (date) values (?)",formatDate);
 		console.log('Scan logged!');
 	},  //Get the information about the latest scan
 	getLastScan : function(res){
 		var arr = [];
 		var print = function() {
-			res.send(arr[0]);
+			res.send(arr);
 		};
-		db.each("SELECT * FROM lastscan WHERE id = 1;", function(err, row) {
+		db.each("SELECT * FROM lastscan;", function(err, row) {
 			arr.push(row);
 		},print);
 	}, //Get the users that were online when the last scan was

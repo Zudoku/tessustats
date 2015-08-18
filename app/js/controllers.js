@@ -119,13 +119,29 @@ angular.module('myApp.controllers', [])
 		}
 		//Query the last scan time
 		var lastScanResource = $http.get('/query/lastscan').success(function(data) {
-			var scanDate = moment.utc(data.date).toDate();
-			
+			var scanDate = moment.utc(data[0].date).toDate();
+			var scanEndDate = moment.utc(data[1].date).toDate();
+			var nextDate = new Date((scanEndDate.getTime() + (60 * 5 * 1000)));
 			data.dateFormatted = scanDate.toLocaleString();//moment(scanDate).format('YYYY-MM-DD HH:mm:ss');
 			$scope.lastScan = data;
+			$scope.nextDate = nextDate;
 			$scope.lastScanStyle = (data.success === 'Online')? 'success' : 'danger';
 			
 		});
+		
+		$scope.getTimeToNextScan = function(){
+			var nowDate = new Date();
+			if($scope.nextDate == undefined){
+				return "";
+			}
+			var scanDate = $scope.nextDate;
+			var millisecondsToScan = scanDate.getTime() - nowDate.getTime();
+			if(millisecondsToScan < 0){
+				return "Scanning... it may take a while";
+			}
+			return getTimeFromSeconds(Math.ceil(millisecondsToScan/1000));
+			
+		};
 		//Query the amount of users online in the latest scan
 		var lastScanClients = $http.get('/query/lastscanclients').success(function(data) {
 			$scope.usersOnlineNow = data.length;
@@ -197,6 +213,10 @@ angular.module('myApp.controllers', [])
 	$scope.selectuser=function(clientid){
 		
 		$location.path('/user/'+clientid);
+	};
+	
+	$scope.selectCountry = function(country){
+		$location.path('/country/'+country);
 	};
 
 } ])

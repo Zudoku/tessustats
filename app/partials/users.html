@@ -4,6 +4,7 @@
     <h1 class="panel-title"> <strong>Users</strong> </h1>
   </div>
   <div class="panel-body">
+  	Currently a total of {{users.length}} users have been seen on the server!
   	<h4>Data</h4>
     Below is a list of all users that have been on the TeamSpeak server since the making of this website (mid May 2015).
     The data is grouped by the nickname of the user when it was seen online, but clicking the user will bring you to the clients latest statistics including their latest nickname if it has changed.
@@ -27,7 +28,7 @@
 	<th>Country </th>
 	</tr>
 	<tr ng-class="user.textcolor" ng-repeat="user in users" ng-click="selectuser(user.databaseid)">
-   		<td >{{$index + 1}}.</td><td> {{user.nickname}}</td><td>{{user.times}}</td> <td><span class="famfamfam-flag-{{getCountry(user.databaseid) | lowercase}}"></span></td>
+   		<td >{{$index + 1}}.</td><td> {{user.nickname}}</td><td>{{user.times}}</td> <td><span ng-click="selectCountry(getCountry(user.databaseid) | uppercase)"class="famfamfam-flag-{{getCountry(user.databaseid) | lowercase}}"></span></td>
 	</tr>
 </table>
 </div>
