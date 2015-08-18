@@ -65,6 +65,9 @@ app.get('/query/getAllActiveChannels',function(req,res){
 app.get('/query/channel/:cid',function(req,res){
 	database.getChannelData(res,req.params.cid);
 });
+app.get('/query/getAllUsersCountry',function(req,res){
+	database.getAllUsersCountry(res);
+});
 
 //Redirect / to /app/
 app.get('/', function(req,res){

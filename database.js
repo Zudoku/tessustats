@@ -558,6 +558,16 @@ module.exports = {
 		db.run("DELETE FROM activechannels;",inserting);
 		
 		
+	},
+	getAllUsersCountry : function(res){
+		var result = [];
+		var print = function() {
+			res.send(result);
+		};
+		db.each("SELECT country,databaseid FROM userdata;",function(err,row){
+			row.country = row.country.toLowerCase();
+			result.push(row);
+		},print);
 	}
 
 }

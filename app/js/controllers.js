@@ -138,7 +138,17 @@ angular.module('myApp.controllers', [])
 			$scope.mostclientsseen.date = scanDate.toLocaleString();//moment(scanDate).format('YYYY-MM-DD HH:mm:ss');
 		});
 		
+		
+		
 	});
+	
+	$scope.getNavigationClass = function(page){
+		console.log(page);
+		if(page == 'server'){
+			return "active";
+		}
+		return "";
+	}
 	
 	
 } ])
@@ -168,6 +178,21 @@ angular.module('myApp.controllers', [])
 		});
 		
 	});
+	var countriesResource = $http.get('/query/getAllUsersCountry').success(function(countriesData) {
+		$scope.usercountries = countriesData;
+	});
+	
+	$scope.getCountry = function(clientid){
+		if($scope.usercountries == undefined){
+			return "";
+		}
+		for(var t = 0; t<$scope.usercountries.length ; t++){
+			if($scope.usercountries[t].databaseid == clientid){
+				return $scope.usercountries[t].country;
+			}
+		}
+	}
+	
 	//Function for clicking the user in the list
 	$scope.selectuser=function(clientid){
 		
