@@ -29,7 +29,7 @@
     		<br>
     		<strong>Collecting the data</strong><br>
 			TessuStats connects to the server via TeamSpeaks official <a href="http://media.teamspeak.com/ts3_literature/TeamSpeak%203%20Server%20Query%20Manual.pdf">ServerQuery</a> interface.The connection is made using <a href="https://www.npmjs.com/package/node-teamspeak">node-teamspeak</a> ServerQuery Node.js client.
-    		We make a connection to the TeamSpeak server every 5 minutes. Every scan we save the server state, connection status and search for user list to add a record of the user to the database. We do not store any IP adresses.
+    		We make a connection to the TeamSpeak server every 5 minutes. Every scan we save the server state, connection status,channels that are up and search for user list to add a record of the user to the database. We do not store any IP adresses.
   			<br>
     		<strong>Storing the data</strong><br>
     		We store everything in <a href="https://www.sqlite.org/">SQLite</a> database. It is serverless so we don't need an SQL server. We use <a href="https://www.npmjs.com/package/sqlite3">sqlite3</a> Node.js module to access the database.
