@@ -595,6 +595,26 @@ module.exports = {
 		db.each("SELECT * FROM scans;",function(err,row){
 			result.push(row);
 		},print);
+	},
+	getActiveChannelsAmount : function(res){
+		var result = [];
+		var print = function() {
+			var x = { channels  : result.length};
+			res.send(x);
+		};
+		db.each("SELECT * FROM activechannels;",function(err,row){
+			result.push(row.cid);
+		},print);
+	},
+	getChannelsAmount : function(res){
+		var result = [];
+		var print = function() {
+			var x = { channels  : result.length};
+			res.send(x);
+		};
+		db.each("SELECT * FROM channels;",function(err,row){
+			result.push(row.cid);
+		},print);
 	}
 
 }

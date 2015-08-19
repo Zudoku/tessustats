@@ -160,6 +160,13 @@ angular.module('myApp.controllers', [])
 		var allScans = $http.get('/query/scansAmount').success(function(data) {
 			$scope.scanAmount = data.scans;
 		});
+		var activeChannelsResource = $http.get('/query/activeChannelsAmount').success(function(data) {
+			$scope.activeChannels = data.channels;
+			var inActiveChannels = $http.get('/query/channelsAmount').success(function(data) {
+				$scope.channelsAmount = data.channels;
+			});
+		});
+		
 	});
 	
 	$scope.getNavigationClass = function(page){
@@ -199,9 +206,11 @@ angular.module('myApp.controllers', [])
 	var countriesResource = $http.get('/query/getAllUsersCountry').success(function(countriesData) {
 		$scope.usercountries = countriesData;
 	});
-	var allScanClients = $http.get('/query/usersAmount').success(function(data) {
+	var allScanClientsResource = $http.get('/query/usersAmount').success(function(data) {
 		$scope.uniqueVisitors = data.users;
 	});
+	
+	
 	
 	$scope.getCountry = function(clientid){
 		if($scope.usercountries == undefined){

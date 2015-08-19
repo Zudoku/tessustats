@@ -74,6 +74,13 @@ app.get('/query/usersAmount',function(req,res){
 app.get('/query/scansAmount',function(req,res){
 	database.getScansAmount(res);
 });
+app.get('/query/activeChannelsAmount',function(req,res){
+	database.getActiveChannelsAmount(res);
+});
+app.get('/query/channelsAmount',function(req,res){
+	database.getChannelsAmount(res);
+});
+
 
 //Redirect / to /app/
 app.get('/', function(req,res){
