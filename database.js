@@ -615,6 +615,15 @@ module.exports = {
 		db.each("SELECT * FROM channels;",function(err,row){
 			result.push(row.cid);
 		},print);
+	},
+	getCombinedActivityScore : function(res){
+		var result = [];
+		var print = function() {
+			res.send(result[0]);
+		};
+		db.each("SELECT COUNT(*) as times FROM online;",function(err,row){
+			result.push(row);
+		},print);
 	}
 
 }

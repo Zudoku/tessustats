@@ -11,12 +11,12 @@
 <table class="table table-hover">
 	<tr>
 	<th>Country</th>
-	<th>Activity score</th>
+	<th>Activity score ({{activityScoreCombined}})</th>
 	<th>User count</th>
 	<th>Rank</th>
 	</tr>
 	<tr  ng-repeat="country in countries" ng-click="selectcountry(country.country)">
-   		<td >{{country.country}}</td><td >{{country.activityscore}}</td><td >{{country.users.length}}</td><td >{{$index +1}}.</td>
+   		<td ><span class="famfamfam-flag-{{country.country | lowercase}}"></span> {{country.country}} </td><td ><span class="label label-info">{{getActivityPercent(country.activityscore)}} %</span> {{country.activityscore}} / {{activityScoreCombined}}</td><td ><span class="label label-info">{{getUsersPercent(country.users.length)}} %</span> {{country.users.length}} / {{usersAmount}}</td><td >{{$index +1}}.</td>
 	</tr>
 </table>
 </div>

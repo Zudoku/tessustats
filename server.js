@@ -83,6 +83,11 @@ app.get('/query/channelsAmount',function(req,res){
 app.get('/query/channelname/:cid',function(req,res){
 	database.getChannelNameFromCID(res,req.params.cid);
 });
+app.get('/query/combinedActivityScore',function(req,res){
+	database.getCombinedActivityScore(res);
+});
+
+
 
 //Redirect / to /app/
 app.get('/', function(req,res){

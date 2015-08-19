@@ -1,17 +1,36 @@
 <div class="container content">
 <div class="row">
 	<div class="col-xs-12 ">
-        <h1><span class="label label-default"> Country: ({{country.country}})</span></h1>
+        <h1><span class="label label-default"> Country: {{country.country}} <span class="famfamfam-flag-{{country.country | lowercase}}"></span></span></h1>
     </div>
 
 </div>
 <br>
 <br>
 <div class="row">
+        <div class="col-xs-4 ">
+            <h3 style="margin:0px;"><span class="label label-info" > User count</span></h3>
+        </div>
+</div>
+<div class="row">
         <div class="col-xs-12 ">
         	<div class="progress">
   				<div class="progress-bar progress-bar-success" style="width: {{userspercent}}%">
-  				<span class="sr-only">35% Complete (success)</span>
+  				<span class="sr-only"></span>
+  				</div>
+  			</div>
+        </div>
+</div>
+<div class="row">
+        <div class="col-xs-4 ">
+            <h3 style="margin:0px;"><span class="label label-info" > Activity</span></h3>
+        </div>
+</div>
+<div class="row">
+        <div class="col-xs-12 ">
+        	<div class="progress">
+  				<div class="progress-bar progress-bar-success" style="width: {{activitypercent}}%">
+  				<span class="sr-only"></span>
   				</div>
   			</div>
         </div>
@@ -27,7 +46,7 @@
                 <div class="panel-body ">
                     <div class="row smallmarginbottom" >
                     	<div class="col-xs-6 smallmarginbottom">
-                            <strong>Activity score:</strong> {{country.activityscore}}
+                            <strong>Activity score:</strong> <span class="label label-info">{{country.activityscore}}</span> / <span class="label label-default">{{activityScoreCombined}}</span> ({{activitypercent}} %)
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
                             <strong>Users from {{country.country}}:</strong> <span class="label label-info">{{country.users.length}}</span> / <span class="label label-default">{{allusers}}</span> ({{userspercent}} %)

@@ -240,11 +240,29 @@ angular.module('myApp.controllers', [])
 		var countryResource = $http.get('/query/allcountries').success(function(data) {
 			$scope.countries = data;
 		});
-
+		var activityScoreResource = $http.get('/query/combinedActivityScore').success(function(data) {
+			$scope.activityScoreCombined = data.times;
+		});
+		var usersAmountResource = $http.get('/query/usersAmount').success(function(data) {
+			$scope.usersAmount = data.users;
+		});
 		$scope.selectcountry=function(countrycode){
 
 			$location.path('/country/'+countrycode);
 		};
+		$scope.getActivityPercent = function(activityScore){
+			if($scope.activityScoreCombined == undefined){
+				return "";
+			}
+			return parseFloat((activityScore / $scope.activityScoreCombined) * 100).toFixed(2);
+		};
+		$scope.getUsersPercent = function(userCount){
+			if($scope.usersAmount == undefined){
+				return "";
+			}
+			return parseFloat((userCount / $scope.usersAmount) * 100).toFixed(2);
+		};
+		
 
 } ])
 
@@ -258,7 +276,11 @@ angular.module('myApp.controllers', [])
 					var usersResource = $http.get('/query/allusers').success(function(alluserdata) {
 						var allusers = alluserdata.length
 						$scope.allusers = allusers;
-						$scope.userspercent = ($scope.country.users.length / allusers) * 100
+						$scope.userspercent = parseFloat(($scope.country.users.length / allusers) * 100).toFixed(2);
+					});
+					var activityScoreResource = $http.get('/query/combinedActivityScore').success(function(data) {
+						$scope.activityScoreCombined = data.times;
+						$scope.activitypercent = parseFloat(($scope.country.activityscore / $scope.activityScoreCombined) * 100).toFixed(2);
 					});
 					break;
 				}
@@ -279,6 +301,7 @@ angular.module('myApp.controllers', [])
 		var activeChannelResource = $http.get('/query/getAllActiveChannels').success(function(data) {
 			$scope.activeChannels = data
 		});
+		
 		
 		$scope.selectChannel=function(channelname){
 
@@ -369,6 +392,9 @@ angular.module('myApp.controllers', [])
 				$scope.activity = "Empty for " + getTimeFromSeconds($scope.channel.secondsempty);
 			}
 			$scope.encryptionString = ($scope.channel.encryptedvoice == 0) ? "No voice encryption": "Voice encryption";
+			
+			
+			
 		});
 
 } ])
