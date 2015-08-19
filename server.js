@@ -80,7 +80,9 @@ app.get('/query/activeChannelsAmount',function(req,res){
 app.get('/query/channelsAmount',function(req,res){
 	database.getChannelsAmount(res);
 });
-
+app.get('/query/channelname/:cid',function(req,res){
+	database.getChannelNameFromCID(res,req.params.cid);
+});
 
 //Redirect / to /app/
 app.get('/', function(req,res){
