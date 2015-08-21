@@ -2,13 +2,13 @@ var DATABASE_PATH = 'db';
 
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(DATABASE_PATH);
-var util = require("util");;
+var util = require("util");
 //http://i.imgur.com/PHlR21R.png
 
 /* SQL script to create template DB file
  DROP TABLE online;
  DROP TABLE userdata;
- DROP TALBE serverdata;
+ DROP TABLE serverdata;
  DROP TABLE scans;
  DROP TABLE lastscan;
  DROP TABLE channels

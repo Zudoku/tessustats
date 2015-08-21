@@ -13,7 +13,7 @@
 			<th>Server</th> 
 			<th>Population</th> 
 		</tr>
-  		<tr ng-repeat="channel in handleChannels(activeChannels)" ng-click="selectChannel(channel.cid)" ng-class="getTemporaryStyle(channel.cid)"> 
+  		<tr class="clickable" ng-repeat="channel in handleChannels(activeChannels)" ng-click="selectChannel(channel.cid)" ng-class="getTemporaryStyle(channel.cid)"> 
   			<td > <div ng-class="channel.style">{{channel.name}} <span ng-hide="passwordChannel(channel.passwordprotected)" class="glyphicon glyphicon-lock" aria-hidden="true"></span></div> </td>
   			<td>{{getPopulation(channel.cid)}}</td>
   			

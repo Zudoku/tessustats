@@ -1,0 +1,45 @@
+<div class="content">
+	<div class="row">
+		<div class="col-xs-2 ">
+			
+		</div>
+		<div class="col-xs-8">
+			<div ng-hide="needIntroduction()"class="panel panel-default">
+			<div class="panel-body">
+			<h4>Introduction</h4>
+				<p>
+					Hei! I am <a href="https://bitbucket.org/Arap">Arap</a> or Arttu Siren, 17 year old student from Finland with a strong passion for programming and everything around it. 
+					I thrive to be a fullstack developer and learn everything i can from software and computers in general. I have a really big interest in learning how to reverse engineer software and I'm going to properly learn how to do it someday... Mark my words haha =)!
+			 		<br><br>
+			 		One of my weaknesses is not finishing projects. I have a lot of halfway done projects and I really should finish them.
+			 		My biggest and most time consuming cancelled project is <a href="https://bitbucket.org/Arap/intopark">Into Park</a> . It is a theme park Java game heavily inspired by Rollercoaster Tycoon 2.
+			 		I doubt I will ever finish making it. The development got stuck on mainly the art side of the game. I spent most of my time doing 3D models and not actual programming.
+			 		It still was a HUGE learning experience and I feel like I got alot of the game logic done. I recently have been developing a site called <a href="http://tessustats.ovh">Tessu Stats</a>.
+			 		It is a TeamSpeak server analyzing application that tracks the user activity and analyzes it and displays data about who is the most active user in the server and how the usercount depends on time and so on.
+			 		<br><br>
+			 		This blog is experimental and I really have not blogged ever. I also really struggle with forming smooth to read sentences and I figured trying to write this is a good way to improve in that area too. 
+			 		I will write about anything that pops into my head, but 90% of the posts will be technology related. I hope that you will enjoy reading what I have to say. ^.^
+			 	</p>
+			</div>
+			</div>
+			<div ng-repeat="article in articles" >
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<a href="#/article/{{article.id}}"><h1>{{article.heading}}</h1></a>
+						{{article.timestamp}}
+						<hr style="margin: 0px; margin-bottom: 5px;">
+						<p>{{article.article}}</p>
+						<hr style="margin: 0px; margin-bottom: 5px;">
+						Tags:{{article.tags}}
+					</div>
+				</div>
+				
+				
+			</div>
+			<br>
+			<a style="float: left;">Previous</a>
+			<a style="float: right;">Next</a>
+		</div>
+		
+	</div>
+</div>

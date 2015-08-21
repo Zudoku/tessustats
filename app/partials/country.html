@@ -68,7 +68,7 @@
   			</div>
   			<div class="panel-body">
     			<table id="userstable" class="table table-condensed table-hover" >
-					<tr  ng-repeat="user in usersFromCountry" ng-click="selectUser(user.databaseid)" >
+					<tr  class="clickable" ng-repeat="user in usersFromCountry" ng-click="selectUser(user.databaseid)" >
    						<td>{{user.nickname}}</td>
 					</tr>
 				</table>

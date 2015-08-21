@@ -8,6 +8,7 @@ var express = require('express');
 var app = express();
 var database=require('./database.js');
 var tsparser=require('./tsparser.js');
+var blogAPI = require('./blogAPI.js');
 
 console.log("Modules loaded succesfully!");
 
@@ -16,31 +17,25 @@ tsparser.setdb(database);
 console.log("Database configured!");
 
 app.use("/app/", express.static(__dirname + '/app'));
+
+//TESSU STATS
 app.get('/query/serverActivityChart/:timeframe', function(req, res){
 	res.set('Content-Type', 'text/plain');
 	database.getActivityChartData(res,req.params.timeframe);
-  
 });
 app.get('/query/scanTimesDay', function(req, res){
 	res.set('Content-Type', 'text/plain');
 	database.getScanTimesDay(res);
-  
 });
-
 app.get('/query/allusers', function(req, res){
-	
 	database.allUsersData(res);
-  
 });
 app.get('/query/user/:databaseid',function(req,res){
 	database.getUserData(res,req.params.databaseid);
-	
 });
 app.get('/query/serverdata',function(req,res){
 	database.getServerData(res);
-	
 });
-
 app.get('/query/latestrecord/:databaseid',function(req,res){
 	database.getUsersLastRecord(res,req.params.databaseid);
 });
@@ -88,10 +83,21 @@ app.get('/query/combinedActivityScore',function(req,res){
 });
 
 
+//BLOG 
+app.get('/query/blog/article/:id',function(req,res){
+	blogAPI.getArticle(res,req.params.id);
+});
+app.get('/query/blog/articleList',function(req,res){
+	blogAPI.getArticleList(res);
+});
 
 //Redirect / to /app/
 app.get('/', function(req,res){
 	res.redirect('/app/');
+});
+//Redirect /blog to /app/blog.html
+app.get('/blog', function(req,res){
+	res.redirect('/app/blog.html');
 });
 
 console.log("Server starting!");

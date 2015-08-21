@@ -27,7 +27,7 @@
 	<th>Times online</th>
 	<th>Country </th>
 	</tr>
-	<tr ng-class="user.textcolor" ng-repeat="user in users" ng-click="selectuser(user.databaseid)">
+	<tr class="clickable"ng-class="user.textcolor" ng-repeat="user in users" ng-click="selectuser(user.databaseid)">
    		<td >{{$index + 1}}.</td><td> {{user.nickname}}</td><td>{{user.times}}</td> <td><span ng-click="selectCountry(getCountry(user.databaseid) | uppercase)"class="famfamfam-flag-{{getCountry(user.databaseid) | lowercase}}"></span></td>
 	</tr>
 </table>

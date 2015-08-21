@@ -5,6 +5,9 @@ body {
   padding: 40px 15px;
   text-align: center;
 }
+.centerText{
+  text-align: center;
+}
 .tessupanel-left {
   padding: 30px 100px;
   text-align: left;
@@ -46,4 +49,8 @@ body {
 .channelStyle {
 	padding-bottom: 5px;
 	padding-top: 5px;
+}
+.clickable{
+	cursor: pointer; 
+	cursor: hand;
 }
