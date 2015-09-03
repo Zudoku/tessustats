@@ -3,20 +3,22 @@
  */
 
 
-var TeamSpeakClient = require("node-teamspeak"), util = require("util");
+var TeamSpeakClient = require("node-teamspeak"), util = require("util"), config = require('./config');
 
-var cl = new TeamSpeakClient("178.62.185.179");
+var cl = new TeamSpeakClient(config.TS_IP);
 
-var SERVERQUERY_LOGIN_NAME  ="Rivenation";//client_login_name
-var SERVERQUERY_LOGIN_PASSWORD = "BUrZfIBV"; //client_login_password
+var SERVERQUERY_LOGIN_NAME  = config.SERVERQUERY_LOGIN_NAME;//client_login_name
+var SERVERQUERY_LOGIN_PASSWORD = config.SERVERQUERY_LOGIN_PASSWORD; //client_login_password
 
-var VIRTUAL_SERVER_ID = 1;
+var VIRTUAL_SERVER_ID = config.VIRTUAL_SERVER_ID;
 
-var TIME_BETWEEN_QUERIES = 1000; //milliseconds
+var TIME_BETWEEN_QUERIES = config.TIME_BETWEEN_QUERIES; //milliseconds
 
 var database;
 
 var TIME_OF_QUERY = '';
+
+var NETWORK_DEBUG_LOGGING = false;
 
 
 var sendCommand = function(command, args, cb) {
@@ -24,6 +26,8 @@ var sendCommand = function(command, args, cb) {
 	cl.send(command, args, function(err, response, rawResponse) {
 		if (err) {
 			console.log("err:", command, err);
+		}else if(NETWORK_DEBUG_LOGGING){
+			console.log(util.inspect(response))
 		}
 		if(cb){
 			cb(response,err);

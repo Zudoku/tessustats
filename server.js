@@ -1,9 +1,5 @@
 
-var webserver_port = 3700;
-var webserver_bind = '127.0.0.1';
-
-var TIMEOUT_BETWEEN_SCANS = 300000;
-
+var config = require('./config');
 var express = require('express');
 var app = express();
 var database=require('./database.js');
@@ -102,10 +98,10 @@ app.get('/blog', function(req,res){
 
 console.log("Server starting!");
 
-app.listen(webserver_port,webserver_bind);
+app.listen(config.webserver_port,config.webserver_bind);
 
-console.log("Server running at ",webserver_bind,":",webserver_port);
+console.log("Server running at ",config.webserver_bind,":",config.webserver_port);
 
-console.log("Starting scanning TS every " + TIMEOUT_BETWEEN_SCANS + " seconds");
-tsparser.keepScanning(TIMEOUT_BETWEEN_SCANS);
+console.log("Starting scanning TS every " + config.TIMEOUT_BETWEEN_SCANS + " seconds");
+tsparser.keepScanning(config.TIMEOUT_BETWEEN_SCANS);
 

@@ -6,3 +6,4 @@ tmp
 .idea
 db
 .metadata/
+config.js

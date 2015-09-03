@@ -1,7 +1,6 @@
-var DATABASE_PATH = 'db';
-
+var config = require('./config');
 var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(DATABASE_PATH);
+var db = new sqlite3.Database(config.DATABASE_PATH);
 var util = require("util");
 //http://i.imgur.com/PHlR21R.png
 
