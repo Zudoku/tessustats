@@ -286,7 +286,15 @@ var loginToServerQuery = function(callback) {
 				logscan(false);
 				return;
 			}
-			callback();
+			cl.send("clientupdate",{client_nickname : "Tessustats (BOT)"}, function(err, response, rawResponse){
+				if(err){
+					console.log(util.inspect(err));
+					logscan(false);
+					return;
+				}
+				callback();
+			});
+			
 
 
 		});
