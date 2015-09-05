@@ -5,7 +5,8 @@
   		</div>
   		<div class="panel-body">
   			Below is a list of all the current channels in the server.  By clicking the channel, you will be taken into a more in depth page of that channel. Temporary channels will have a <span class="text-warning">yellow</span> background.
-  			 The channel section of the website is still in the progress and not finished.
+  			 The channel section of the website is still in the progress and not finished. <br><br>
+         <strong>Empty for</strong> for column resets on server restart.
 		</div>
 	</div>
 	<table class="table table-hover">
@@ -18,7 +19,7 @@
   		<tr class="clickable" ng-repeat="channel in handleChannels(activeChannels)" ng-click="selectChannel(channel.cid)" ng-class="getTemporaryStyle(channel.cid)"> 
   			<td > <div ng-class="channel.style">{{channel.name}} 
         <br>
-        <ul ng-click="$event.stopPropagation()">
+        <ul ng-click="$event.stopPropagation()" style="margin-bottom: 0px !important;">
           <li ng-repeat="client in getChannelData(channel.cid).clients"><a href="#/user/{{client.databaseid}}">{{client.nickname}}</a></li>
         </ul>
         </div> </td>
