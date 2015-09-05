@@ -5,10 +5,8 @@
         </div>
 
     </div>
-    <br>
-    <br>
 
-    <div class="row">
+    <div class="row content">
         <div class="col-xs-4 ">
             <h3 style="margin:0px;"><span class="label label-info" > Basic info</span></h3>
         </div>
@@ -37,7 +35,10 @@
                             <strong>Total connections to server:</strong> {{user.totalconnections}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Times scanned:</strong> {{allusersrecord.times}}
+                            <strong>Activity score:</strong> {{allusersrecord.times}}
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Time spent online:</strong> {{getTimeFromSeconds(allusersrecord.times * 5 * 60)}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
                             <strong>Activity rank:</strong> {{allusersrecord.activityrank}}

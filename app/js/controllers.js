@@ -210,7 +210,9 @@ angular.module('myApp.controllers', [])
 		$scope.uniqueVisitors = data.users;
 	});
 	
-	
+	$scope.getTimeFromSeconds = function(seconds){
+		return getTimeFromSeconds(seconds);
+	};
 	
 	$scope.getCountry = function(clientid){
 		if($scope.usercountries == undefined){
@@ -463,6 +465,9 @@ angular.module('myApp.controllers', [])
 
 		$scope.allusersrecord = foundAllUsersRecord;
 	});
+	$scope.getTimeFromSeconds = function(seconds){
+		return getTimeFromSeconds(seconds);
+	};
 	
 	
 } ]);
