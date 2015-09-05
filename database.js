@@ -623,6 +623,26 @@ module.exports = {
 		db.each("SELECT COUNT(*) as times FROM online;",function(err,row){
 			result.push(row);
 		},print);
+	},
+	getInactiveChannels : function(res){
+		var active = [];
+		var channels = [];
+		var print = function() {
+			res.send(channels);
+		};
+		var query = function(){
+
+			db.each("SELECT cid,name FROM channels;",function(err,row){
+				if(active.indexOf(row.cid) == -1){
+					channels.push(row);
+				}
+				
+				
+			},print);
+		};
+		db.each("SELECT * FROM activechannels;",function(err,row){
+			active.push(row.cid);
+		},query);
 	}
 
 }

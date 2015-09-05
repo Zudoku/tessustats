@@ -76,8 +76,10 @@ app.get('/query/channelname/:cid',function(req,res){
 });
 app.get('/query/combinedActivityScore',function(req,res){
 	database.getCombinedActivityScore(res);
+}); 
+app.get('/query/getInactiveChannels',function(req,res){
+	database.getInactiveChannels(res);
 });
-
 
 //BLOG 
 app.get('/query/blog/article/:id',function(req,res){

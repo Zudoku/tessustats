@@ -387,6 +387,9 @@ angular.module('myApp.controllers', [])
 			}
 			return "";
 		};
+		var inactiveChannelResource = $http.get('/query/getInactiveChannels').success(function(data) {
+			$scope.inactiveChannels = data
+		});
 } ])
 
 .controller('channelCtrl', ['$scope','$http','$location','$routeParams', function($scope, $http,$location,$routeParams) {
