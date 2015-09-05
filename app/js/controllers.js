@@ -307,7 +307,12 @@ angular.module('myApp.controllers', [])
 
 			$location.path('/channel/'+channelname);
 		}
-		$scope.handleChannels = function(channels){
+		$scope.handleChannels = function(){
+			var channels = $scope.activeChannels;
+			if(channels == undefined){
+				return [];
+			}
+			
 			var result = [];
 			for(var y=0;y < channels.length; y++){
 				if(channels[y].children == undefined){
@@ -357,20 +362,23 @@ angular.module('myApp.controllers', [])
 			}
 			$scope.lastScan = channelLastClientsList;
 		});
+
 		
-		$scope.getPopulation = function(cid){
+		$scope.getChannelData = function(cid){
 			var lastScan = $scope.lastScan;
 			if(lastScan == undefined){
-				return "0";
+				return;
 			}
 			for(var y=0; y < lastScan.length; y++){
 				if(lastScan[y].cid == cid){
-					return "" + lastScan[y].clients.length;
+					return lastScan[y];
 				}
 			}
-			return "0";
+			return;
 		};
-		
+		$scope.getTimeFromSeconds = function(seconds){
+			return getTimeFromSeconds(seconds);
+		};
 		$scope.getTemporaryStyle = function(cid){
 			for(var t =0 ; t < $scope.handledChannels.length ; t++){
 				if(cid == $scope.handledChannels[t].cid && $scope.handledChannels[t].type == "Temporary"){

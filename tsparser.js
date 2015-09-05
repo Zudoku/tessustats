@@ -286,10 +286,12 @@ var loginToServerQuery = function(callback) {
 				logscan(false);
 				return;
 			}
-			cl.send("clientupdate",{client_nickname : "Tessustats (BOT)"}, function(err, response, rawResponse){
+			var nickname =(config.MODE == "DEV")? "Tessustats (BOT) (DEV)": "Tessustats (BOT)";
+
+			cl.send("clientupdate",{client_nickname : nickname}, function(err, response, rawResponse){
 				if(err){
 					console.log(util.inspect(err));
-					logscan(false);
+					logScan(false);
 					return;
 				}
 				callback();

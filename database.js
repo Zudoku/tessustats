@@ -536,7 +536,7 @@ module.exports = {
 				
 				return;
 			}
-			db.each("SELECT cid,pid,name,passwordprotected,orderT,type FROM channels WHERE cid = ?;",active[queryIndex],function(err,row){
+			db.each("SELECT cid,pid,name,passwordprotected,orderT,type,secondsempty FROM channels WHERE cid = ?;",active[queryIndex],function(err,row){
 				channels.push(row);
 				queryIndex++;
 				
