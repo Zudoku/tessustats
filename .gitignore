@@ -4,6 +4,5 @@ node_modules/
 tmp
 .DS_Store
 .idea
-db
 .metadata/
 config.js
