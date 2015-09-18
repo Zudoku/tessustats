@@ -12,5 +12,6 @@ config.TIME_BETWEEN_QUERIES = 1000; //milliseconds
 //DATABASE
 config.DATABASE_PATH = 'db';
 
+config.MODE = "";
 
 module.exports = config;
