@@ -2,12 +2,12 @@
 
 
 // Declare app level module which depends on filters, and services
-angular.module('myApp', [
+angular.module('tessustats', [
   'ngRoute',
-  'myApp.filters',
-  'myApp.services',
-  'myApp.directives',
-  'myApp.controllers'
+  'tessustats.controllers',
+  'tessustats.filters',
+  'tessustats.services',
+  'tessustats.directives',
 ]).config(['$routeProvider', function ($routeProvider) {
   $routeProvider.when('/index', {templateUrl: 'partials/front.html', controller: 'basicCtrl'});
   //SERVER
