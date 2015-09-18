@@ -15,70 +15,140 @@ angular.module('tessustats.controller.server', [])
 			$('#mostclienttime').tooltip();
 			
 		};
-		
-		$scope.chart = null
-		$scope.showChart = function(){
-			console.log("showing chart");
-			$scope.chart = c3.generate({
-				bindto: '#serverchart',
-			  	data: {
-			  		url: '/query/serverActivityChart/day',
-					type: 'bar',
-					groups: [
-					            ['0','1','2']
-					],
-					names : {
-					    0: 'Active',
-					    1: 'Microphone muted',
-					    2: 'Speakers and headphones muted'
-					},
-					x : 'time',
-			  	},
-			  	axis: {
-			  	  x: {
-			  	    localtime: true,
-			  	  	tick: {
-			  	  		format: function (x) { 
-			  	  			var date = new Date(x*1000);
-			  	  			return date.toLocaleString();
-			  	  		}
-			  	    },
-			  	    show: false
-			  	  }
-			  	},
-			  	padding: {
-			  	  bottom: 40
-			  	},
-			  	size: {
-			  	  height: 440
-			  	}
+		Highcharts.setOptions({
+			global: {
+				timezoneOffset: -180
+			}
+		});
+		$scope.showChart = function (timeFrame) {
+			$http.get("/query/serverActivityChart/" + timeFrame).success(function (data) {
+				var soundsEnabledData = [];
+				var micMutedData = [];
+				var speakersMutedData = [];
+				var lastDate;
+				var scans = [];
+				if (timeFrame == "month" || timeFrame == "week") {
+					var daysData = [];
+					data.split("\n").forEach(function (scan) {
+						if (scan) {
+							var columns = scan.split(",");
+							var date = new Date(parseInt(columns[0]) * 1000);
+							if (daysData.length == 0)
+								daysData.push({
+									date: date,
+									data: {
+										soundsEnabled: [parseInt(columns[1])],
+										micMuted: [parseInt(columns[2])],
+										speakersMuted: [parseInt(columns[3])]
+									}
+								});
+							else
+								if (daysData[daysData.length-1].date.getDate() == date.getDate() && daysData[daysData.length-1].date.getMonth() == date.getMonth()) {
+									daysData[daysData.length-1].data.soundsEnabled.push(parseInt(columns[1]));
+									daysData[daysData.length-1].data.micMuted.push(parseInt(columns[2]));
+									daysData[daysData.length-1].data.speakersMuted.push(parseInt(columns[3]));
+								} else {
+									daysData.push({
+										date: date,
+										data: {
+											soundsEnabled: [parseInt(columns[1])],
+											micMuted: [parseInt(columns[2])],
+											speakersMuted: [parseInt(columns[3])]
+										}
+									});
+								}
+						}
+					});
+					daysData.forEach(function (day) {
+						function getLargest(dataSet) {
+							var largest = 0;
+							dataSet.forEach(function (item) {
+								if (item > largest)
+									largest = item;
+							});
+							return largest;
+						}
+						var timeStamp = Date.UTC(day.date.getUTCFullYear(), day.date.getUTCMonth()-1, day.date.getUTCDate(), day.date.getUTCHours(), day.date.getUTCMinutes());
+						soundsEnabledData.push([timeStamp, getLargest(day.data.soundsEnabled)]);
+						micMutedData.push([timeStamp, getLargest(day.data.micMuted)]);
+						speakersMutedData.push([timeStamp, getLargest(day.data.speakersMuted)]);
+					});
+				} else {
+					data.split("\n").forEach(function (scan) {
+						if (scan) {
+							var columns = scan.split(",");
+							var date = new Date(parseInt(columns[0]) * 1000);
+							date = Date.UTC(date.getUTCFullYear(), date.getUTCMonth()-1, date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes());
+							soundsEnabledData.push([date, parseInt(columns[1])]);
+							micMutedData.push([date, parseInt(columns[2])]);
+							speakersMutedData.push([date, parseInt(columns[3])]);
+						}
+					});
+				}
+				$('#serverchart').highcharts({
+			        chart: {
+			            type: 'area',
+			            zoomType: "x"
+			        },
+			        title: {
+			            text: 'Users online during last ' + timeFrame
+			        },
+			        xAxis: {
+			            type: "datetime"           
+			        },
+			        yAxis: {
+			            title: {
+			                text: 'Users online'
+			            }
+			        },
+			        tooltip: {
+			        	shared: true,
+			        	crosshairs: [true]
+			        },
+			        plotOptions: {
+			        	area: {
+			        		stacking: "normal",
+			        		lineWidth: 1,
+			        		marker: {
+			        			radius: 1
+			        		},
+			        		states: {
+			        			hover: {
+			        				lineWidth: 1
+			        			}
+			        		}
+			        	}
+			        },
+			        series: [{
+			        	type: "area",
+			        	name: "Sounds enabled",
+			        	data: soundsEnabledData
+			        },
+			        {
+			        	type: "area",
+			        	name: "Mic muted",
+			        	data: micMutedData
+			        },
+			        {
+			        	type: "area",
+			        	name: "Speakers and mic muted",
+			        	data: speakersMutedData
+			        }]
+			    });
 			});
 		};
-		//Load the chart on page load too.
-		$scope.showChart() 
+		$scope.showChart("day");
 		//A function to change activity-chart's timeframe to 24 hours
 		$scope.loadActivityGraphDay = function(){
-			$scope.chart.load({
-				url: '/query/serverActivityChart/day',
-				unload: true          
-			
-			});
+			$scope.showChart("day");
 		}
 		//A function to change activity-chart's timeframe to 7 days
 		$scope.loadActivityGraphWeek = function(){
-			$scope.chart.load({
-				url: '/query/serverActivityChart/week',
-				unload: true          
-			
-			});
+			$scope.showChart("week");
 		}
 		//A function to change activity-chart's timeframe to 1 month
 		$scope.loadActivityGraphMonth = function(){
-			$scope.chart.load({
-				url: '/query/serverActivityChart/month',
-				unload: true          
-			
-			});
+			$scope.showChart("month");
 		}
 		//Query the last scan time
 		var lastScanResource = $http.get('/query/lastscan').success(function(data) {

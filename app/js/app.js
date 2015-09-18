@@ -26,3 +26,4 @@ angular.module('tessustats', [
   //FRONT PAGE
   $routeProvider.otherwise({templateUrl: 'partials/front.html', controller: 'basicCtrl'});
 }]);
+ 
