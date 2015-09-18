@@ -28,7 +28,7 @@ module.exports = {
 			var print = function() {
 				res.send(result);
 			};
-			db.each("SELECT timestamp,heading,id,tags from articles;",function(err,row){
+			db.each("SELECT timestamp,heading,id,tags from articles order by id DESC;",function(err,row){
 				result.push(row);
 			},print);
 		},

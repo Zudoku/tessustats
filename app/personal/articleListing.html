@@ -1,4 +1,4 @@
-<div class="content">
+<div class="content"style="overflow: hidden">
 	<div class="row">
 		<div class="col-xs-2 ">
 			
@@ -24,8 +24,8 @@
 			</div>
 			<div ng-repeat="article in articles" >
 				<div class="panel panel-default">
-					<div class="panel-body">
-						<a href="#/article/{{article.id}}"><h1>{{article.heading}}</h1></a>
+					<div class="panel-body" style="padding: 20px !important;">
+						<a href="#/article/{{article.id}}"><h1 style="margin-top: 0px;">{{article.heading}}</h1></a>
 						{{article.timestamp}}
 						<hr style="margin: 0px; margin-bottom: 5px;">
 						<p>{{article.article}}</p>
