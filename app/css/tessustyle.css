@@ -54,3 +54,6 @@ body {
 	cursor: pointer; 
 	cursor: hand;
 }
+.timeframe-buttons {
+  margin-top: 10px;
+}

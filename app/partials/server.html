@@ -93,23 +93,19 @@
 								Activity chart:
 							</h3>
 							Below is graph showing how many people there have been online lately. Clicking the buttons will change the timeframe.
-							 Loading the graph data will take a few seconds, because the graph framework doesn't handle so many nodes very well.
-							 <br><br>
 						</div>
 						
 						<div class="col-xs-12 smallmarginbottom">
-							<div class="btn-group  " role="group" aria-label="adb">
-								<button type="button"  class="btn btn-danger crazybutton" ng-Click="loadActivityGraphDay()">24
-									Hours</button>
-								<button type="button" class="btn btn-danger crazybutton" ng-Click="loadActivityGraphWeek()">7
-									days</button>
+							<div class="btn-group timeframe-buttons" role="group" aria-label="adb">
+								<button type="button"  class="btn btn-danger crazybutton" ng-Click="loadActivityGraphDay()">Day</button>
+								<button type="button" class="btn btn-danger crazybutton" ng-Click="loadActivityGraphWeek()">Week</button>
+								<button type="button"  class="btn btn-danger crazybutton" ng-Click="loadActivityGraphMonth()">Month</button>
 							</div>
 						</div>
 
 						</div>
 						<div class="col-xs-12 smallmarginbottom">
 							<div id="serverchart" style="height: 500px; margin-bottom: 100px;">
-							
 						</div>
 					</div>
 				</div>

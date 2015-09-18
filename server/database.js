@@ -128,7 +128,7 @@ module.exports = {
 	getActivityChartData : function(res,identifier) {
 		var queryResult = [];
 		var scans = [];
-		var response="0,1,2,time\n";
+		var response = "";
 		var rowString;
 		//Query datetime range
 		var timelineStart = "";
@@ -162,6 +162,7 @@ module.exports = {
 			}
 			for (var i = 0; i < scans.length; i++) { //Loop trough all the scans and go trough the dictionary with them
 				var dateObject = Date.parse(scans[i])/1000;
+				var rowText = "";
 				if(dictionary[dateObject.toString()] != null){
 					var a = dictionary[dateObject.toString()];
 					for(var activity = 0 ; activity < 3 ; activity++){ //Go trough active online, muted online , all muted online and comma separate them and add them to the response
@@ -176,16 +177,16 @@ module.exports = {
 							}
 						}
 						if(activity === 0){
-							response = response + toAdd;
+							rowText = toAdd;
 						}else{
-							response = response +"," + toAdd;
+							rowText = rowText +"," + toAdd;
 						}
 						
 					}
 				}else{
-					response = response + "0,0,0"; //No-one was online
+					rowText = "0,0,0"; //No-one was online
 				}
-				response = response +"," + dateObject + "\n"; //Add the timestamp to the 4th row
+				response = response + dateObject + "," + rowText + "\n"; //Add the timestamp to the 4th row
 			}
 			
 			
