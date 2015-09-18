@@ -1,10 +1,10 @@
 
-var config = require('./config');
+var config = require('../server/config');
 var express = require('express');
 var app = express();
-var database=require('./database.js');
-var tsparser=require('./tsparser.js');
-var blogAPI = require('./blogAPI.js');
+var database=require('../server/database');
+var tsparser=require('../server/tsparser');
+var blogAPI = require('../blog/blogAPI');
 
 console.log("Modules loaded succesfully!");
 
@@ -12,7 +12,7 @@ tsparser.setdb(database);
 
 console.log("Database configured!");
 
-app.use("/app/", express.static(__dirname + '/app'));
+app.use("/app/", express.static(__dirname + '/../app'));
 
 //TESSU STATS
 app.get('/query/serverActivityChart/:timeframe', function(req, res){

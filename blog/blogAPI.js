@@ -1,4 +1,4 @@
-var DATABASE_PATH = 'blogdatabase';
+var DATABASE_PATH = 'blog/blogdatabase';
 
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(DATABASE_PATH);

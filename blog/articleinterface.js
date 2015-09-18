@@ -1,6 +1,6 @@
 var express = require('express');
-var config = require('./config');
-var blogAPI = require('./blogAPI.js');
+var config = require('../server/config');
+var blogAPI = require('../blog/blogAPI');
 var app = express();
 
 app.use(express.bodyParser());

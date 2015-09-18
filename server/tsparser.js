@@ -3,7 +3,7 @@
  */
 
 
-var TeamSpeakClient = require("node-teamspeak"), util = require("util"), config = require('./config');
+var TeamSpeakClient = require("node-teamspeak"), util = require("util"), config = require('../server/config');
 
 var cl = new TeamSpeakClient(config.TS_IP);
 
@@ -289,11 +289,6 @@ var loginToServerQuery = function(callback) {
 			var nickname =(config.MODE == "DEV")? "Tessustats (BOT) (DEV)": "Tessustats (BOT)";
 
 			cl.send("clientupdate",{client_nickname : nickname}, function(err, response, rawResponse){
-				if(err){
-					console.log(util.inspect(err));
-					logScan(false);
-					return;
-				}
 				callback();
 			});
 			

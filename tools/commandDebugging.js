@@ -6,7 +6,7 @@
 
 
 
-var config = require('./config');
+var config = require('..(server/config');
 
 
 var TeamSpeakClient = require("node-teamspeak"),
