@@ -15,7 +15,7 @@ app.post('/upload', function(req, res) {
 });
 app.get('/',function(req, res) {
 	res.type('html');
-	res.sendfile('articleform.html');
+	res.sendfile('blog/articleform.html');
 });
 
 app.listen(config.webserver_port,config.webserver_bind);
