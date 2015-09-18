@@ -236,7 +236,7 @@ module.exports = {
 			res.send(arr);
 		};
 
-		db.each("SELECT nickname,COUNT(*) as times,databaseid FROM online GROUP BY nickname ORDER BY times DESC;", function(err, row) {
+		db.each("SELECT nickname,COUNT(*) as times,databaseid FROM online GROUP BY databaseid ORDER BY times DESC;", function(err, row) {
 			arr.push(row);
 		}, print);
 	}, //Get all users latest nickname
