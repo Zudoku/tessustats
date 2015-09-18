@@ -190,12 +190,8 @@ angular.module('myApp.controllers', [])
 				//Find the client that has the same name
 				for(var allusersIndex = 0 ; allusersIndex < usersdata.length ; allusersIndex++){
 					if(usersdata[allusersIndex].databaseid === handledClient.databaseid){
-						//If it also has same name, give it green text
-						if(usersdata[allusersIndex].nickname === handledClient.nickname){
-							$scope.users[allusersIndex].textcolor = 'success';
-						}else{ //If only same databaseid, name has changed. Yellow text instead
-							$scope.users[allusersIndex].textcolor = 'warning';
-						}
+						//Apply green color
+						$scope.users[allusersIndex].textcolor = 'success';
 					}
 				}
 			}
