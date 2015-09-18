@@ -1,8 +1,15 @@
 {
-  "name": "TessuStats",
-  "dependencies": {
-    "express": "3.x",
-    "node-teamspeak": "1.0.10",
-    "sqlite3": "2.2.0"
-  }
+	"name": "TessuStats",
+	"version": "2.0.0",
+	"description": "Webapp that queries Teamspeak 3 Server and displays data about users, channels and nationalities.",
+  	"author": "Arttu Siren <arttu.siren@gmail.com>",
+  	"contributors": [{
+  		"name": "Rivenation",
+  		"email": "rivenation@gmail.com"
+	}],
+	"dependencies": {
+    	"express": "3.x",
+    	"node-teamspeak": "1.0.10",
+    	"sqlite3": "2.2.0"
+	}
 }
