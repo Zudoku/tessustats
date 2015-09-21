@@ -10,7 +10,8 @@ var util = require("util");
  DROP TABLE serverdata;
  DROP TABLE scans;
  DROP TABLE lastscan;
- DROP TABLE channels
+ DROP TABLE channels;
+ DROP TABLE activechannels;
 
  CREATE TABLE online
  (
