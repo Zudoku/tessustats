@@ -28,7 +28,7 @@
 						<a href="#/article/{{article.id}}"><h1 style="margin-top: 0px;">{{article.heading}}</h1></a>
 						{{article.timestamp}}
 						<hr style="margin: 0px; margin-bottom: 5px;">
-						<p>{{article.article}}</p>
+						<div ng-bind-html="article.article"></div>
 						<hr style="margin: 0px; margin-bottom: 5px;">
 						Tags:{{article.tags}}
 					</div>

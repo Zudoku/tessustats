@@ -6,7 +6,7 @@ angular.module('blog.controllers', [])
 .controller('basicCtrl', ['$scope','$http','$location','$routeParams', function($scope, $http,$location,$routeParams) {
 
 } ])
-.controller('articleListCtrl', ['$scope','$http','$location','$routeParams', function($scope, $http,$location,$routeParams) {
+.controller('articleListCtrl', ['$scope','$http','$location','$routeParams','$sce', function($scope, $http,$location,$routeParams,$sce) {
 	$scope.needIntroduction = function(){
 		if($routeParams.page == undefined || $routeParams.page == 0){
 			return false;
@@ -31,15 +31,18 @@ angular.module('blog.controllers', [])
 		}
 		for(var i = 0; i < articlesToShow.length; i++){
 			var articleResource = $http.get('/query/blog/article/' + articlesToShow[i]).success(function(data) {
-				$scope.articles.push(data);
+				var safedata = data;
+				safedata.article = $sce.trustAsHtml(data.article);
+				$scope.articles.push(safedata);
 			});
 		}
 	});
 	
 	
 } ])
-.controller('articleCtrl', ['$scope','$http','$location','$routeParams', function($scope, $http,$location,$routeParams) {
+.controller('articleCtrl', ['$scope','$http','$location','$routeParams','$sce', function($scope, $http,$location,$routeParams,$sce) {
 	var articleResource = $http.get('/query/blog/article/' + $routeParams.id).success(function(data) {
 		$scope.article = data;
+		$scope.article.article = $sce.trustAsHtml(data.article);
 	});
 } ]);
