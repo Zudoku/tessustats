@@ -49,7 +49,7 @@
                             <strong>Activity score:</strong> <span class="label label-info">{{countriesdata.countrydata.activityscore}}</span> / <span class="label label-default">{{countriesdata.combinedActivityScore}}</span> ({{getActivityPercent(countriesdata.countrydata.activityscore)}} %)
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Time online:</strong> {{getTimeFromSeconds(countriesdata.combinedActivityScore *5 * 60)}}.
+                            <strong>Time online:</strong> {{getTimeFromSeconds(countriesdata.countrydata.activityscore *5 * 60)}}.
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
                             <strong>Users from {{countriesdata.countrydata.country}}:</strong> <span class="label label-info">{{countriesdata.countrydata.users.length}}</span> / <span class="label label-default">{{countriesdata.clientamount}}</span> ({{getUsersPercent(countriesdata.countrydata.users.length)}} %)
