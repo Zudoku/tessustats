@@ -697,7 +697,13 @@ module.exports = {
 				db.all("SELECT * FROM channels;", function(err,channels){
 					var result = rows;
 					for( var x = 0 ; x < rows.length; x++){
-						result[x].channelname = channels.find( u => u.cid == rows[x].channel).name;
+						var foundChannel = channels.find( u => u.cid == rows[x].channel);
+						if(foundChannel != undefined){
+							result[x].channelname = channels.find( u => u.cid == rows[x].channel).name;
+						}else{
+							result[x].channelname = "";
+						}
+						
 						result[x].y = result[x].times;
 						result[x].times = undefined;
 					}
