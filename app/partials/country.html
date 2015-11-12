@@ -1,7 +1,7 @@
 <div class="container content">
 <div class="row">
 	<div class="col-xs-12 ">
-        <h1><span class="label label-default"> Country: {{country.country}} <span class="famfamfam-flag-{{country.country | lowercase}}"></span></span></h1>
+        <h1><span class="label label-default"> Country: {{countriesdata.countrydata.country}} <span class="famfamfam-flag-{{countriesdata.countrydata.country | lowercase}}"></span></span></h1>
     </div>
 
 </div>
@@ -15,7 +15,7 @@
 <div class="row">
         <div class="col-xs-12 ">
         	<div class="progress">
-  				<div class="progress-bar progress-bar-success" style="width: {{userspercent}}%">
+  				<div class="progress-bar " style="width: {{getActivityPercent(countriesdata.countrydata.activityscore)}}%; background-color: #d0e9c6 !important;">
   				<span class="sr-only"></span>
   				</div>
   			</div>
@@ -29,7 +29,7 @@
 <div class="row">
         <div class="col-xs-12 ">
         	<div class="progress">
-  				<div class="progress-bar progress-bar-success" style="width: {{activitypercent}}%">
+  				<div class="progress-bar " style="width: {{getUsersPercent(countriesdata.countrydata.users.length)}}%; background-color: #d0e9c6 !important;">
   				<span class="sr-only"></span>
   				</div>
   			</div>
@@ -46,13 +46,16 @@
                 <div class="panel-body ">
                     <div class="row smallmarginbottom" >
                     	<div class="col-xs-6 smallmarginbottom">
-                            <strong>Activity score:</strong> <span class="label label-info">{{country.activityscore}}</span> / <span class="label label-default">{{activityScoreCombined}}</span> ({{activitypercent}} %)
+                            <strong>Activity score:</strong> <span class="label label-info">{{countriesdata.countrydata.activityscore}}</span> / <span class="label label-default">{{countriesdata.combinedActivityScore}}</span> ({{getActivityPercent(countriesdata.countrydata.activityscore)}} %)
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Users from {{country.country}}:</strong> <span class="label label-info">{{country.users.length}}</span> / <span class="label label-default">{{allusers}}</span> ({{userspercent}} %)
+                            <strong>Time online:</strong> {{getTimeFromSeconds(countriesdata.combinedActivityScore *5 * 60)}}.
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Country rank:</strong> {{rank}}.
+                            <strong>Users from {{countriesdata.countrydata.country}}:</strong> <span class="label label-info">{{countriesdata.countrydata.users.length}}</span> / <span class="label label-default">{{countriesdata.clientamount}}</span> ({{getUsersPercent(countriesdata.countrydata.users.length)}} %)
+                        </div>
+                        <div class="col-xs-6 smallmarginbottom">
+                            <strong>Country rank:</strong> {{countriesdata.rank + 1}}.
                         </div>
                     </div>
                 </div>
@@ -64,12 +67,12 @@
     <div class="col-xs-12 ">
     	<div class="panel panel-default">
   			<div class="panel-heading">
-    			<h3 class="panel-title"> <strong>Users from {{country.country}} </strong></h3>
+    			<h3 class="panel-title"> <strong>Users from {{countriesdata.countrydata.country}} </strong></h3>
   			</div>
   			<div class="panel-body">
     			<table id="userstable" class="table table-condensed table-hover" >
-					<tr  class="clickable" ng-repeat="user in usersFromCountry" ng-click="selectUser(user.databaseid)" >
-   						<td>{{user.nickname}}</td>
+					<tr class="clickable" ng-repeat="user in countriesdata.countrydata.users" ng-click="selectUser(user.databaseid)" >
+   						<td>{{user.username}}</td>
 					</tr>
 				</table>
   			</div>

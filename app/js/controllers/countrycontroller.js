@@ -2,32 +2,34 @@
 
 angular.module('tessustats.controller.country', [])
 .controller('countryCtrl', ['$scope','$http','$location','$routeParams', function($scope, $http,$location,$routeParams) {
-		var countryResource = $http.get('/query/allcountries').success(function(data) {
-			
-			for(var x = 0; x < data.length; x++){
-				if(data[x].country == $routeParams.countrycode){
-					$scope.country = data[x];
-					$scope.rank = (x + 1);
-					var usersResource = $http.get('/query/allusers').success(function(alluserdata) {
-						var allusers = alluserdata.length
-						$scope.allusers = allusers;
-						$scope.userspercent = parseFloat(($scope.country.users.length / allusers) * 100).toFixed(2);
-					});
-					var activityScoreResource = $http.get('/query/combinedActivityScore').success(function(data) {
-						$scope.activityScoreCombined = data.times;
-						$scope.activitypercent = parseFloat(($scope.country.activityscore / $scope.activityScoreCombined) * 100).toFixed(2);
-					});
-					break;
-				}
-			}
+
+	$scope.updateData = function(){
+		var countriesResource = $http.get('/query/countrypage/' + $routeParams.countrycode).success(function(data) {
+	    	$scope.countriesdata = data;
 		});
-		var usersResource = $http.get('/query/allClientsFromCountry/' + $routeParams.countrycode).success(function(data) {
-			$scope.usersFromCountry = data;
-		});
+	};
+	$scope.getActivityPercent = function(activityScore){
+		if($scope.countriesdata == undefined || $scope.countriesdata.combinedActivityScore == undefined){
+			return "";
+		}
+		return parseFloat((activityScore / $scope.countriesdata.combinedActivityScore) * 100).toFixed(2);
+	};
+	$scope.getUsersPercent = function(userCount){
+		if($scope.countriesdata == undefined || $scope.countriesdata.clientamount == undefined){
+			return "";
+		}
+		return parseFloat((userCount / $scope.countriesdata.clientamount) * 100).toFixed(2);
+	};
+
+	$scope.selectUser = function(databaseid){
+		$location.path('/user/'+databaseid);
+	};
+
+	$scope.getTimeFromSeconds = function(seconds){
+		return getTimeFromSeconds(seconds);
+	};
+
+	$scope.updateData();
 		
-		
-		$scope.selectUser = function(databaseid){
-			$location.path('/user/'+databaseid);
-		};
 
 } ]);

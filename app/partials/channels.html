@@ -3,39 +3,72 @@
   		<div class="panel-heading">
     		<h1 class="panel-title"> <strong>Active Channels</strong> </h1>
   		</div>
-  		<div class="panel-body">
-  			Below is a list of all the current channels in the server.  By clicking the channel, you will be taken into a more in depth page of that channel. Temporary channels will have a <span class="text-warning">yellow</span> background.
-  			 The channel section of the website is still in the progress and not finished. <br><br>
-         <strong>Empty for</strong> for column resets on server restart.
+  		<div class="panel-body panel-shadow">
+  			Below is a list of all the current channels in the server.  By clicking the channel, you will be taken into a more in depth page of that channel. Temporary channels will have a <span class="text-warning">yellow</span> background. The table tries to imitate the channel-list as seen in the TeamSpeak client.
+  			<br><br>
+        <strong>Empty for</strong> for column resets on server restart.
 		</div>
 	</div>
-	<table class="table table-hover">
-		<tr>
-			<th>Server</th> 
-      <th><span class="glyphicon glyphicon-question-sign" ></span></th>
-			<th>Population</th>
-      <th>Empty for</th>
-		</tr>
-  		<tr class="clickable" ng-repeat="channel in handleChannels(activeChannels)" ng-click="selectChannel(channel.cid)" ng-class="getTemporaryStyle(channel.cid)"> 
-  			<td > <div ng-class="channel.style">{{channel.name}} 
-        <br>
-        <ul ng-click="$event.stopPropagation()" style="margin-bottom: 0px !important;">
-          <li ng-repeat="client in getChannelData(channel.cid).clients"><a href="#/user/{{client.databaseid}}">{{client.nickname}}</a></li>
-        </ul>
-        </div> </td>
-        <td><span ng-hide="passwordChannel(channel.passwordprotected)" class="glyphicon glyphicon-lock" aria-hidden="true"></span></td>
-  			<td>{{(getChannelData(channel.cid).clients.length != undefined)?getChannelData(channel.cid).clients.length: 0}}</td>
-  			<td>{{(channel.secondsempty == -1)?"" : getTimeFromSeconds(channel.secondsempty)}}</td>
-  		</tr>
-	</table>
-	<div class="panel panel-default content">
-  		<div class="panel-heading">
-    		<h1 class="panel-title"> <strong >Deleted Channels</strong> </h1>
-  		</div>
-  		<div class="panel-body">
-  			<ul>
-          <li ng-repeat="inactivechannel in inactiveChannels">{{inactivechannel.name}}</li>
-        </ul>
-		  </div>
-	</div>
+  <div class="row">
+        <div class="col-xs-4 ">
+            <h3 style="margin:0px;"><span class="label label-info" > Top 5 active channels from last 7 days</span></h3>
+        </div>
+  </div>
+  <div class="row">
+        <div class="col-xs-12 ">
+            <div class="panel panel-default ">
+                <div class="panel-body panel-shadow">
+                    <table class="table table-hover">
+                      <tr>
+                        <th>Rank</th> 
+                        <th>Channel name</th>
+                        <th>Activity score</th>
+                        <th>Time online</th>
+                      </tr>
+                      <tr class="clickable" ng-repeat="topchannel in channelsdata.mostActive" ng-click="selectChannel(topchannel.cid)" > 
+                        <td>{{$index+1}}.</td>
+                        <td>{{topchannel.name}}</td>
+                        <td>{{topchannel.activityscore}}</td>
+                        <td>{{getTimeFromSeconds(topchannel.activityscore * 60 * 5)}}</td>
+
+                      </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+  </div>
+  <div class="row">
+        <div class="col-xs-4 ">
+            <h3 style="margin:0px;"><span class="label label-info" > TeamSpeak view of channels</span></h3>
+        </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 ">
+      <div class="panel panel-default ">
+        <div class="panel-body panel-shadow">
+          <table class="table table-hover">
+            <tr>
+              <th>Server</th> 
+              <th><span class="glyphicon glyphicon-question-sign" ></span></th>
+              <th>Population now</th>
+              <th>Empty for</th>
+            </tr>
+            <tr class="clickable" ng-repeat="channel in channelsdata.activeChannels" ng-click="selectChannel(channel.cid)" ng-class="getTemporaryStyle(channel.cid)"> 
+              <td > 
+                <div style="padding-left: {{getPaddingChannelLevel(channel.channellevel)}}px !important;">{{channel.name}} 
+                  <br>
+                  <ul ng-click="$event.stopPropagation()" style="margin-bottom: 0px !important;">
+                    <li ng-repeat="client in getOnlineUsersForChannel(channel.cid)"><a href="#/user/{{client.databaseid}}">{{client.nickname}}</a></li>
+                  </ul>
+                </div>
+              </td>
+              <td><span ng-hide="passwordChannel(channel.passwordprotected)" class="glyphicon glyphicon-lock" aria-hidden="true"></span></td>
+              <td>{{(getOnlineUsersForChannel(channel.cid).length != undefined) ? getOnlineUsersForChannel(channel.cid).length: 0}}</td>
+              <td>{{(channel.secondsempty == -1)?"" : getTimeFromSeconds(channel.secondsempty)}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

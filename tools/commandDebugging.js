@@ -6,9 +6,14 @@
 
 
 
-var config = require('..(server/config');
+var config = require('../server/config');
 
 
+var statistics = require('../server/statistics');
+statistics.calculateStatisticsData();
+
+
+/*
 var TeamSpeakClient = require("node-teamspeak"),
     util = require("util");
 
@@ -29,3 +34,5 @@ cl.send("login", {client_login_name: config.botlogin, client_login_password: con
         });
     });
 });
+
+*/

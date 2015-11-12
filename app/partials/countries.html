@@ -1,22 +1,70 @@
 <div class="container content">
+
+
+
 <div class="panel panel-default">
   <div class="panel-heading">
     <h1 class="panel-title"> <strong>Countries</strong> </h1>
   </div>
-  <div class="panel-body">
+  <div class="panel-body panel-shadow">
 	Below is a list of all the countries that users in the server have been from. Clicking the countries will bring you into their detailed page for
 	the country. The country section of the website is still in the progress and not finished.
   </div>
 </div>
+
+
+<div class="row">
+        <div class="col-xs-4 ">
+            <h3 style="margin:0px;"><span class="label label-info" > Activity per country </span></h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 ">
+            <div class="panel panel-default ">
+                <div class="panel-body panel-shadow">
+                    <div class="row smallmarginbottom" >
+                        <div class="col-xs-12 ">
+                            <div id="countryactivitychart" style="height: 300px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="row">
+        <div class="col-xs-4 ">
+            <h3 style="margin:0px;"><span class="label label-info" > Users per country   </span></h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 ">
+            <div class="panel panel-default ">
+                <div class="panel-body panel-shadow">
+                    <div class="row smallmarginbottom" >
+                        <div class="col-xs-12 ">
+                            <div id="countryuserchart" style="height: 300px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <table class="table table-hover">
 	<tr>
 	<th>Country</th>
-	<th>Activity score ({{activityScoreCombined}})</th>
+	<th>Activity score ({{countriesdata.combinedActivityScore}})</th>
+	<th>Time online ({{getTimeFromSeconds(countriesdata.combinedActivityScore *5 * 60)}})</th>
 	<th>User count</th>
 	<th>Rank</th>
 	</tr>
-	<tr class="clickable" ng-repeat="country in countries" ng-click="selectcountry(country.country)">
-   		<td ><span class="famfamfam-flag-{{country.country | lowercase}}"></span> {{country.country}} </td><td ><span class="label label-info">{{getActivityPercent(country.activityscore)}} %</span> {{country.activityscore}} / {{activityScoreCombined}}</td><td ><span class="label label-info">{{getUsersPercent(country.users.length)}} %</span> {{country.users.length}} / {{usersAmount}}</td><td >{{$index +1}}.</td>
+	<tr class="clickable" ng-repeat="country in countriesdata.countries" ng-click="selectcountry(country.country)">
+   		<td ><span class="famfamfam-flag-{{country.country | lowercase}}"></span> {{country.country}} </td><td ><span class="label label-info">{{getActivityPercent(country.activityscore)}} %</span> {{country.activityscore}} / {{countriesdata.combinedActivityScore}}</td> <td> {{getTimeFromSeconds(country.activityscore *5 * 60)}} </td> <td ><span class="label label-info">{{getUsersPercent(country.users.length)}} %</span> {{country.users.length}} / {{countriesdata.clientamount}}</td><td >{{$index +1}}.</td>
 	</tr>
 </table>
 </div>

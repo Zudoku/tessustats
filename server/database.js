@@ -1,3 +1,4 @@
+'use strict'
 var config = require('./config');
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(config.DATABASE_PATH);
@@ -12,6 +13,7 @@ var util = require("util");
  DROP TABLE lastscan;
  DROP TABLE channels;
  DROP TABLE activechannels;
+ DROP TABLE statistics_OS;
 
  CREATE TABLE online
  (
@@ -98,6 +100,12 @@ secondsempty INTEGER
 CREATE TABLE activechannels
 (
 cid INTEGER
+);
+
+CREATE TABLE statistics_OS
+(
+name TEXT,
+amount INTEGER
 );
  */
 
@@ -232,15 +240,21 @@ module.exports = {
 					function(err,row){scans.scanTimes.push(row.date);},print);
 		
 	},//Get the user list of all visited clients
-	allUsersData:function(res){
-		var arr = [];
-		var print = function() {
-			res.send(arr);
-		};
-
-		db.each("SELECT nickname,COUNT(*) as times,databaseid FROM online GROUP BY databaseid ORDER BY times DESC;", function(err, row) {
-			arr.push(row);
-		}, print);
+	getUserList : () => {
+		return new Promise((resolve, reject) => {
+			db.all("SELECT nickname,COUNT(*) as times,databaseid FROM online GROUP BY databaseid ORDER BY times DESC;", function(err, rows) {
+				
+				let users = rows;
+				db.all("SELECT databaseid,country FROM userdata;",function(err, rows) {
+					var result = users.map(obj => {
+						obj.country = rows.find(x => x.databaseid == obj.databaseid).country.toLowerCase();
+						return obj;
+					});
+					resolve(result);
+				});
+				
+			});
+		})
 	}, //Get all users latest nickname
 	allUsersID:function(){
 		var arr = [];
@@ -251,44 +265,30 @@ module.exports = {
 			arr.push(row);
 		},print);
 	}, //Get the last record of the client with the parameter databaseid
-	getUsersLastRecord : function(res,databaseid){
-		var arr = [];
-		var print = function() {
-			if(arr.length >= 1){
-				res.send(arr[0]);
-			}
-			else{
-				res.send('');
-			}
-
-		};
-		db.each("SELECT *,COUNT(*) as times FROM online  WHERE databaseid = ? ORDER BY times DESC;",[databaseid], function(err, row) {
-			arr.push(row);
-		},print);
+	getUserLastRecord : ( databaseid ) => {
+		return new Promise((resolve, reject) => {
+			db.all("SELECT *,COUNT(*) as times FROM online  WHERE databaseid = ? ORDER BY times DESC;",[databaseid], function(err, rows) {
+				module.exports.getChannelNameFromCID(rows[0].channel).then( (name) => { 
+					rows[0].channelname = name;
+					resolve(rows[0]);
+				})
+			});
+		})		
 	}, //Gets the data of one user specified by parameter databaseid
-	getUserData:function(res,databaseid){
-		var arr = [];
-		var print = function() {
-			//Add the flagCode
-			try{
-				arr[0].flagCode = arr[0].country.toLowerCase();
-			}catch(error){
-				console.log(error);
-			}
-			res.send(arr[0]);
-		};
-		db.each("SELECT * FROM userdata WHERE databaseid = ? ;",[databaseid], function(err, row) {
-			arr.push(row);
-		},print);
+	getUserData:( databaseid ) => {
+		return new Promise((resolve, reject) => {
+			db.all("SELECT * FROM userdata WHERE databaseid = ? ;",[databaseid], function(err, rows) {
+				resolve(rows[0]);
+			});
+		})		
 	}, //Get the server statistics
-	getServerData : function(res){
-		var arr = [];
-		var print = function() {
-			res.send(arr[0]);
-		};
-		db.each("SELECT * FROM serverdata WHERE id = 1;", function(err, row) {
-			arr.push(row);
-		},print);
+	getServerBasicInfo : () => {
+		return new Promise((resolve, reject) => {
+        	db.all("SELECT * FROM serverdata WHERE id = 1;", (err, rows) => {
+				resolve(rows[0]);
+			});
+    	})
+		
 	}, //Updates server statistics
 	insertServerData : function(serverObject){
 		console.log('Updating Server information!');
@@ -298,7 +298,7 @@ module.exports = {
 	}, //Updates the users data check tsparser.js for the structure for userObject.
 	updateUserData: function(userObject){
 		console.log('Saving clientinfo for user ',userObject.nickname, ' to database');
-
+		//... sorry
 		db.serialize(function() {
 			db.get("SELECT * FROM userdata WHERE databaseid = ?;",userObject.databaseid,function(err,row){
 				if(row===undefined){
@@ -332,104 +332,84 @@ module.exports = {
 		db.run("INSERT INTO scans (date) values (?)",formatDate);
 		console.log('Scan logged!');
 	},  //Get the information about the latest scan
-	getLastScan : function(res){
-		var arr = [];
-		var print = function() {
-			res.send(arr);
-		};
-		db.each("SELECT * FROM lastscan;", function(err, row) {
-			arr.push(row);
-		},print);
+	getLastScan : () => {
+		return new Promise((resolve, reject) => {
+			db.all("SELECT * FROM lastscan;", function(err, rows) {
+				resolve(rows);
+			});
+		})
 	}, //Get the users that were online when the last scan was
-	getLastScanClients : function(res){
-		var response = [];
-		var lastscan = [];
-		var print = function() {
-			res.send(response);
-		};
-		var queryclients = function() {
-			db.each("SELECT nickname,databaseid,channel FROM online WHERE date = ?",lastscan[0].date, function(err, row) {
-				response.push(row);
-			},print);
-		};
-		db.each("SELECT * FROM lastscan WHERE id = 1;", function(err, row) {
-			lastscan.push(row);
-		},queryclients);
+	getLastScanClients : () => {
+		return new Promise((resolve, reject) => {
+			db.get("SELECT * FROM lastscan WHERE id = 1;", function(err, rows) {
+				db.all("SELECT nickname,databaseid,channel FROM online WHERE date = ?",rows.date, function(err, clients) {
+					resolve(clients);
+				});
+			});
+		})
 	}, //Get the most clients ever seen on the server
-	getMostClientsSeen : function(res){
-		var arr = [];
-		var print = function() {
-			res.send(arr[0]);
-		};
-		db.each("SELECT date,COUNT(*) as times FROM online GROUP BY date ORDER BY times DESC;", function(err, row) {
-			arr.push(row);
-		},print);
-	},
-	getAllCountries : function(res) {
-		var response = [];
-		var users = [];
-		var userdata = [];
-		var countries = []; //Contains the names of the countries
-		
-		var constructCountries = function(){
-			for(var i= 0; i< users.length;i++){
-				var currentUser = users[i];
-				var userCountry;
-				if(countries.indexOf(currentUser.country) < 0){
-					//Add a new country
-					countries.push(currentUser.country);
-					var country = {
-							users : [],
-							activityscore : 0,
-							country : currentUser.country
-					};
-					userCountry = country;
-					response.push(country);
-				}else{
-					//Search the existing country from the array.
-					for(var o=0;o < response.length; o++){
-						if(response[o].country == currentUser.country){
-							userCountry = response[o];
-							break;
-						}
-					}
-					if(userCountry == undefined){
-						console.log("Error finding the existing country");
-					}
+	getMostClientsSeen : () => {
+		return new Promise((resolve, reject) => {
+			db.all("SELECT date,COUNT(*) as times FROM online GROUP BY date ORDER BY times DESC;", function(err, rows) {
+				if(rows.length >= 1){
+					resolve(rows[0]);
 				}
-				for(var x = 0 ; x < userdata.length; x++){
-					if(currentUser.databaseid == userdata[x].databaseid){
-						userCountry.activityscore += userdata[x].times;
-						break;
-					}
-				}
-				//userCountry.activityscore += currentUser.totalconnections;
-				userCountry.users.push(currentUser.databaseid);
-			}
-			
-			print();
-		};
-		var print = function() {
-			//Sort with activityscore
-			response.sort(function (a,b){
-				if(a.activityscore > b.activityscore){
-					return -1;
-				}else if(a.activityscore < b.activityscore){
-					return 1;
-				}else{
-					return 0;
+				else{
+					resolve(0);
 				}
 			});
-			res.send(response);
-		};
-		var getUserData = function(){
-			db.each("SELECT COUNT(*) as times,databaseid FROM online GROUP BY databaseid ORDER BY times DESC;", function(err, row) {
-				userdata.push(row);
-			},constructCountries);
-		};
-		db.each("SELECT * FROM userdata;",function(err,row){
-			users.push(row);
-		},getUserData);
+		})
+	},
+	getAllCountries : () => {
+		return new Promise((resolve, reject) => {
+			var countries = [];
+			db.all("SELECT * FROM userdata;",function(err,userdata){
+				db.all("SELECT COUNT(*) as times,databaseid FROM online GROUP BY databaseid ORDER BY times DESC;", function(err, onlinedata) {
+					userdata.map( (value) => {
+						var userOnlineData = onlinedata.find( x => x.databaseid == value.databaseid);
+						if(userOnlineData == undefined){
+							console.log("Can't find user in both tables, userdata and online!");
+						}else{
+							var countryFindAttempt = countries.find( country => country.country == value.country);
+							if(countryFindAttempt != undefined){
+								var user = {
+									databaseid: value.databaseid,
+									username: value.nickname
+								};
+								countryFindAttempt.users.push(user);
+								countryFindAttempt.activityscore += userOnlineData.times;
+							}else{
+								var country = {
+									users : [],
+									activityscore : 0,
+									country : value.country
+								};
+								var user = {
+									databaseid: value.databaseid,
+									username: value.nickname
+								};
+								country.users.push(user);
+								country.activityscore += userOnlineData.times;
+								countries.push(country);
+							}
+						}
+					});
+
+					countries.sort(function (a,b){
+						if(a.activityscore > b.activityscore){
+							return -1;
+						}else if(a.activityscore < b.activityscore){
+							return 1;
+						}else{
+							return 0;
+						}
+					});
+
+					resolve(countries);
+
+				});
+			});
+		})
 	},
 	getUsersFromCountry : function(res,country){
 		var result = [];
@@ -458,104 +438,162 @@ module.exports = {
 			});
 		});
 	},
-	getChannelNameFromCID : function(res,cid){
-		var result = [];
-		var print = function() {
-			if(result.length != 0){
-				res.send(result[0]);
-			}else{
-				res.send([]);
-			}
-			
-		};
-		db.each("SELECT name FROM channels WHERE cid = ?;",cid,function(err,row){
-			result.push(row);
-		},print);
+	getChannelNameFromCID : (cid) => {
+		return new Promise((resolve, reject) => {
+			db.get("SELECT name FROM channels WHERE cid = ?;",cid,function(err,row){
+				resolve(row.name);
+			});
+		})
 	},
-	getAllActiveChannels : function(res){
-		var active = [];
-		var channels = [];
-		var result = [];
-		var queryIndex = 0;
-		var print = function() {
-			res.send(result);
-		};
-		var sort = function(){
-			for(var y = 0 ; y < channels.length; y++){
-				if(channels[y].pid == 0){
-					result.push(channels[y]);
-				}
-			}
-			
-			var childChannels = [];
-			for(var y = 0 ; y < channels.length; y++){
-				if(channels[y].pid != 0){
-					for(var f = 0 ; f < result.length; f++){
-						if(result[f].cid == channels[y].pid){
-							if(result[f].children == undefined){
-								result[f].children = [];
-								result[f].children.push(channels[y]);
-							}else{
-								result[f].children.push(channels[y]);
+	getAllActiveChannels : () => {
+		return new Promise((resolve, reject) => {
+
+			var resultChannels = [];
+
+			db.all("SELECT * FROM channels;",function(err,channels){
+				db.all("SELECT * FROM activechannels;",function(err,activeChannels){
+					//Hours wasted sorting them to right order: 4
+					resultChannels = activeChannels.map( (value) => {
+						var channel = channels.find( x => x.cid == value.cid);
+						var finding = true;
+						var channelLevel = 0;
+						var handledChannel = channel;
+						while(finding){
+							var parentCID = handledChannel.pid;
+							if(parentCID == 0){
+								finding = false;
+								channel.channellevel = channelLevel;
+								return channel;
 							}
-							continue;
+							var parent = channels.find( y => y.cid == parentCID);
+							if(parent == undefined){
+								channelLevel = 0;
+								finding = false;
+								channel.channellevel = channelLevel;
+								return channel;
+
+							}else{
+								channelLevel++;
+								handledChannel = parent;
+							}
+						}
+						
+
+					});
+					var modifiedList = false;
+
+					function addChildrenChannels(list,channelLevel){
+						var result = [];
+						var index = 0;
+						modifiedList = false;
+						while(true){
+							if(index == list.length -1){
+								return result;
+								break;
+							}
+							var channel = list[index];
+							if(channel.channellevel < channelLevel){
+								result.push(channel);
+							}
+							if(channel.channellevel == channelLevel){
+								result.push(channel);
+								var channelsToBeAdded = getChildrenChannels(channel.cid);
+								if(channelsToBeAdded.length != 0){
+									modifiedList = true;
+									for(var c = 0 ; c < channelsToBeAdded.length; c++){
+										result.push(channelsToBeAdded[c]);
+									}
+								}
+								
+							}
+							index++;
+						}
+						
+					};
+					function getChildrenChannels(cid){
+						var result = resultChannels.filter(function(filteredChannel){
+							if(filteredChannel.pid == cid){
+								return true;
+							}
+							return false;
+						});
+						result.sort(function(a,b){
+							if(a.orderT == 0){
+								return -1;
+							}
+							if(b.orderT == 0){
+								return 1;
+							}
+							if(a.orderT == b.cid){
+								return 1;
+							}
+							if(b.orderT == a.cid){
+								return -1;
+							}
+
+						});
+
+						return result;
+
+					};
+					var start = resultChannels.filter(function(filteredChannel){
+						if(filteredChannel.pid == 0){
+							return true;
+						}
+						return false;
+					});
+					var sortedStart = [];
+					var currentChannel;
+					for(var t = 0; t < start.length; t++){
+						if(start[t].pid == 0 && start[t].orderT == 0){
+							currentChannel = start[t];
 						}
 					}
-				}
-			}
-			
-			result.sort(function (a,b){
-				if(a.orderT > b.orderT){
-					return 1;
-				}else if(a.orderT < b.orderT){
-					return -1;
-				}else{
-					return 0;
-				}
-			});
-			for(var b = 0 ; b < result.length ; b++){
-				var rootChannel = result[b];
-				if(rootChannel.children != undefined){
-					rootChannel.children.sort(function (a,b){
-						if(a.orderT > b.orderT){
-							return 1;
-						}else if(a.orderT < b.orderT){
-							return -1;
-						}else{
-							return 0;
+					sortedStart.push(currentChannel);
+					while(true){
+						var found = false;
+						for(var t = 0; t < start.length; t++){
+							if(start[t].orderT == currentChannel.cid){
+								sortedStart.push(start[t]);
+								currentChannel = start[t];
+								found = true;
+
+							}
 						}
-					});
-				}
-			}
-			
-			
-			print();
-			
-		}
-		var query = function(){
-			if(queryIndex >= active.length){
-				sort();
+						if(!found){
+							break;
+						}
+					}
+
+					var channelLevel = 0;
+					while(true){
+
+						var startNew = addChildrenChannels(sortedStart,channelLevel);
+						sortedStart = startNew;
+						if(!modifiedList){
+							break;
+						}
+						channelLevel++;
+					}
+					
+
+					resolve(sortedStart);
+				});
 				
-				return;
-			}
-			db.each("SELECT cid,pid,name,passwordprotected,orderT,type,secondsempty FROM channels WHERE cid = ?;",active[queryIndex],function(err,row){
-				channels.push(row);
-				queryIndex++;
-				
-			},query);
-		};
-		db.each("SELECT * FROM activechannels;",function(err,row){
-			active.push(row.cid);
-		},query);
+			});
+		})
 	},
-	getChannelData : function(res,cid){
-		var result = [];
-		var print = function() {
-			res.send(result[0]);
-		};
-		db.each("SELECT * FROM channels WHERE cid = ?;",cid,function(err,row){
-			result.push(row);
-		},print);
+	getChannelData : (cid) => {
+		return new Promise((resolve, reject) => {
+			db.all("SELECT * FROM channels WHERE cid = ?;",cid,function(err,rows){
+				if(rows.length != 0){
+					resolve(rows[0]);
+				}else{
+					resolve([]);
+				}
+				
+			});
+		})
 	},
 	updateActiveChannels : function(activeChannels){
 		var inserting = function(){
@@ -567,55 +605,40 @@ module.exports = {
 		
 		
 	},
-	getAllUsersCountry : function(res){
-		var result = [];
-		var print = function() {
-			res.send(result);
-		};
-		db.each("SELECT country,databaseid FROM userdata;",function(err,row){
-			row.country = row.country.toLowerCase();
-			result.push(row);
-		},print);
+	getAllUsersCountry : () => {
+		return new Promise((resolve, reject) => {
+			db.all("SELECT country,databaseid FROM userdata;",function(err,rows){
+				resolve(rows);
+			});
+		})
 	},
-	getUsersAmount : function(res){
-		var result = [];
-		var print = function() {
-			var x = { users  : result.length};
-			res.send(x);
-		};
-		db.each("SELECT * FROM userdata;",function(err,row){
-			result.push(row);
-		},print);
+	getUsersAmount : () => { //TODO: optimize
+		return new Promise((resolve, reject) => {
+			db.all("SELECT databaseid FROM userdata;",function(err,rows){
+				resolve(rows.length);
+			});
+		})
 	},
-	getScansAmount : function(res){
-		var result = [];
-		var print = function() {
-			var x = { scans  : result.length};
-			res.send(x);
-		};
-		db.each("SELECT * FROM scans;",function(err,row){
-			result.push(row);
-		},print);
+	getScansAmount : () => { //TODO: optimize
+		return new Promise((resolve, reject) => {
+			db.all("SELECT * FROM scans;",function(err,rows){
+				resolve(rows.length);
+			});
+		})
 	},
-	getActiveChannelsAmount : function(res){
-		var result = [];
-		var print = function() {
-			var x = { channels  : result.length};
-			res.send(x);
-		};
-		db.each("SELECT * FROM activechannels;",function(err,row){
-			result.push(row.cid);
-		},print);
+	getActiveChannelsAmount : () => { //TODO: optimize
+		return new Promise((resolve, reject) => {
+			db.all("SELECT cid FROM activechannels;",function(err,rows){
+				resolve(rows.length);
+			});
+		})
 	},
-	getChannelsAmount : function(res){
-		var result = [];
-		var print = function() {
-			var x = { channels  : result.length};
-			res.send(x);
-		};
-		db.each("SELECT * FROM channels;",function(err,row){
-			result.push(row.cid);
-		},print);
+	getChannelsAmount : () => { //TODO: optimize
+		return new Promise((resolve, reject) => {
+			db.all("SELECT cid FROM channels;",function(err,rows){
+				resolve(rows.length);
+			});
+		})
 	},
 	getCombinedActivityScore : function(res){
 		var result = [];
@@ -645,6 +668,98 @@ module.exports = {
 		db.each("SELECT * FROM activechannels;",function(err,row){
 			active.push(row.cid);
 		},query);
+	},
+	getIsUserOnline : (databaseid) => { 
+		return new Promise((resolve, reject) => {
+			db.all("SELECT * FROM lastscan WHERE id = 1;", function(err, rows) {
+				var results = rows.find(x => x.databaseid == databaseid);
+				resolve(results != undefined);
+			});
+		})
+	},
+	getUserActivityScore : (databaseid) => { 
+		return new Promise((resolve, reject) => {
+			db.all("SELECT nickname,COUNT(*) as times,databaseid FROM online GROUP BY databaseid ORDER BY times DESC;", function(err, rows) {
+				for(var y = 0 ; y < rows.length ; y++){
+					if(rows[y].databaseid == databaseid){
+						resolve({rank : y + 1 , score: rows[y].times});
+						break;
+					}
+				}
+				resolve(-1);
+			});
+		})
+	},
+	getUserPieChart : (databaseid) => { 
+		return new Promise((resolve, reject) => {
+			db.all("SELECT databaseid,COUNT(*) as times,channel FROM online WHERE databaseid=? GROUP BY databaseid,channel ORDER BY times DESC;",[databaseid], function(err, rows) {
+
+				db.all("SELECT * FROM channels;", function(err,channels){
+					var result = rows;
+					for( var x = 0 ; x < rows.length; x++){
+						result[x].channelname = channels.find( u => u.cid == rows[x].channel).name;
+						result[x].y = result[x].times;
+						result[x].times = undefined;
+					}
+					if(result.length > 5){
+						resolve(result);
+					}else{
+						resolve(result);
+					}
+				});
+				
+			});
+		})
+	},
+	getCountryData : (country) => {
+		return new Promise((resolve, reject) => {
+			module.exports.getAllCountries().then( (countries) => {
+				var foundCountry = countries.find( x => x.country.toLowerCase() == country.toLowerCase());
+				resolve(foundCountry);
+			});
+
+		})
+	},
+	getMostActiveChannelsFromThisWeek : () => {
+		return new Promise((resolve, reject) => {
+			var result = [];
+			db.all("SELECT cid,name from channels;", function(err, channels){
+				db.all("SELECT COUNT(*) as times,channel FROM online WHERE date>date('now','-7 days') GROUP BY channel ORDER BY times DESC;",function(err,mostActive){
+					var topActive = mostActive.splice(0,5);
+					for(var t = 0 ; t < topActive.length; t++){
+						var channelObject = channels.find(x => x.cid == topActive[t].channel);
+						channelObject.activityscore = topActive[t].times;
+						result.push(channelObject);
+					}
+					resolve(result);
+				});
+			});
+		})
+	},
+	isMostActiveChannelThisWeek : (cid) => {
+		return new Promise((resolve, reject) => {
+			module.exports.getMostActiveChannelsFromThisWeek().then( (channels) => {
+				var searchAttempt = channels.find( c => c.cid == cid);
+				if(searchAttempt != undefined){
+					resolve(true);
+				}else{
+					resolve(false);
+				}
+				
+			});
+		})
+	},
+	getChannelActiveUsers : (cid) => {
+		return new Promise((resolve, reject) => {
+			db.all("SELECT COUNT(*) as times,databaseid,nickname FROM online WHERE channel = ? GROUP BY databaseid ORDER BY times DESC;", [cid], function(err,rows){
+				if(rows.length != 0){
+					var result = rows.splice(0,5);
+					resolve(result);
+				}else{
+					resolve([]);
+				}
+			});
+		})
 	}
 
 }

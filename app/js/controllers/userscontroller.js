@@ -2,46 +2,35 @@
 
 angular.module('tessustats.controller.users', [])
 .controller('usersCtrl', ['$scope','$http','$location', function($scope, $http,$location) {
-	var userResource = $http.get('/query/allusers').success(function(usersdata) {
-		
-		var lastScanClients = $http.get('/query/lastscanclients').success(function(data) {
-			$scope.users = usersdata;
-			//Go through all the clients that were in the last scan
-			for(var index = 0 ; index < data.length ; index++){
-				var handledClient = data[index];
+
+
+
+	$scope.updateData = function(){
+		var serverResource = $http.get('/query/userspage').success(function(data) {
+			
+	    	//Making  things pretty for user
+
+	    	//Loop last seen clients
+	    	for(var index = 0 ; index < data.lastscanclients.length ; index++){
+				var handledClient = data.lastscanclients[index];
 				//Find the client that has the same name
-				for(var allusersIndex = 0 ; allusersIndex < usersdata.length ; allusersIndex++){
-					if(usersdata[allusersIndex].databaseid === handledClient.databaseid){
+				for(var allusersIndex = 0 ; allusersIndex < data.userlist.length ; allusersIndex++){
+					if(data.userlist[allusersIndex].databaseid === handledClient.databaseid){
 						//Apply green color
-						$scope.users[allusersIndex].textcolor = 'success';
+						data.userlist[allusersIndex].textcolor = 'success';
 					}
 				}
 			}
-			
+
+	    	$scope.usersdata = data;
+	    	$scope.namefiltering();
 		});
-		
-	});
-	var countriesResource = $http.get('/query/getAllUsersCountry').success(function(countriesData) {
-		$scope.usercountries = countriesData;
-	});
-	var allScanClientsResource = $http.get('/query/usersAmount').success(function(data) {
-		$scope.uniqueVisitors = data.users;
-	});
+	};
 	
 	$scope.getTimeFromSeconds = function(seconds){
 		return getTimeFromSeconds(seconds);
 	};
-	
-	$scope.getCountry = function(clientid){
-		if($scope.usercountries == undefined){
-			return "";
-		}
-		for(var t = 0; t<$scope.usercountries.length ; t++){
-			if($scope.usercountries[t].databaseid == clientid){
-				return $scope.usercountries[t].country;
-			}
-		}
-	}
+
 	
 	//Function for clicking the user in the list
 	$scope.selectuser=function(clientid){
@@ -52,5 +41,33 @@ angular.module('tessustats.controller.users', [])
 	$scope.selectCountry = function(country){
 		$location.path('/country/'+country);
 	};
+
+	$scope.namefiltering = function(){
+		if($scope.namemodel != undefined && $scope.usersdata != undefined){
+			$scope.shownusers = $scope.usersdata.userlist.filter(function(value){
+
+				var nickname = value.nickname.toLowerCase();
+				var model = $scope.namemodel.toLowerCase();
+
+				return (nickname.indexOf(model) > -1);
+			});
+		}else{
+			if($scope.usersdata != undefined){
+				$scope.shownusers = $scope.usersdata.userlist;
+			}
+
+		}
+	};
+
+	$scope.getActivityRank = function(databaseid){
+		for(var c = 0 ; c < $scope.usersdata.userlist.length; c++){
+			if($scope.usersdata.userlist[c].databaseid == databaseid){
+				return c + 1;
+			}
+		}
+		return "?";
+	};
+
+	$scope.updateData();
 
 } ]);

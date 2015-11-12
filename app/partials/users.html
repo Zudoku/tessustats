@@ -3,11 +3,11 @@
   <div class="panel-heading">
     <h1 class="panel-title"> <strong>Users</strong> </h1>
   </div>
-  <div class="panel-body">
-  	Currently a total of {{uniqueVisitors}} unique visitors have been seen on the server!
+  <div class="panel-body panel-shadow">
+  	Currently a total of {{usersdata.clientamount}} unique visitors have been seen on the server!
   	<h4>Data</h4>
-    Below is a list of all users that have been on the TeamSpeak server since the making of this website (mid May 2015).
-    The data is grouped by the nickname of the user when it was seen online, but clicking the user will bring you to the clients latest statistics including their latest nickname if it has changed. Ctrl + F and typing your username will help you locate yourself faster =)
+    Below is a list of all users that have been on the TeamSpeak server since resetting of the HerGGu Teamspeak server (21.9.2015).
+    The data is grouped by ID of the user. Use the name search if looking for a specific one
     <h4>Understanding the table</h4>
     Users are sorted from the most active to the least active.<br>
     <strong>Times online</strong> column shows how many times the website has seen the client online total. Scan is made every 5 minutes.<br>
@@ -21,6 +21,12 @@
     <a href="/#/about" class="alert-link"> For more information about how the site works click here! </a>
   </div>
 </div>
+<form>
+  <div class="form-group">
+    <label for="namesearch">Name search</label>
+    <input id="usersearch" type="text" ng-model="namemodel" ngChange="{{namefiltering()}}"class="form-control" >
+  </div>
+</form>
 <table class="table table-hover">
 	<tr>
 	<th>Rank</th>
@@ -28,8 +34,8 @@
 	<th>Time online</th>
 	<th>Country </th>
 	</tr>
-	<tr class="clickable"ng-class="user.textcolor" ng-repeat="user in users" ng-click="selectuser(user.databaseid)">
-   		<td >{{$index + 1}}.</td><td> {{user.nickname}}</td><td>{{getTimeFromSeconds(user.times * 5 * 60)}}</td> <td><span ng-click="selectCountry(getCountry(user.databaseid) | uppercase)"class="famfamfam-flag-{{getCountry(user.databaseid) | lowercase}}"></span></td>
+	<tr class="clickable"ng-class="user.textcolor" ng-repeat="user in shownusers" ng-click="selectuser(user.databaseid)">
+   		<td >{{getActivityRank(user.databaseid)}}.</td><td> {{user.nickname}}</td><td>{{getTimeFromSeconds(user.times * 5 * 60)}}</td> <td><span ng-click="selectCountry((user.country | uppercase ))"class="famfamfam-flag-{{user.country}}"></span></td>
 	</tr>
 </table>
 </div>

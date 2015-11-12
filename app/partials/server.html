@@ -8,46 +8,46 @@
 	</div>
 	<div class="row">
 		<div class="col-xs-12 ">
-			<div class="panel panel-default ">
+			<div class="panel panel-default panel-shadow">
 				<div class="panel-body ">
 					<div class="row smallmarginbottom">
 						<div class="col-xs-6 smallmarginbottom">
-							<strong>Server name:</strong> {{serverdata.name}}
+							<strong>Server name:</strong> {{serverdata.basicinfo.name}}
 						</div>
 						<div class="col-xs-6 smallmarginbottom">
 							<strong>Server welcome message:</strong>
-							{{serverdata.welcomemessage}}
+							{{serverdata.basicinfo.welcomemessage}}
 						</div>
 						<div class="col-xs-6 smallmarginbottom">
-							<strong>Server platform:</strong> {{serverdata.platform}}
+							<strong>Server platform:</strong> {{serverdata.basicinfo.platform}}
 						</div>
 						<div class="col-xs-6 smallmarginbottom ">
-							<strong>Server version:</strong> {{serverdata.version}}
+							<strong>Server version:</strong> {{serverdata.basicinfo.version}}
 						</div>
 						<div class="col-xs-6 smallmarginbottom">
-							<strong>Average ping:</strong> {{serverdata.ping}}
+							<strong>Average ping:</strong> {{serverdata.basicinfo.ping}}
 						</div>
 						<div class="col-xs-6 smallmarginbottom">
-							<strong>Packet loss:</strong> {{serverdata.packetloss}}%
+							<strong>Packet loss:</strong> {{serverdata.basicinfo.packetloss}}%
 						</div>
 						<div class="col-xs-6 smallmarginbottom">
-							<strong>Server uptime:</strong> {{serverdata.uptime}}
+							<strong>Server uptime:</strong> {{serverdata.basicinfo.uptime}}
 						</div>
 						<div class="col-xs-6 smallmarginbottom">
 							<strong>Server status: <span
-								class="text-{{lastScanStyle}}">{{lastScan[0].success}}</span></strong>
+								class="text-{{serverdata.lastscaninfo.lastScanStyle}}">{{serverdata.lastscan[0].success}}</span></strong>
 						</div>
 						<div class="col-xs-6 smallmarginbottom">
-							<strong>Scans total:</strong> {{scanAmount}}
+							<strong>Scans total:</strong> {{serverdata.scanamount}}
 						</div>
 						<div class="col-xs-6 smallmarginbottom">
-							<strong>Unique visitors:</strong> {{uniqueVisitors}}
+							<strong>Unique visitors:</strong> {{serverdata.clientamount}}
 						</div>
 						<div class="col-xs-6 smallmarginbottom">
-							<strong>Channels active:</strong> {{activeChannels}}
+							<strong>Channels active:</strong> {{serverdata.activechannels}}
 						</div>
 						<div class="col-xs-6 smallmarginbottom">
-							<strong>Channels created:</strong> {{channelsAmount}}
+							<strong>Channels created:</strong> {{serverdata.channelamount}}
 						</div>
 					</div>
 				</div>
@@ -64,25 +64,25 @@
 	</div>
 	<div class="row">
 		<div class="col-xs-12 ">
-			<div class="panel panel-default ">
+			<div class="panel panel-default panel-shadow">
 				<div class="panel-body ">
 					<div class="row smallmarginbottom">
 						<div class="col-xs-6 smallmarginbottom">
-							<strong>At this moment:</strong> {{usersOnlineNow}} online!
+							<strong>At this moment:</strong> {{serverdata.lastscanCO}} online!
 						</div>
 						<div class="col-xs-6 smallmarginbottom">
-							<strong>Server can hold up to:</strong> {{serverdata.maxclients}} clients
+							<strong>Server can hold up to:</strong> {{serverdata.basicinfo.maxclients}} clients
 						</div>
 						<div class="col-xs-6 smallmarginbottom">
-							<strong>Last scan:</strong> {{lastScan.dateFormatted}}
+							<strong>Last scan:</strong> {{serverdata.lastscaninfo.dateFormatted}}
 						</div>
 						<div class="col-xs-6 smallmarginbottom">
 							<strong>Next scan:</strong> ~ {{getTimeToNextScan()}}
 						</div>
 						<div class="col-xs-6 smallmarginbottom ">
-							<strong>Most clients seen:</strong> {{mostclientsseen.times}} <i
+							<strong>Most clients seen:</strong> {{serverdata.mostclients.times}} <i
 								class="icon-ok-sign" rel="tooltip"
-								title="{{mostclientsseen.date}}" id="mostclienttime"> <span
+								title="{{serverdata.mostclients.date}}" id="mostclienttime"> <span
 								class="glyphicon glyphicon-time text-info"></span>
 							</i>
 						</div>
@@ -114,9 +114,10 @@
 		</div>
 	</div>
 <script>
+
 $(document).ready(function(){
     $("[rel=tooltip]").tooltip({ placement: 'right'});
-    console.log("tooltips activated");
 });
+
 </script>
 </div>

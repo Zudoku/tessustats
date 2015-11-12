@@ -2,19 +2,41 @@
 
 angular.module('tessustats.controller.channel', [])
 .controller('channelCtrl', ['$scope','$http','$location','$routeParams', function($scope, $http,$location,$routeParams) {
-		var channelResource = $http.get('/query/channel/'+$routeParams.channelid).success(function(data) {
-			$scope.channel = data;
-			$scope.passwordString = ($scope.channel.passwordprotected == 0) ? "No password protection": "Password protection";
-			$scope.encryptionString = ($scope.channel.encryptedvoice == 0) ? "No voice encryption": "Voice encryption";
-			if($scope.channel.secondsempty == -1){
-				$scope.activity = "Active";
-			}else{
-				$scope.activity = "Empty for " + getTimeFromSeconds($scope.channel.secondsempty);
-			}
-			$scope.encryptionString = ($scope.channel.encryptedvoice == 0) ? "No voice encryption": "Voice encryption";
-			
-			
-			
+
+	$scope.updateData = function(){
+		var channelsResource = $http.get('/query/channelpage/' + $routeParams.channelid).success(function(data) {
+	    	$scope.channeldata = data;
 		});
+	};
+	$scope.getPasswordProtectionString = function(value){
+		if(value == 1){
+			return "Password protected";
+		}
+		return "No password protection";
+	};
+
+	$scope.getVoiceEncryptionString = function(value){
+		if(value == 1){
+			return "Voice encryption";
+		}
+		return "No Voice encryption";
+	};
+
+	$scope.getActivityString = function(value){
+		if(value == -1){
+			return "Active right now!";
+		}else{
+			return "Empty for " + getTimeFromSeconds(value);
+		}
+	};
+
+	$scope.getTimeFromSeconds = function(seconds){
+		return getTimeFromSeconds(seconds);
+	};
+	$scope.selectuser=function(clientid){
+		$location.path('/user/'+clientid);
+	};
+	
+	$scope.updateData();
 
 } ]);

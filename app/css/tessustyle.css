@@ -22,6 +22,10 @@ body {
 .nomarginbottom{
   margin-bottom: 0px;
 }
+.mediummarginbottom{
+  margin-bottom: 25px;
+}
+
 .smallmarginbottom{
   margin-bottom: 10px;
 }
@@ -56,4 +60,10 @@ body {
 }
 .timeframe-buttons {
   margin-top: 10px;
+}
+.panel-shadow {
+  background-color: #F3F3F3;
+}
+.color-cyan {
+  background-color: #5bc0de !important;
 }

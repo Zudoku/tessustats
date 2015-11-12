@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-12 ">
-            <h1><span class="label label-default"> Name: {{user.nickname}}</span></h1>
+            <h1><span class="label label-default"> Name: {{userinfo.info.nickname}}</span></h1>
         </div>
 
     </div>
@@ -14,40 +14,40 @@
     <div class="row">
         <div class="col-xs-12 ">
             <div class="panel panel-default ">
-                <div class="panel-body ">
+                <div class="panel-body panel-shadow">
                     <div class="row smallmarginbottom" >
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Server rank:</strong> {{user.rank}}
+                            <strong>Server rank:</strong> {{userinfo.info.rank}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Operating system:</strong> {{user.os}}
+                            <strong>Operating system:</strong> {{userinfo.info.os}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Client version:</strong> {{user.clientversion}}
+                            <strong>Client version:</strong> {{userinfo.info.clientversion}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom ">
-                            <strong>Country:</strong> {{user.country}} <span class="famfamfam-flag-{{user.flagCode}}"></span>
+                            <strong>Country:</strong> {{userinfo.info.country}} <span class="famfamfam-flag-{{userinfo.info.countrycode}}"></span>
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Status:</strong> <span class="{{onlineClass}}"> {{onlineRightNow}} </span>
+                            <strong>Status:</strong> <span class="{{onlineClass}}"> {{userinfo.info.onlinetext}} </span>
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Total connections to server:</strong> {{user.totalconnections}}
+                            <strong>Total connections to server:</strong> {{userinfo.info.totalconnections}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Activity score:</strong> {{allusersrecord.times}}
+                            <strong>Activity score:</strong> {{userinfo.activityscore.score}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Time spent online:</strong> {{getTimeFromSeconds(allusersrecord.times * 5 * 60)}}
+                            <strong>Time spent online:</strong> {{getTimeFromSeconds(userinfo.activityscore.score * 5 * 60)}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Activity rank:</strong> {{allusersrecord.activityrank}}
+                            <strong>Activity rank:</strong> {{userinfo.activityscore.rank}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Badges:</strong> {{user.badges}}
+                            <strong>Badges:</strong> {{userinfo.info.badges}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Talkpower:</strong> {{user.talkpower}}
+                            <strong>Talkpower:</strong> {{userinfo.info.talkpower}}
                         </div>
 
                     </div>
@@ -64,21 +64,41 @@
     <div class="row">
         <div class="col-xs-12 ">
             <div class="panel panel-default ">
-                <div class="panel-body ">
+                <div class="panel-body panel-shadow">
                     <div class="row smallmarginbottom" >
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Last seen:</strong> {{record.date}}
+                            <strong>Last seen:</strong> {{userinfo.userlastrecord.dateFormatted}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Channel:</strong> {{channelName}}
+                            <strong>Channel:</strong> <a href="/app/#/channel/{{userinfo.userlastrecord.channel}}" >{{userinfo.userlastrecord.channelname}} </a>
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Microphone:</strong> {{record.inputmutedstring}}
+                            <strong>Microphone:</strong> {{getMutedText(userinfo.userlastrecord.inputmuted)}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Speakers:</strong> {{record.outputmutedstring}}
+                            <strong>Speakers:</strong> {{getMutedText(userinfo.userlastrecord.outputmuted)}}
                         </div>
 
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-4 ">
+            <h3 style="margin:0px;"><span class="label label-info" > User channel preference </span></h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 ">
+            <div class="panel panel-default ">
+                <div class="panel-body panel-shadow">
+                    <div class="row smallmarginbottom" >
+                        <div class="col-xs-12 ">
+                            <div id="userchart" style="height: 300px;">
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,36 +1,71 @@
 <div class="container content">
     <div class="row">
         <div class="col-xs-4 ">
-            <h2 style="margin:0px;"><span class="label label-info" > {{channel.name}}</span></h2>
+            <h2 style="margin:0px;"><span class="label label-info" > {{channeldata.channelinfo.name}}</span></h2>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-12 ">
             <div class="panel panel-default ">
-                <div class="panel-body ">
+                <div class="panel-body panel-shadow">
                     <div class="row" >
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Channel topic:</strong> {{channel.topic}}
+                            <strong>Channel topic:</strong> {{channeldata.channelinfo.topic}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Channel description:</strong> {{channel.description}}
+                            <strong>Channel description:</strong> {{channeldata.channelinfo.description}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Channel protection:</strong> {{passwordString}}
+                            <strong>Channel protection:</strong> {{getPasswordProtectionString(channeldata.channelinfo.passwordprotected)}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Channel type:</strong> {{channel.type}}
+                            <strong>Channel type:</strong> {{channeldata.channelinfo.type}}
                         </div>
 						<div class="col-xs-6 ">
-                            <strong>Channel voice encryption:</strong> {{encryptionString}}
+                            <strong>Channel voice encryption:</strong> {{getVoiceEncryptionString(channeldata.channelinfo.encryptedvoice)}}
                         </div>
                         <div class="col-xs-6 ">
-                            <strong>Channel Activity:</strong> {{activity}}
+                            <strong>Channel Activity:</strong> {{getActivityString(channeldata.channelinfo.secondsempty)}}
                         </div>
                     </div>
                 </div>
             </div>
 
+        </div>
+    </div>
+    <div class="row mediummarginbottom" ng-show="channeldata.ismostactivethisweek">
+        <div class="col-xs-4 ">
+            <h2 style="margin:0px;"><span class="label label-info" > Active channel award!</span></h2>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-xs-4 ">
+            <h3 style="margin:0px;"><span class="label label-info" > Top 5 active users in the channel</span></h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 ">
+            <div class="panel panel-default ">
+                <div class="panel-body panel-shadow">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>Rank</th> 
+                            <th>User name</th>
+                            <th>Activity score</th>
+                            <th>Time online</th>
+                        </tr>
+                        <tr class="clickable" ng-repeat="user in channeldata.activeusers" ng-click="selectuser(user.databaseid)" > 
+                            <td>{{$index+1}}.</td>
+                            <td>{{user.nickname}}</td>
+                            <td>{{user.times}}</td>
+                            <td>{{getTimeFromSeconds(user.times * 60 * 5)}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
