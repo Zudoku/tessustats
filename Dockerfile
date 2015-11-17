@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:5
+FROM nodesource/jessie:5.0.0
 
 WORKDIR /
 ADD ./ /tessustat
