@@ -458,6 +458,9 @@ module.exports = {
 						var finding = true;
 						var channelLevel = 0;
 						var handledChannel = channel;
+						if(channel == undefined){
+							return {};
+						}
 						while(finding){
 							var parentCID = handledChannel.pid;
 							if(parentCID == 0){
