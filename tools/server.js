@@ -5,7 +5,6 @@ var express = require('express');
 var app = express();
 var database=require('../server/database');
 var tsparser=require('../server/tsparser');
-var blogAPI = require('../blog/blogAPI');
 
 console.log("Modules loaded succesfully!");
 
@@ -202,14 +201,6 @@ app.get('/query/serverActivityChart/:timeframe', function(req, res){
 app.get('/query/scanTimesDay', function(req, res){
 	res.set('Content-Type', 'text/plain');
 	database.getScanTimesDay(res);
-});
-
-//BLOG 
-app.get('/query/blog/article/:id',function(req,res){
-	blogAPI.getArticle(res,req.params.id);
-});
-app.get('/query/blog/articleList',function(req,res){
-	blogAPI.getArticleList(res);
 });
 
 //Redirect / to /app/
