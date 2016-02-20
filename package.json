@@ -1,6 +1,6 @@
 {
 	"name": "TessuStats",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"description": "Webapp that queries Teamspeak 3 Server and displays data about users, channels and nationalities.",
   	"author": "Arttu Siren <arttu.siren@gmail.com>",
   	"contributors": [{
