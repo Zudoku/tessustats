@@ -218,6 +218,6 @@ app.listen(config.webserver_port,config.webserver_bind);
 
 console.log("Server running at ",config.webserver_bind,":",config.webserver_port);
 
-console.log("Starting scanning TS every " + config.TIMEOUT_BETWEEN_SCANS + " seconds");
-tsparser.keepScanning(config.TIMEOUT_BETWEEN_SCANS);
+console.log("Starting scanning TS every " + config.timeout_between_scans + " seconds");
+tsparser.keepScanning(config.timeout_between_scans);
 

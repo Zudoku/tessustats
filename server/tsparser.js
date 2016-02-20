@@ -5,14 +5,14 @@
 
 var TeamSpeakClient = require("node-teamspeak"), util = require("util"), config = require('../server/config');
 
-var cl = new TeamSpeakClient(config.TS_IP);
+var cl = new TeamSpeakClient(config.ts_ip);
 
-var SERVERQUERY_LOGIN_NAME  = config.SERVERQUERY_LOGIN_NAME;//client_login_name
-var SERVERQUERY_LOGIN_PASSWORD = config.SERVERQUERY_LOGIN_PASSWORD; //client_login_password
+var SERVERQUERY_LOGIN_NAME  = config.serverquery_username; //client_login_name
+var SERVERQUERY_LOGIN_PASSWORD = config.serverquery_password; //client_login_password
 
-var VIRTUAL_SERVER_ID = config.VIRTUAL_SERVER_ID;
+var VIRTUAL_SERVER_ID = config.virtual_server_id;
 
-var TIME_BETWEEN_QUERIES = config.TIME_BETWEEN_QUERIES; //milliseconds
+var TIME_BETWEEN_QUERIES = config.time_between_queries; //milliseconds
 
 var database;
 
@@ -286,7 +286,7 @@ var loginToServerQuery = function(callback) {
 				logscan(false);
 				return;
 			}
-			var nickname =(config.MODE == "DEV")? "Tessustats (BOT) (DEV)": "Tessustats (BOT)";
+			var nickname =(config.mode == "DEV")? "Tessustats (BOT) (DEV)": "Tessustats (BOT)";
 
 			cl.send("clientupdate",{client_nickname : nickname}, function(err, response, rawResponse){
 				callback();

@@ -9,8 +9,6 @@
 var config = require('../server/config');
 
 
-var statistics = require('../server/statistics');
-statistics.calculateStatisticsData();
 
 
 /*
@@ -19,7 +17,7 @@ var TeamSpeakClient = require("node-teamspeak"),
 
 console.log(util.inspect(cl));
 
-var cl = new TeamSpeakClient(config.TS_IP);
+var cl = new TeamSpeakClient(config.ts_ip);
 cl.send("login", {client_login_name: config.botlogin, client_login_password: config.botpass}, function(err, response, rawResponse){
     console.log(util.inspect(rawResponse));
     cl.send("use", { sid: 1}, function(err, response, rawResponse){
