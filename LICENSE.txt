@@ -1,5 +1,13 @@
 LICENCES
 
+TessuStats
+==============================================================================
+Please use this software according to all these licenses. If you use this, 
+please give appropriate credit. You are also free to remove or change 
+the contents of the pages as long as you state that you made the changes.
+
+TessuStats, Arttu Siren <arttu.siren@gmail.com> 
+http://tessustats.ovh/ 2014-2016
 
 Angular.js 
 ==============================================================================
