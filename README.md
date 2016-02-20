@@ -2,12 +2,13 @@
 
 Version 2.0.3
 
+http://tessustats.ovh/
 
-
-### What is this repository for? ###
-
+TessuStats is a website / webapp that collects data from the HerGGu Teamspeak server and displays different statistics, graphs and information about how the server is operating. TessuStats is completely non-profit free website and is developed and maintained just for practice, portfolio and own fun.
 
 ### How do I get set up? ###
+
+#### config ####
 
 Example config.js
 ```
@@ -31,9 +32,22 @@ config.mode = "";
 module.exports = config;
 
 ```
+#### Installing with Docker####
 
+```
+#!Shell
 
-### Contribution guidelines ###
+docker build  -t herggu/tessustats . 
+```
+
+#### Installing without Docker ####
+
+```
+#!Shell
+npm install
+node tools/server.js
+
+```
 
 ### License ###
 
