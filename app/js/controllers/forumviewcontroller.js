@@ -73,7 +73,7 @@ angular.module('tessustats.controller.forumView', [])
 	$scope.login = function(authguid) {
 		var cookieConfig = {
 			path : '/',
-			domain: "127.0.0.1", //'127.0.0.1' for DEV '.tessustats.ovh' for PRODUCTION
+			domain: ".tessustats.ovh", //'127.0.0.1' for DEV '.tessustats.ovh' for PRODUCTION
 			expires : "Fri, 31 Dec 2025 23:59:59 GMT",
 			secure : false
 		};
@@ -115,7 +115,7 @@ angular.module('tessustats.controller.forumView', [])
 
 		var cookieConfig = {
 			path : '/',
-			domain: "127.0.0.1", //'127.0.0.1' for DEV '.tessustats.ovh' for PRODUCTION
+			domain: ".tessustats.ovh", //'127.0.0.1' for DEV '.tessustats.ovh' for PRODUCTION
 			expires : "Fri, 31 Dec 2025 23:59:59 GMT",
 			secure : false
 		};
