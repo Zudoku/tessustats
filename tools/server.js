@@ -194,7 +194,7 @@ app.get('/query/channelpage/:cid', (req,res) => {
 
 
 //The API handler for registration
-app.post('/registration/new/:uniqueID', (req,res) => {
+app.get('/registration/new/:uniqueID', (req,res) => {
 
 	var uniqueID = req.params.uniqueID;
 	console.log(req.ip + " tried to register " + uniqueID);
@@ -209,7 +209,7 @@ app.post('/registration/new/:uniqueID', (req,res) => {
 	
 });
 
-app.post('/registration/confirm/:uniqueID/:databaseID/:authguid', (req,res) => {
+app.get('/registration/confirm/:uniqueID/:databaseID/:authguid', (req,res) => {
 
 	var uniqueID = req.params.uniqueID;
 	var databaseID = req.params.databaseID;
@@ -279,7 +279,7 @@ app.get('/query/forum/post/:postID', (req,res) => {
 	
 });
 
-app.post('/forum/editPost/:postID', (req,res) => {
+app.get('/forum/editPost/:postID', (req,res) => {
 
 	var postID = req.params.postID;
 	var post = req.body;
@@ -291,7 +291,7 @@ app.post('/forum/editPost/:postID', (req,res) => {
 	
 });
 
-app.post('/forum/newPost', (req,res) => {
+app.get('/forum/newPost', (req,res) => {
 
 	var post = req.body;
 	console.log(JSON.stringify(post));
@@ -350,7 +350,7 @@ app.post('/forum/newPost', (req,res) => {
 });
 
 
-app.post('/forum/newComment', (req,res) => {
+app.get('/forum/newComment', (req,res) => {
 
 	var commentData = req.body;
 	console.log(JSON.stringify(commentData));
@@ -408,7 +408,7 @@ app.post('/forum/newComment', (req,res) => {
 	
 });
 
-app.post('/forum/editComment', (req,res) => {
+app.get('/forum/editComment', (req,res) => {
 
 	var post = req.body;
 
@@ -418,7 +418,7 @@ app.post('/forum/editComment', (req,res) => {
 	
 });
 
-app.post('/query/names', (req,res) => {
+app.get('/query/names', (req,res) => {
 
 	var ids = req.body.ids;
 

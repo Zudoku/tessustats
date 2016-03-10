@@ -35,7 +35,7 @@ angular.module('tessustats.controller.forumView', [])
 		}
 
 		//Make HTTP POST request with that uniqueID
-		var registerQuery = $http.post('/registration/new/' + uniqueID).success(function(data) {
+		var registerQuery = $http.get('/registration/new/' + uniqueID).success(function(data) {
 
 
 			console.log(JSON.stringify(data));
@@ -84,7 +84,7 @@ angular.module('tessustats.controller.forumView', [])
 
 	$scope.checkOutNamesFor = function(ids){
 		console.log(JSON.stringify(ids));
-		var nameCheckQuery = $http.post('/query/names',{ ids : ids });
+		var nameCheckQuery = $http.get('/query/names',{ ids : ids });
 
 		nameCheckQuery.success(function(data) {
 			console.log(JSON.stringify(data));

@@ -17,7 +17,7 @@ angular.module('tessustats.controller.forumconfirm', [])
 		}
 
 		//Make HTTP POST request with that uniqueID
-		var registerQuery = $http.post('/registration/confirm/' +  $routeParams.uniqueID + '/' + $routeParams.databaseID + '/' + authguid).success(function(data) {
+		var registerQuery = $http.get('/registration/confirm/' +  $routeParams.uniqueID + '/' + $routeParams.databaseID + '/' + authguid).success(function(data) {
 
 			console.log(JSON.stringify(data));
 			if(data.success){

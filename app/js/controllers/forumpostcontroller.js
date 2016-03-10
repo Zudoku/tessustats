@@ -37,7 +37,7 @@ angular.module('tessustats.controller.forumpost', [])
 		};
 
 
-		var postCommentQuery = $http.post('/forum/newComment',commentObject);
+		var postCommentQuery = $http.get('/forum/newComment',commentObject);
 
 		postComment.success(function(data) {
 			$scope.sending = false;
@@ -84,7 +84,7 @@ angular.module('tessustats.controller.forumpost', [])
 
 	$scope.checkOutNamesFor = function(ids){
 		console.log(JSON.stringify(ids));
-		var nameCheckQuery = $http.post('/query/names',{ ids : ids });
+		var nameCheckQuery = $http.get('/query/names',{ ids : ids });
 
 		nameCheckQuery.success(function(data) {
 			console.log(JSON.stringify(data));

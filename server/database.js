@@ -1008,6 +1008,15 @@ module.exports = {
 	},
 	getUserNamesFromDatabaseIDs : (databaseIDArray) => {
 		return new Promise((resolve, reject) => {
+
+			if(databaseIDArray == undefined){
+				reject({
+					success : false,
+					error : err,
+					msg : "022"
+				});
+			}
+
 			db.all("SELECT databaseid,nickname,country,rank FROM userdata",function(err, rows) {
 				if(err) {
 					reject({
