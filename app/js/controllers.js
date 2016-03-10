@@ -40,7 +40,11 @@ angular.module('tessustats.controllers',
 	'tessustats.controller.country',
 	'tessustats.controller.countries',
 	'tessustats.controller.channel',
-	'tessustats.controller.channels'
+	'tessustats.controller.channels',
+	'tessustats.controller.forumView',
+	'tessustats.controller.forumpostnew',
+	'tessustats.controller.forumpost',
+	'tessustats.controller.forumconfirm'
 	])
 
 

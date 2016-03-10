@@ -4,6 +4,7 @@
 // Declare app level module which depends on filters, and services
 angular.module('tessustats', [
   'ngRoute',
+  'ngCookies',
   'tessustats.controllers',
   'tessustats.filters',
   'tessustats.services',
@@ -23,6 +24,11 @@ angular.module('tessustats', [
   $routeProvider.when('/country/:countrycode', {templateUrl: 'partials/country.html', controller: 'countryCtrl'});
   //ABOUT
   $routeProvider.when('/about', {templateUrl: 'partials/about.html', controller: 'basicCtrl'});
+  //FORUMS
+  $routeProvider.when('/forum', {templateUrl: 'partials/forumview.html', controller: 'forumviewCtrl'});
+  $routeProvider.when('/forum/post/:postID', {templateUrl: 'partials/forumpost.html', controller: 'forumpostCtrl'});
+  $routeProvider.when('/forum/newpost/', {templateUrl: 'partials/forumpostnew.html', controller: 'forumpostnewCtrl'});
+  $routeProvider.when('/registration/confirm/:uniqueID/:databaseID', {templateUrl: 'partials/forumconfirmregister.html', controller: 'forumconfirmCtrl'});
   //FRONT PAGE
   $routeProvider.otherwise({templateUrl: 'partials/front.html', controller: 'basicCtrl'});
 }]);

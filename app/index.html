@@ -34,7 +34,7 @@
 }
 
 </style>
-  <body>
+  <body class="bgcolor-cyan-light">
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
@@ -44,27 +44,28 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand whiteText" href="#"><span style="color: #5bc0de;">T</span>essu <span style="color: #5bc0de;">S</span>tats </a>
+          <a class="navbar-brand color-white" href="#"><span class="color-cyan">T</span>essu <span class="color-cyan">S</span>tats </a>
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="#/" class="whiteText">Home</a></li>
-            <li><a href="#/server" class="whiteText"><span class="glyphicon glyphicon-stats"></span> Server</a></li>
-            <li><a href="#/users" class="whiteText"><span class="glyphicon glyphicon-user"></span> Users</a></li>
-            <li><a href="#/countries" class="whiteText"><span class="glyphicon glyphicon-globe"></span> Countries</a></li>
-            <li><a href="#/channels" class="whiteText"><span class="glyphicon glyphicon-list-alt"></span> Channels</a></li>
-            <li><a href="#/about" class="whiteText">About</a></li>
+            <li><a href="#/" class="color-white"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+            <li><a href="#/server" class="color-white"><span class="glyphicon glyphicon-stats"></span> Server</a></li>
+            <li><a href="#/users" class="color-white"><span class="glyphicon glyphicon-user"></span> Users</a></li>
+            <li><a href="#/countries" class="color-white"><span class="glyphicon glyphicon-globe"></span> Countries</a></li>
+            <li><a href="#/channels" class="color-white"><span class="glyphicon glyphicon-list-alt"></span> Channels</a></li>
+            <li><a href="#/forum" class="color-white"><span class="glyphicon glyphicon-heart"></span> Forum</a></li>
+            <li><a href="#/about" class="color-white">About</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </div>
-    <div ng-view></div>
+    <div ng-view class ="bgcolor-cyan-light"></div>
     <div id="footer">
       <div class="container">
       <hr>
-        <p class="text-muted">Created by <a href="http://steamcommunity.com/profiles/76561198040377718/">Arnold (Arttu Siren) </a> in 2014-2016.    </p>
-        <p class="text-muted"><a href="https://bitbucket.org/Arap"> My Bitbucket </a> </p>
-        <p class="text-muted">Special thanks to <a href="https://bitbucket.org/Rivenation/">Rivenation</a> for hosting the TeamSpeak server! =) </p>
+        <p class="color-black">Created by <a class="color-red" href="http://steamcommunity.com/profiles/76561198040377718/">Arttu (Arttu Siren) </a> in 2014-2016.    </p>
+        <p class="color-black"><a class="color-red" href="https://bitbucket.org/Arap"> My Bitbucket </a> </p>
+        <p class="color-black">Special thanks to <a class="color-red" href="https://bitbucket.org/Rivenation/">Rivenation</a> for hosting the TeamSpeak server! =) </p>
       </div>
     </div>
     <!-- LIBRARIES -->
@@ -76,6 +77,7 @@
     <script src="lib/angular/angular.js"></script>
     <script src="lib/angular/angular-route.js"></script>
     <script src="lib/angular/angular-resource.js"></script>
+    <script src="lib/angular/angular-cookies.js"></script>
     <!-- Moment.js -->
     <script src="lib/moment/moment-2-10-6.js"></script>
     <!-- Highcharts.js -->
@@ -89,6 +91,10 @@
     <script src="js/controllers/countriescontroller.js"></script>
     <script src="js/controllers/channelcontroller.js"></script>
     <script src="js/controllers/channelscontroller.js"></script>
+    <script src="js/controllers/forumviewcontroller.js"></script>
+    <script src="js/controllers/forumpostcontroller.js"></script>
+    <script src="js/controllers/forumpostnewcontroller.js"></script>
+    <script src="js/controllers/forumconfirmregistercontroller.js"></script>
 
     <script src="js/services.js"></script>
     <script src="js/controllers.js"></script>

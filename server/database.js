@@ -667,6 +667,363 @@ module.exports = {
 				}
 			});
 		})
+	},
+	newRegistration : (databaseID,uniqueID,authguid) => {
+		return new Promise((resolve, reject) => {
+			db.run("DELETE FROM forumRegisters WHERE uniqueID = ?",[uniqueID], function(err){
+				if(err){
+					reject({
+						success : false,
+						error : err,
+						msg : "001"
+					});
+					return;
+				}
+				db.run("INSERT INTO forumRegisters (databaseID,uniqueID,created,authguid) VALUES (?,?,?,?)",[databaseID,uniqueID,new Date(),authguid], function(err){
+					if(err){
+						reject({
+							success : false,
+							error : err,
+							msg : "002"
+						});
+						return;
+					}
+					resolve({
+						success : true,
+						databaseID : databaseID, 
+						uniqueID : uniqueID,
+						authguid : authguid
+					});
+				});
+			});
+		})
+	},
+	authenticate : (guid) => {
+		return new Promise((resolve, reject) => {
+			db.get("SELECT * FROM forumAuthentication WHERE authguid = ?",[guid], function(err,row){
+				if(err){
+					reject({
+						success : false,
+						error : err,
+						msg : "003"
+					});
+				} else {
+					resolve({
+						success : (row != undefined),
+						row : row
+					});
+				}
+
+			});
+		})
+	},
+	getStartedRegistration : (authguid) => {
+		return new Promise((resolve, reject) => {
+			db.get("SELECT * FROM forumRegisters WHERE authguid = ?",[authguid], function(err,row){
+				if(err){
+					reject({
+						success : false,
+						error : err,
+						msg : "004"
+					});
+				} else {
+					resolve({
+						success : true,
+						row : row
+					});
+				}
+			});
+		})
+	},
+	completeRegistration : (databaseID,uniqueID,authguid) => {
+		return new Promise((resolve, reject) => {
+			db.get("SELECT * FROM forumRegisters WHERE authguid = ?",[authguid], function(err,row){
+				if(err){
+					reject({
+						success : false,
+						error : err,
+						msg : "005"
+					});
+					return;
+				} else {
+
+					if(row == undefined){
+						reject({
+							success : false,
+							error : { reason : "No such authguid" },
+							msg : "006"
+						});
+						return;
+					}
+
+					var correctCredentials = true;
+					if(row.uniqueID != uniqueID){
+						correctCredentials = false;
+					}
+					if(row.databaseID != databaseID){
+						correctCredentials = false;
+					}
+					if(!correctCredentials){
+						reject({
+							success : false,
+							error : { reason : "Wrong credentials!" },
+							msg : "007"
+						});
+						return;
+					}
+
+					//Legit registration, move the row to new database and delete previous authguid if there is one
+					db.run("DELETE FROM forumAuthentication WHERE databaseID = ?",[databaseID], function(err){
+						if(err){
+							reject({
+								success : false,
+								error : err,
+								msg : "013"
+							});
+						} else {
+							db.run("INSERT INTO forumAuthentication (databaseID,uniqueID,authguid,created,lastUsed) VALUES (?,?,?,?,?)",[databaseID,uniqueID,authguid,new Date(),new Date()], function(err){
+								if(err){
+									reject({
+										success : false,
+										error : err,
+										msg : "008"
+									});
+								} else {
+									db.run("DELETE FROM forumRegisters WHERE authguid = ?",[authguid], function(err){
+										if(err){
+											reject({
+												success : false,
+												error : err,
+												msg : "009"
+											});
+										} else {
+											resolve({
+												success : true
+											});
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+		})
+	},
+	getForumPostDataWithID : (postID) => {
+		return new Promise((resolve, reject) => {
+			db.get("SELECT * FROM forumPosts WHERE ID = ?",[postID], function(err, row) {
+				if(err){
+					reject({
+						success : false,
+						error : err,
+						msg : "014"
+					});
+				}else{
+					resolve(row);
+				}
+			});
+		})
+	},
+	getForumPostsWithCreator : (databaseid,index) => {
+		return new Promise((resolve, reject) => {
+			db.all("SELECT * FROM forumPosts WHERE creator = ?",[databaseid], function(err, rows) {
+				if(err){
+					reject([]);
+				}else{
+					var chunkSize = 100;
+					if(rows.length > index * chunkSize){
+						var start = index * chunkSize;
+						var end = rows.length;
+						if(start + chunkSize < end){
+							end = start + chunkSize + 1;
+						}
+
+						var result = rows.slice(start,end);
+						resolve(result);
+
+
+
+					}else{
+						resolve([]);
+					}
+				}
+			});
+		})
+	},
+	getForumPostsWithCategory : (category,index) => {
+		return new Promise((resolve, reject) => {
+			db.all("SELECT * FROM forumPosts WHERE category = ?",[category], function(err, rows) {
+				if(err){
+					reject([]);
+				}else{
+					var chunkSize = 100;
+					if(rows.length > index * chunkSize){
+						var start = index * chunkSize;
+						var end = rows.length;
+						if(start + chunkSize < end){
+							end = start + chunkSize + 1;
+						}
+
+						var result = rows.slice(start,end);
+						resolve(result);
+					}else{
+						resolve([]);
+					}
+				}
+			});
+		})
+	},
+	getLatestForumPosts : (index) => {
+		return new Promise((resolve, reject) => {
+			db.all("SELECT * FROM forumPosts ORDER BY updated DESC", function(err, rows) {
+				if(err){
+					reject([]);
+				}else{
+					var chunkSize = 100;
+					if(rows.length > index * chunkSize){
+						var start = index * chunkSize;
+						var end = rows.length;
+						if(start + chunkSize < end){
+							end = start + chunkSize + 1;
+						}
+
+						var result = rows.slice(start,end);
+						resolve(result);
+					}else{
+						resolve([]);
+					}
+				}
+			});
+		})
+	},
+	addNewForumPost : (databaseID,category,title,text) => {
+		return new Promise((resolve, reject) => {
+			db.get("SELECT * FROM forumUtil", function(err, row) {
+				if(err){
+					reject({
+						success : false,
+						error : err,
+						msg : "015"
+					});
+				}else{
+					var currentID = row.currentID;
+					currentID++;
+					db.run("DELETE FROM forumUtil",function(err) {
+						if(err){
+							reject({});
+						}else{
+							db.run("INSERT INTO forumUtil (currentID) VALUES (?)",[currentID],function(err) {
+								if(err){
+									reject({
+										success : false,
+										error : err,
+										msg : "016"
+									});
+								}else{
+									db.run("INSERT INTO forumPosts (creator,ID,created,updated,comments,category,title,content) VALUES (?,?,?,?,?,?,?,?)",
+									[databaseID,currentID,new Date(), new Date(),0,category,title,text]
+									,function(err) {
+										if(err){
+											reject({
+												success : false,
+												error : err,
+												msg : "017"
+											});
+										} else {
+											resolve({
+												success : true,
+												postID : currentID
+											});
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			})
+		})
+	},
+	addNewComment : (databaseID,text,postID) => {
+		return new Promise((resolve, reject) => {
+			var commentTime = new Date();
+			db.run("INSERT INTO forumPostsComments (commenter,forumPost,comment,postTime) VALUES (?,?,?,?)",[databaseID,postID,text,commentTime],function(err) {
+				if(err){
+					reject({
+						success : false,
+						error : err,
+						msg : "018"
+					});
+				} else {
+					db.get("SELECT comments FROM forumPosts WHERE ID = ?",[postID],function(err,row) {
+						if(err){
+							reject({
+								success : false,
+								error : err,
+								msg : "019"
+							});
+						} else {
+							var commentAmount = row.comments;
+							commentAmount++;
+							db.run("UPDATE forumPosts SET updated = ?, comments = ?",[new Date(),commentAmount],function(err) {
+								if(err){
+									reject({
+										success : false,
+										error : err,
+										msg : "019"
+									});
+								} else {
+									resolve({
+										success : true,
+										commentData : { 
+											commenter : databaseID,
+											forumPost : postID, 
+											comment : text, 
+											postTime : commentTime
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+		})
+	},
+	getForumCommentsWithID : (postID) => {
+		return new Promise((resolve, reject) => {
+			db.all("SELECT * FROM forumPostsComments WHERE forumPost = ? ORDER BY postTime ASC",[postID], function(err, rows) {
+				if(err){
+					reject({
+						success : false,
+						error : err,
+						msg : "020"
+					});
+				}else{
+					resolve(rows);
+				}
+			});
+		})
+	},
+	getUserNamesFromDatabaseIDs : (databaseIDArray) => {
+		return new Promise((resolve, reject) => {
+			db.all("SELECT databaseid,nickname,country,rank FROM userdata",function(err, rows) {
+				if(err) {
+					reject({
+						success : false,
+						error : err,
+						msg : "021"
+					});
+				}
+				var result = [];
+				for(var x = 0 ; x < databaseIDArray.length; x++){
+					var foundObject = rows.find(u => u.databaseid == databaseIDArray[x]);
+					result.push(foundObject);
+				}
+				resolve(result);
+			})
+		})
 	}
 
 }

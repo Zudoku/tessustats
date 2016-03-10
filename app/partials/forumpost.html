@@ -1,0 +1,77 @@
+<div class="container content">
+
+    <div class="row">
+        <div class="col-xs-12 ">
+            <div class="panel panel-default ">
+                <div class="panel-body bgcolor-dark color-white">
+                    <div>
+                        <h4 class="smallMarginTop"> {{post.title}} </h4>
+                        <hr class="smallHR"/>
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <strong>poster: {{getNameFor(post.creator)}} </strong>
+                            </div>
+                            <div class="col-xs-3">
+                                <strong>created: {{post.created}} </strong>
+                            </div>
+                            <div class="col-xs-3">
+                                <strong>updated: {{post.updated}} </strong>
+                            </div>
+                            <div class="col-xs-3">
+                                <strong>category: {{post.category}} </strong>
+                            </div>
+                        </div>
+                        
+                        <hr class="smallHR"/>
+
+                        <pre class=" color-black" style="white-space: pre-wrap;">{{post.content}}</pre>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 ">
+            <div class="panel panel-default ">
+                <div class="panel-body bgcolor-dark color-white">
+                    <h2 class="smallMarginTop"> {{comments.length}} Comments </h2>
+                    <hr class="smallHR"/>
+
+                    <div ng-repeat="comment in comments">
+                        <hr class="smallHR"/>
+                        <strong><a class="color-white" href="/app/#/user/{{comment.commenter}}">{{getNameFor(comment.commenter)}} </a></strong>
+                        <pre class=" color-black" style="white-space: pre-wrap;">{{comment.comment}}</pre>
+                        comment posted: {{comment.postTime}}
+                        <hr class="smallHR"/>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 ">
+            <div class="panel panel-default ">
+                <div class="panel-body bgcolor-dark color-white">
+                    <div ng-show="loggedInUser">
+                        <hr class="smallHR"/>
+                        <h4 class="smallMarginTop"> Post a comment </h4>
+                        <form novalidate class="simple-form ">
+                            <textarea rows="5" type="text" class="form-control simplebox smallmarginbottom" id="newCommentText" placeholder="Your comment ..." ng-model="newComment">
+                            </textarea>
+                            <button class="btn btn-success" type="submit" ng-click="postComment()">Comment <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></button>
+                        </form>
+                        <div ng-show="error" class="alert alert-danger" role="alert" style="margin-top: 10px;">
+                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                            <span class="sr-only">Error:</span>
+                            {{errorMessage}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+<div class="container content">
+
+    <div class="row">
+        <div class="col-xs-12 ">
+            <div class="panel panel-default ">
+                <div class="panel-body bgcolor-dark color-white">
+                    <div>
+                        <h2> Write a new post </h2>
+                        <form novalidate class="simple-form ">
+                            <hr/>
+                            <label for="postTitle">Title</label>
+                            <input type="text" class="form-control simplebox smallmarginbottom" id="postTitle" placeholder="Title" ng-model="post.title">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        <label for="postCategory">Category</label>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <label for="postSubscription">Subscription</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        <select class="form-control simplebox" id="postCategory" ng-model="post.category" >
+                                            <option>Social</option>
+                                            <option>Event</option>
+                                            <option>Misc</option>
+                                            <option>Dev</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" id="postSubscription" value="subscribeToPost" ng-model="post.subscribe"> Subscribe to this post
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <label for="postText">Post</label>
+                            <textarea rows="20" type="text" class="form-control simplebox smallmarginbottom" id="postText" placeholder="Start writing your post here" ng-model="post.text">
+                                
+                            </textarea>
+
+                            <div ng-show="error" class="alert alert-danger" role="alert" style="margin-top: 10px;">
+                                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                <span class="sr-only">Error:</span>
+                                {{errorMessage}}
+                            </div>
+                            
+                            <button class="btn btn-success" type="submit" ng-click="sendNewPost()">Send <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

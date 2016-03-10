@@ -1,20 +1,22 @@
 <div class="container">
     <div class="row">
-        <div class="col-xs-12 ">
-            <h1><span class="label label-default"> Name: {{userinfo.info.nickname}}</span></h1>
+    <div class="col-xs-4 ">
+    </div>
+        <div class="col-xs-2 ">
+            <h1><span class="label bgcolor-dark ">Name: {{userinfo.info.nickname}}</span></h1>
         </div>
 
     </div>
 
     <div class="row content">
         <div class="col-xs-4 ">
-            <h3 style="margin:0px;"><span class="label label-info" > Basic info</span></h3>
+            <h3 style="margin:0px;"><span class="label bgcolor-orange color-black" > Basic info</span></h3>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-12 ">
             <div class="panel panel-default ">
-                <div class="panel-body panel-shadow">
+                <div class="panel-body bgcolor-dark color-white">
                     <div class="row smallmarginbottom" >
                         <div class="col-xs-6 smallmarginbottom">
                             <strong>Server rank:</strong> {{userinfo.info.rank}}
@@ -58,19 +60,19 @@
     </div>
     <div class="row">
         <div class="col-xs-4 ">
-            <h3 style="margin:0px;"><span class="label label-info" > Last record </span></h3>
+            <h3 style="margin:0px;"><span class="label bgcolor-orange color-black" > Last record </span></h3>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-12 ">
             <div class="panel panel-default ">
-                <div class="panel-body panel-shadow">
+                <div class="panel-body bgcolor-dark color-white">
                     <div class="row smallmarginbottom" >
                         <div class="col-xs-6 smallmarginbottom">
                             <strong>Last seen:</strong> {{userinfo.userlastrecord.dateFormatted}}
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
-                            <strong>Channel:</strong> <a href="/app/#/channel/{{userinfo.userlastrecord.channel}}" >{{userinfo.userlastrecord.channelname}} </a>
+                            <strong>Channel:</strong> <a class="color-red" href="/app/#/channel/{{userinfo.userlastrecord.channel}}" >{{userinfo.userlastrecord.channelname}} </a>
                         </div>
                         <div class="col-xs-6 smallmarginbottom">
                             <strong>Microphone:</strong> {{getMutedText(userinfo.userlastrecord.inputmuted)}}
@@ -88,13 +90,13 @@
 
     <div class="row">
         <div class="col-xs-4 ">
-            <h3 style="margin:0px;"><span class="label label-info" > User channel preference </span></h3>
+            <h3 style="margin:0px;"><span class="label bgcolor-orange color-black" > User channel preference </span></h3>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-12 ">
             <div class="panel panel-default ">
-                <div class="panel-body panel-shadow">
+                <div class="panel-body bgcolor-dark color-white">
                     <div class="row smallmarginbottom" >
                         <div class="col-xs-12 ">
                             <div id="userchart" style="height: 300px;">

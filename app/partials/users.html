@@ -1,9 +1,9 @@
 <div class="container content">
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h1 class="panel-title"> <strong>Users</strong> </h1>
+<div class="panel panel-default ">
+  <div class="panel-heading bgcolor-dark">
+    <h1 class="panel-title color-white"> <strong>Users</strong> </h1>
   </div>
-  <div class="panel-body panel-shadow">
+  <div class="panel-body bgcolor-dark color-white">
   	Currently a total of {{usersdata.clientamount}} unique visitors have been seen on the server!
   	<h4>Data</h4>
     Below is a list of all users that have been on the TeamSpeak server since resetting of the HerGGu Teamspeak server (21.9.2015).
@@ -15,26 +15,26 @@
   </div>
 </div>
 
-<div class="alert alert-info" role="alert">
+<div class="alert alert-danger" role="alert">
   <div style="width: 33em; margin-left: auto; margin-right: auto;">
     <span class="glyphicon glyphicon-bullhorn" style="font-size:1.5em;" aria-hidden="true"> </span>
     <a href="/#/about" class="alert-link"> For more information about how the site works click here! </a>
   </div>
 </div>
 <form>
-  <div class="form-group">
+  <div class="form-group  color-black">
     <label for="namesearch">Name search</label>
     <input id="usersearch" type="text" ng-model="namemodel" ngChange="{{namefiltering()}}"class="form-control" >
   </div>
 </form>
-<table class="table table-hover">
-	<tr>
+<table class="table table-hover bgcolor-dark color-white ">
+	<tr class="dark-table-hover">
 	<th>Rank</th>
 	<th>Nickname</th>
 	<th>Time online</th>
 	<th>Country </th>
 	</tr>
-	<tr class="clickable"ng-class="user.textcolor" ng-repeat="user in shownusers" ng-click="selectuser(user.databaseid)">
+	<tr class="clickable dark-table-hover"ng-class="user.textcolor" ng-repeat="user in shownusers" ng-click="selectuser(user.databaseid)">
    		<td >{{getActivityRank(user.databaseid)}}.</td><td> {{user.nickname}}</td><td>{{getTimeFromSeconds(user.times * 5 * 60)}}</td> <td><span ng-click="selectCountry((user.country | uppercase ))"class="famfamfam-flag-{{user.country}}"></span></td>
 	</tr>
 </table>

@@ -2,6 +2,7 @@
 
 var config = require('../server/config');
 var express = require('express');
+var bodyParser = require('body-parser')
 var app = express();
 var database=require('../server/database');
 var tsparser=require('../server/tsparser');
@@ -11,7 +12,7 @@ console.log("Modules loaded succesfully!");
 tsparser.setdb(database);
 
 console.log("Database configured!");
-
+app.use(bodyParser.json());
 app.use("/app/", express.static(__dirname + '/../app'));
 
 //The API handler for /server
@@ -192,6 +193,254 @@ app.get('/query/channelpage/:cid', (req,res) => {
 });
 
 
+//The API handler for registration
+app.post('/registration/new/:uniqueID', (req,res) => {
+
+	var uniqueID = req.params.uniqueID;
+	console.log(req.ip + " tried to register " + uniqueID);
+
+	tsparser.loginIfNeeded().then(function(result){
+		tsparser.tryRegister(uniqueID).then(function(result){
+			res.json(result);
+		}, (err) => {
+			res.json(err);
+		});
+	});
+	
+});
+
+app.post('/registration/confirm/:uniqueID/:databaseID/:authguid', (req,res) => {
+
+	var uniqueID = req.params.uniqueID;
+	var databaseID = req.params.databaseID;
+	var authguid = req.params.authguid;
+	console.log(req.ip + " tried to confirm register " + uniqueID + " " + authguid);
+
+	database.completeRegistration(databaseID,uniqueID,authguid).then(function(result){
+		res.json(result);
+	}, (err) => {
+		res.json(err);
+	});
+	
+});
+
+app.get('/query/forumView/', (req,res) => {
+
+
+	Promise.all([
+		database.getLatestForumPosts(0)
+
+	]).then(function(data) {
+		var response = {};
+		response.forumPosts = data[0];
+		res.json(response);
+		
+	}, (err) => {
+    	console.log(`error: ${err}`)
+    	res.json({error: 1});
+	})
+	
+});
+
+app.get('/query/forum/auth/:authguid', (req,res) => {
+
+	var authguid = req.params.authguid;
+
+	database.authenticate(authguid).then(function(result){
+		res.json(result);
+	}, (err) => {
+		res.json(err);
+	});
+	
+});
+
+
+//The API handler for /forum/post/
+app.get('/query/forum/post/:postID', (req,res) => {
+
+	var postID = req.params.postID;
+	
+
+	Promise.all([
+		database.getForumPostDataWithID(postID),
+		database.getForumCommentsWithID(postID)
+
+	]).then(function(data) {
+		var response = {};
+		response.forumPost = data[0];
+		response.editable = false;
+		response.comments = data[1];
+		res.json(response);
+		
+	}, (err) => {
+    	console.log(`error: ${err}`)
+    	res.json({error: 1});
+	})
+	
+});
+
+app.post('/forum/editPost/:postID', (req,res) => {
+
+	var postID = req.params.postID;
+	var post = req.body;
+
+	console.log(JSON.stringify(post));
+
+	res.json({});
+	
+	
+});
+
+app.post('/forum/newPost', (req,res) => {
+
+	var post = req.body;
+	console.log(JSON.stringify(post));
+
+	//Validate forum post
+	if(post.category == undefined || post.category == ""){
+		res.json({
+			success : false,
+			message : "Please give the post a valid category"
+		});
+		return;
+	}
+	if(post.title == undefined || post.title == ""){
+		res.json({
+			success : false,
+			message : "Please give the post a valid title"
+		});
+		return;
+	}
+	if(post.text == undefined || post.text == ""){
+		res.json({
+			success : false,
+			message : "Your post is empty"
+		});
+		return;
+	}
+
+
+
+	//Check authentication
+	var authguid = post.authentication;
+
+	database.authenticate(authguid).then(function(data) {
+		if(!data.success){
+			res.json({
+				success : false,
+				message : "Please log in!"
+			});
+		} else{
+			database.addNewForumPost(data.row.databaseID,post.category,post.title,post.text).then(function(forumData) {
+				res.json(forumData);
+			}, (error) => {
+				res.json({
+					success : false,
+					message : "Error : " + error.msg
+				});
+			});
+		}
+	}, (error) => {
+		res.json({
+			success : false,
+			message : "Error : " + error.msg
+		});
+	});
+	
+});
+
+
+app.post('/forum/newComment', (req,res) => {
+
+	var commentData = req.body;
+	console.log(JSON.stringify(commentData));
+
+	//Validate comment
+	if(commentData.comment == undefined || commentData.comment == ""){
+		res.json({
+			success : false,
+			message : "Your comment is empty"
+		});
+		return;
+	}
+
+	//Validate postID
+	database.getForumPostDataWithID(commentData.postID).then(function(forumDataQuery){
+		if(forumDataQuery != undefined){
+			//postID is valid
+			//Check authentication
+
+			database.authenticate(commentData.authentication.authguid).then(function(data) {
+				if(!data.success){
+					res.json({
+						success : false,
+						message : "Please log in!"
+					});
+				} else{
+					database.addNewComment(commentData.authentication.databaseID,commentData.comment,commentData.postID).then(function(data){
+						res.json(data);
+					}, (err) => {
+						res.json({
+							success : false,
+							message : "Error: " + err.msg
+						});
+					});
+				}
+			}, (error) => {
+				res.json({
+					success : false,
+					message : "Error : " + error.msg
+				});
+			});
+
+		} else {
+			res.json({
+				success : false,
+				message : "Can't find such forum post"
+			});
+		}
+	}, (error) => {
+		res.json({
+			success : false,
+			message : "Error: " + error
+		});
+	});
+	
+});
+
+app.post('/forum/editComment', (req,res) => {
+
+	var post = req.body;
+
+	console.log(JSON.stringify(post));
+
+	res.json({});
+	
+});
+
+app.post('/query/names', (req,res) => {
+
+	var ids = req.body.ids;
+
+	console.log(JSON.stringify(post));
+
+	database.getUserNamesFromDatabaseIDs(ids).then(function(data) {
+		res.json(data);
+	}, (error) => {
+		res.json({
+			success : false,
+			message : "Error: " + error
+		});
+	});
+
+	res.json({});
+	
+});
+
+
+
+
+
 
 //TESSU STATS
 app.get('/query/serverActivityChart/:timeframe', function(req, res){
@@ -207,10 +456,7 @@ app.get('/query/scanTimesDay', function(req, res){
 app.get('/', function(req,res){
 	res.redirect('/app/');
 });
-//Redirect /blog to /app/blog.html
-app.get('/blog', function(req,res){
-	res.redirect('/app/blog.html');
-});
+
 
 console.log("Server starting!");
 

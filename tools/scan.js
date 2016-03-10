@@ -1,3 +1,4 @@
+'use strict'
 var database=require('../server/database');
 var tsparser=require('../server/tsparser');
 

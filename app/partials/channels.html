@@ -1,9 +1,9 @@
 <div class="container content">
 	<div class="panel panel-default">
-  		<div class="panel-heading">
+  		<div class="panel-heading bgcolor-dark color-white">
     		<h1 class="panel-title"> <strong>Active Channels</strong> </h1>
   		</div>
-  		<div class="panel-body panel-shadow">
+  		<div class="panel-body bgcolor-dark color-white">
   			Below is a list of all the current channels in the server.  By clicking the channel, you will be taken into a more in depth page of that channel. Temporary channels will have a <span class="text-warning">yellow</span> background. The table tries to imitate the channel-list as seen in the TeamSpeak client.
   			<br><br>
         <strong>Empty for</strong> for column resets on server restart.
@@ -11,21 +11,21 @@
 	</div>
   <div class="row">
         <div class="col-xs-4 ">
-            <h3 style="margin:0px;"><span class="label label-info" > Top 5 active channels from last 7 days</span></h3>
+            <h3 style="margin:0px;"><span class="label bgcolor-orange color-black" > Top 5 active channels from last 7 days</span></h3>
         </div>
   </div>
   <div class="row">
         <div class="col-xs-12 ">
             <div class="panel panel-default ">
-                <div class="panel-body panel-shadow">
+                <div class="panel-body bgcolor-dark color-white">
                     <table class="table table-hover">
-                      <tr>
+                      <tr class="dark-table-hover">
                         <th>Rank</th> 
                         <th>Channel name</th>
                         <th>Activity score</th>
                         <th>Time online</th>
                       </tr>
-                      <tr class="clickable" ng-repeat="topchannel in channelsdata.mostActive" ng-click="selectChannel(topchannel.cid)" > 
+                      <tr class="clickable dark-table-hover" ng-repeat="topchannel in channelsdata.mostActive" ng-click="selectChannel(topchannel.cid)" > 
                         <td>{{$index+1}}.</td>
                         <td>{{topchannel.name}}</td>
                         <td>{{topchannel.activityscore}}</td>
@@ -39,21 +39,21 @@
   </div>
   <div class="row">
         <div class="col-xs-4 ">
-            <h3 style="margin:0px;"><span class="label label-info" > TeamSpeak view of channels</span></h3>
+            <h3 style="margin:0px;"><span class="label bgcolor-orange color-black" > TeamSpeak view of channels</span></h3>
         </div>
   </div>
   <div class="row">
     <div class="col-xs-12 ">
       <div class="panel panel-default ">
-        <div class="panel-body panel-shadow">
+        <div class="panel-body bgcolor-dark color-white">
           <table class="table table-hover">
-            <tr>
+            <tr class="dark-table-hover">
               <th>Server</th> 
               <th><span class="glyphicon glyphicon-question-sign" ></span></th>
               <th>Population now</th>
               <th>Empty for</th>
             </tr>
-            <tr class="clickable" ng-repeat="channel in channelsdata.activeChannels" ng-click="selectChannel(channel.cid)" ng-class="getTemporaryStyle(channel.cid)"> 
+            <tr class="clickable dark-table-hover" ng-repeat="channel in channelsdata.activeChannels" ng-click="selectChannel(channel.cid)" ng-class="getTemporaryStyle(channel.cid)"> 
               <td > 
                 <div style="padding-left: {{getPaddingChannelLevel(channel.channellevel)}}px !important;">{{channel.name}} 
                   <br>

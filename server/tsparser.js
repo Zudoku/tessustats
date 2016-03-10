@@ -1,3 +1,4 @@
+'use strict'
 /*
  * THIS WILL HELP YOU UNDERSTAND http://media.teamspeak.com/ts3_literature/TeamSpeak%203%20Server%20Query%20Manual.pdf
  */
@@ -19,6 +20,8 @@ var database;
 var TIME_OF_QUERY = '';
 
 var NETWORK_DEBUG_LOGGING = false;
+
+var connected = false;
 
 
 var sendCommand = function(command, args, cb) {
@@ -273,6 +276,7 @@ var loginToServerQuery = function(callback) {
 	sendCommand("login", loginArgs,function(response,err){
 		if(err){
 			console.log(util.inspect(err));
+			connected = false;
 			logScan(false);
 			return;
 		}
@@ -283,21 +287,141 @@ var loginToServerQuery = function(callback) {
 		sendCommand("use",useArgs, function(response,err){
 			if(err){
 				console.log(util.inspect(err));
+				connected = false;
 				logscan(false);
 				return;
 			}
 			var nickname =(config.mode == "DEV")? "Tessustats (BOT) (DEV)": "Tessustats (BOT)";
 
 			cl.send("clientupdate",{client_nickname : nickname}, function(err, response, rawResponse){
+				connected = true;
 				callback();
 			});
-			
-
 
 		});
 	});
 }
 
+var tryRegisterUser = function (uniqueID){
+	return new Promise((resolve, reject) => {
+		if(!connected){
+			console.log("NOT CONNECTED TO SERVER");
+		}
+		sendCommand("clientlist", ["uid"], function(response,err){
+
+			if(err != undefined || response == [] || response == undefined){
+				console.log("Error " +util.inspect(err));
+
+				reject({
+					success : false,
+					error : err,
+					msg : "011"
+				});
+				
+			}
+			var rejectPromise = true;
+			for(var i = 0; i < response.length; i++){
+				var client = response[i];
+				//Real client and UID matches
+				if(client.client_type == 0 && client.client_unique_identifier == uniqueID){
+					var foundClient = client;
+					rejectPromise = false;
+					registerUser(client,uniqueID,function(result){
+						if(result.success){
+							//Send message
+
+							sendCommand("sendtextmessage",{targetmode : 1, target : foundClient.clid, msg: result.authguid }, function(response,err){
+								if(err){
+									reject({
+										success : false,
+										error : err,
+										msg : "010"
+									});
+								} else {
+									resolve({
+										success : true,
+										databaseID : result.databaseID,
+										uniqueID : result.uniqueID
+									});
+								}
+							});
+
+
+						}else{
+							reject(result);
+						}
+					});
+				}
+			}
+
+			if(rejectPromise){
+				reject({
+					success : false,
+					error : err,
+					msg : "012"
+				});
+			}
+			
+		});
+	});
+};
+
+var registerUser = function(client, uniqueID, callback){
+	console.log("Trying to register user " + uniqueID);
+	var candidate = makeNewGuid();
+	console.log("GUID = " + candidate);
+
+	var registerCheck = database.getStartedRegistration(candidate);
+
+	registerCheck.then(function(data){
+
+		if(data.row != undefined){
+			console.log("GUID already in use");
+			registerUser(client, uniqueID, callback);
+			return;
+		}
+		var authCheck = database.authenticate(candidate);
+
+		authCheck.then(function(data){
+
+			if(data.row != undefined){
+				console.log("GUID already in use");
+				registerUser(client, uniqueID, callback);
+				return;
+			}
+
+
+			var newRegistration = database.newRegistration(client.client_database_id,uniqueID,candidate);
+
+			newRegistration.then(function(data){
+				callback(data);
+			},(err) => {
+    			console.log(JSON.stringify(err));
+    			callback(err);
+			});
+
+
+		},(err) => {
+    		console.log(JSON.stringify(err));
+    		callback(err);
+		});
+	},(err) => {
+    	console.log(JSON.stringify(err));
+    	callback(err);
+	});
+
+};
+
+
+var makeNewGuid = function(){
+	function s4() {
+    	return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  	}
+  	return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
 
 
 
@@ -311,5 +435,20 @@ module.exports = {
 	},
 	keepScanning : function(time){
 		setInterval(loginToServerQuery, time,doScan);
+	},
+	tryRegister : function(uniqueID){
+		return tryRegisterUser(uniqueID);
+	},
+	loginIfNeeded : function(){
+		return new Promise((resolve, reject) => {
+			if(!connected){
+				loginToServerQuery(function(){
+					resolve({});
+				});
+			} else{
+				resolve({});
+			}
+		});
+		
 	}
 }
