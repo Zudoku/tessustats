@@ -4,9 +4,7 @@ angular.module('tessustats.controller.forumconfirm', [])
 .controller('forumconfirmCtrl', ['$scope','$http','$location','$routeParams','$cookies', function($scope, $http,$location,$routeParams,$cookies) {
 
 	$scope.updateData = function(){
-		//var forumpostsResource = $http.get('/query/forumView/').success(function(data) {
-	    //	$scope.x = data;
-		//});
+
 	};
 	
 	$scope.completeRegister = function(authguid){

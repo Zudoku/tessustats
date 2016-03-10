@@ -4,7 +4,7 @@ angular.module('tessustats.controller.forumpost', [])
 .controller('forumpostCtrl', ['$scope','$http','$location','$routeParams','$cookies', function($scope, $http,$location,$routeParams,$cookies) {
 
 	$scope.updateData = function(){
-		var forumpostResource = $http.get('/query/forum/post/' + $routeParams.postID,{ authguid : $scope.authentication }).success(function(data) {
+		var forumpostResource = $http.post('/query/forum/post/' + $routeParams.postID,{ authguid : $scope.authentication }).success(function(data) {
 	    	$scope.post = data.forumPost;
 	    	$scope.editable = data.editable;
 	    	$scope.comments = data.comments;
@@ -37,7 +37,7 @@ angular.module('tessustats.controller.forumpost', [])
 		};
 
 
-		var postCommentQuery = $http.get('/forum/newComment',commentObject);
+		var postCommentQuery = $http.post('/forum/newComment',commentObject);
 
 		postComment.success(function(data) {
 			$scope.sending = false;
@@ -84,7 +84,11 @@ angular.module('tessustats.controller.forumpost', [])
 
 	$scope.checkOutNamesFor = function(ids){
 		console.log(JSON.stringify(ids));
-		var nameCheckQuery = $http.get('/query/names',{ ids : ids });
+		if(ids == undefined){
+			return;
+		}
+
+		var nameCheckQuery = $http.post('/query/names',{ ids : ids });
 
 		nameCheckQuery.success(function(data) {
 			console.log(JSON.stringify(data));

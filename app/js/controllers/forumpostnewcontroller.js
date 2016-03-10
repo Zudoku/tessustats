@@ -12,7 +12,7 @@ angular.module('tessustats.controller.forumpostnew', [])
 	$scope.sendNewPost = function(){
 
 		$scope.sending = true;
-		var registerQuery = $http.get('/forum/newPost',$scope.post);
+		var registerQuery = $http.post('/forum/newPost',$scope.post);
 
 		registerQuery.success(function(data) {
 			$scope.sending = false;

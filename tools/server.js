@@ -228,7 +228,6 @@ app.get('/registration/confirm/:uniqueID/:databaseID/:authguid', (req,res) => {
 
 app.get('/query/forumView/', (req,res) => {
 
-
 	Promise.all([
 		database.getLatestForumPosts(0)
 
@@ -258,7 +257,7 @@ app.get('/query/forum/auth/:authguid', (req,res) => {
 
 
 //The API handler for /forum/post/
-app.get('/query/forum/post/:postID', (req,res) => {
+app.post('/query/forum/post/:postID', (req,res) => {
 
 	var postID = req.params.postID;
 	
@@ -281,7 +280,7 @@ app.get('/query/forum/post/:postID', (req,res) => {
 	
 });
 
-app.get('/forum/editPost/:postID', (req,res) => {
+app.post('/forum/editPost/:postID', (req,res) => {
 
 	var postID = req.params.postID;
 	var post = req.body;
@@ -293,7 +292,7 @@ app.get('/forum/editPost/:postID', (req,res) => {
 	
 });
 
-app.get('/forum/newPost', (req,res) => {
+app.post('/forum/newPost', (req,res) => {
 
 	var post = req.body;
 	console.log(JSON.stringify(post));
@@ -352,7 +351,7 @@ app.get('/forum/newPost', (req,res) => {
 });
 
 
-app.get('/forum/newComment', (req,res) => {
+app.post('/forum/newComment', (req,res) => {
 
 	var commentData = req.body;
 	console.log(JSON.stringify(commentData));
@@ -410,7 +409,7 @@ app.get('/forum/newComment', (req,res) => {
 	
 });
 
-app.get('/forum/editComment', (req,res) => {
+app.post('/forum/editComment', (req,res) => {
 
 	var post = req.body;
 
@@ -420,7 +419,7 @@ app.get('/forum/editComment', (req,res) => {
 	
 });
 
-app.get('/query/names', (req,res) => {
+app.post('/query/names', (req,res) => {
 
 	var ids = req.body.ids;
 

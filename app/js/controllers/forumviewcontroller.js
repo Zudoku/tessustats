@@ -84,7 +84,10 @@ angular.module('tessustats.controller.forumView', [])
 
 	$scope.checkOutNamesFor = function(ids){
 		console.log(JSON.stringify(ids));
-		var nameCheckQuery = $http.get('/query/names',{ ids : ids });
+		if(ids == undefined) {
+			return ;
+		}
+		var nameCheckQuery = $http.post('/query/names',{ ids : ids });
 
 		nameCheckQuery.success(function(data) {
 			console.log(JSON.stringify(data));
