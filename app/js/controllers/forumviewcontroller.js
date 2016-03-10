@@ -7,6 +7,17 @@ angular.module('tessustats.controller.forumView', [])
 	$scope.updateData = function(){
 		var forumpostsResource = $http.get('/query/forumView/').success(function(data) {
 	    	$scope.forumData = data;
+	    	console.log(JSON.stringify(data));
+
+	    	var ids = [];
+	    	for(var y = 0 ; y < data.forumPosts.length; y++) {
+	    		if(ids.indexOf(data.forumPosts[y].creator) == -1){
+	    			ids.push(data.forumPosts[y].creator);
+	    		}
+	    	}
+
+	    	$scope.checkOutNamesFor(ids);
+
 		});
 	};
 	
@@ -71,6 +82,35 @@ angular.module('tessustats.controller.forumView', [])
 
 	};
 
+	$scope.checkOutNamesFor = function(ids){
+		console.log(JSON.stringify(ids));
+		var nameCheckQuery = $http.post('/query/names',{ ids : ids });
+
+		nameCheckQuery.success(function(data) {
+			console.log(JSON.stringify(data));
+			if(data.success){
+				for(var t = 0 ; t < data.ids.length; t++) {
+					var userObject = data.ids[t];
+					console.log(JSON.stringify(userObject));
+
+					$scope.nameBank["" +userObject.databaseid] = userObject;
+				}
+
+				console.log(JSON.stringify($scope.nameBank));
+
+			} else {
+				
+			}
+
+			
+		});
+
+		nameCheckQuery.error(function(data) {
+			console.log(JSON.stringify(data));
+		});
+
+	};
+
 	$scope.logout = function() {
 
 		var cookieConfig = {
@@ -84,10 +124,29 @@ angular.module('tessustats.controller.forumView', [])
 		
 	};
 
-	$scope.makeNewPost = function() {
-		$location.url("/forum/newpost/");
+	$scope.getTime = function(time){
+		var timeDate = new Date(time);
+		return timeDate.toLocaleString();
+	};
+
+	$scope.getNameFor = function(ID){
+		if( $scope.nameBank[ID] == undefined) {
+			return "" + ID;
+		}else {
+			return $scope.nameBank[ID].nickname;
+		}
+		
+	};
+
+	$scope.goToPost = function(postID){
+		$location.url("/forum/post/" + postID);
 	}
 
+	$scope.makeNewPost = function() {
+		$location.url("/forum/newpost/");
+	};
+
+	$scope.nameBank = {};
 	$scope.isLoggedIn();
 	$scope.updateData();
 

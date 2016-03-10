@@ -65,13 +65,13 @@
                             <th class="dark-table-hover">Created</th>
                             <th class="dark-table-hover">Updated</th>
                         </tr>
-                        <tr class="clickable" ng-repeat="post in forumData.forumPosts" ng-click="" > 
+                        <tr class="clickable" ng-repeat="post in forumData.forumPosts" ng-click="goToPost(post.ID)" > 
                             <td>{{post.title}}.</td>
                             <td>{{post.category}}</td>
-                            <td>{{post.poster}}</td>
+                            <td>{{getNameFor(post.creator)}}</td>
                             <td>{{post.comments}}</td>
-                            <td>{{post.created}}</td>
-                            <td>{{post.updated}}</td>
+                            <td>{{getTime(post.created)}}</td>
+                            <td>{{getTime(post.updated)}}</td>
                         </tr>
                     </table>
                 </div>

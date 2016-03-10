@@ -13,7 +13,9 @@ angular.module('tessustats.controller.forumpost', [])
 	    	var ids = [];
 	    	ids.push($scope.post.creator);
 	    	for(var y = 0 ; y < data.comments.length; y++) {
-	    		ids.push(data.comments[y].commenter);
+	    		if(ids.indexOf(data.comments[y].commenter) == -1){
+	    			ids.push(data.comments[y].commenter);
+	    		}
 	    	}
 
 	    	$scope.checkOutNamesFor(ids);
