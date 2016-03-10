@@ -51,4 +51,4 @@ node tools/server.js
 
 ### License ###
 
-Check [LICENSE](https://bitbucket.org/Arap/tessustat/src/171e388e1d49622d3968b8ddc4bfede3a502c65a/LICENSE.txt?fileviewer=file-view-default) file
+Check [LICENSE](https://bitbucket.org/Arap/tessustats/src/1f4447ff29808e998383f84cc9d7d9ebc73b0b33/LICENSE.txt?fileviewer=file-view-default) file
