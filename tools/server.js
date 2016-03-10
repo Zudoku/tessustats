@@ -205,6 +205,8 @@ app.get('/registration/new/:uniqueID', (req,res) => {
 		}, (err) => {
 			res.json(err);
 		});
+	}, (err) => {
+		res.json(err);
 	});
 	
 });
