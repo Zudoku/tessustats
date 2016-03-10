@@ -422,7 +422,7 @@ app.post('/query/names', (req,res) => {
 
 	var ids = req.body.ids;
 
-	console.log(JSON.stringify(post));
+	console.log(JSON.stringify(ids));
 
 	database.getUserNamesFromDatabaseIDs(ids).then(function(data) {
 		res.json(data);
@@ -432,8 +432,6 @@ app.post('/query/names', (req,res) => {
 			message : "Error: " + error
 		});
 	});
-
-	res.json({});
 	
 });
 

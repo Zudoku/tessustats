@@ -85,18 +85,22 @@ angular.module('tessustats.controller.forumpost', [])
 		var nameCheckQuery = $http.post('/query/names',{ ids : ids });
 
 		nameCheckQuery.success(function(data) {
-
+			console.log(JSON.stringify(data));
 			if(data.success){
-				for(var t = 0 ; t < data.length; t++) {
-					var userObject = data[t];
-					$scope.nameBank[userObject.databaseid] = userObject;
+				for(var t = 0 ; t < data.ids.length; t++) {
+					var userObject = data.ids[t];
+					console.log(JSON.stringify(userObject));
+
+					$scope.nameBank["" +userObject.databaseid] = userObject;
 				}
+
+				console.log(JSON.stringify($scope.nameBank));
 
 			} else {
 				
 			}
 
-			console.log(JSON.stringify(data));
+			
 		});
 
 		nameCheckQuery.error(function(data) {
@@ -112,6 +116,10 @@ angular.module('tessustats.controller.forumpost', [])
 			return $scope.nameBank[ID].nickname;
 		}
 		
+	};
+	$scope.getTime = function(time){
+		var timeDate = new Date(time);
+		return timeDate.toLocaleString();
 	}
 
 

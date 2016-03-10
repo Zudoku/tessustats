@@ -1020,8 +1020,15 @@ module.exports = {
 				for(var x = 0 ; x < databaseIDArray.length; x++){
 					var foundObject = rows.find(u => u.databaseid == databaseIDArray[x]);
 					result.push(foundObject);
+					if(x == databaseIDArray.length -1){
+						console.log(JSON.stringify(result));
+						resolve({
+							success : true,
+							ids : result
+						});
+					}
 				}
-				resolve(result);
+				
 			})
 		})
 	}

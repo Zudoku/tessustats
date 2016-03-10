@@ -12,10 +12,10 @@
                                 <strong>poster: {{getNameFor(post.creator)}} </strong>
                             </div>
                             <div class="col-xs-3">
-                                <strong>created: {{post.created}} </strong>
+                                <strong>created: {{getTime(post.created)}} </strong>
                             </div>
                             <div class="col-xs-3">
-                                <strong>updated: {{post.updated}} </strong>
+                                <strong>updated: {{getTime(post.updated)}} </strong>
                             </div>
                             <div class="col-xs-3">
                                 <strong>category: {{post.category}} </strong>
@@ -43,7 +43,7 @@
                         <hr class="smallHR"/>
                         <strong><a class="color-white" href="/app/#/user/{{comment.commenter}}">{{getNameFor(comment.commenter)}} </a></strong>
                         <pre class=" color-black" style="white-space: pre-wrap;">{{comment.comment}}</pre>
-                        comment posted: {{comment.postTime}}
+                        comment posted: {{getTime(comment.postTime)}}
                         <hr class="smallHR"/>
                     </div>
 

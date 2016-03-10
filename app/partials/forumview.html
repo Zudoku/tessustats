@@ -61,14 +61,17 @@
                             <th class="dark-table-hover">Topic</th> 
                             <th class="dark-table-hover">Category</th>
                             <th class="dark-table-hover">Poster</th>
-                            <th class="dark-table-hover">Time</th>
+                            <th class="dark-table-hover">Comments</th>
+                            <th class="dark-table-hover">Created</th>
                             <th class="dark-table-hover">Updated</th>
                         </tr>
                         <tr class="clickable" ng-repeat="post in forumData.forumPosts" ng-click="" > 
-                            <td>{{$index+1}}.</td>
-                            <td>{{user.nickname}}</td>
-                            <td>{{user.times}}</td>
-                            <td>{{getTimeFromSeconds(user.times * 60 * 5)}}</td>
+                            <td>{{post.title}}.</td>
+                            <td>{{post.category}}</td>
+                            <td>{{post.poster}}</td>
+                            <td>{{post.comments}}</td>
+                            <td>{{post.created}}</td>
+                            <td>{{post.updated}}</td>
                         </tr>
                     </table>
                 </div>
