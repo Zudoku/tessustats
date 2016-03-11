@@ -248,7 +248,20 @@ app.get('/query/forum/auth/:authguid', (req,res) => {
 	var authguid = req.params.authguid;
 
 	database.authenticate(authguid).then(function(result){
-		res.json(result);
+		if(result.success){
+			database.isForumModerator(result.databaseID).then(function (data) {
+				result.forumModerator = data;
+				res.json(result);
+			}, (error) => {
+				result.forumModerator = false;
+				res.json(result);
+			});
+		} else {
+			result.forumModerator = false;
+			res.json(result);
+		}
+
+
 	}, (err) => {
 		res.json(err);
 	});
@@ -277,18 +290,6 @@ app.post('/query/forum/post/:postID', (req,res) => {
     	console.log(`error: ${err}`)
     	res.json({error: 1});
 	})
-	
-});
-
-app.post('/forum/editPost/:postID', (req,res) => {
-
-	var postID = req.params.postID;
-	var post = req.body;
-
-	console.log(JSON.stringify(post));
-
-	res.json({});
-	
 	
 });
 
@@ -419,6 +420,22 @@ app.post('/forum/editComment', (req,res) => {
 	
 });
 
+app.post('/forum/editPost/:postID', (req,res) => {
+
+	var postID = req.params.postID;
+	var post = req.body;
+
+	console.log(JSON.stringify(post));
+
+	res.json({});
+	
+	
+});
+
+
+/* Example request
+	[123,124,125]
+*/
 app.post('/query/names', (req,res) => {
 
 	var ids = req.body.ids;
@@ -430,7 +447,158 @@ app.post('/query/names', (req,res) => {
 	}, (error) => {
 		res.json({
 			success : false,
-			message : "Error: " + error
+			message : "Error: " + error.msg
+		});
+	});
+	
+});
+
+/* Example request
+	{
+		authentication : "",
+		comment : {
+			commenter : 1231231,
+			forumPost : 0,
+			postTime : 23456789
+		}
+	}
+*/
+app.post('/forum/deleteComment', (req,res) => {
+
+	var post = req.body;
+
+	console.log(JSON.stringify(post));
+
+	if(post.authentication == undefined) {
+		res.json({
+			success : false,
+			message : "Please sign in"
+		});
+		return;
+	}
+	if(post.comment == undefined) {
+		res.json({
+			success : false,
+			message : "Please specify comment"
+		});
+		return;
+	}
+
+	database.authenticate(post.authentication).then(function(auth) {
+		if(!auth.success){
+			res.json({
+				success : false,
+				message : "Please log in!"
+			});
+		} else {
+			database.getComment(post.comment.commenter, post.comment.forumPost, post.comment.postTime).then(function(data) {
+				if(!data.success){
+					res.json({
+						success : false,
+						message : "Can't find such comment"
+					});
+				} else {
+					database.isForumModerator(auth.databaseID).then(function(isModerator) {
+						if(isModerator || data.commenter == auth.databaseID){
+							database.deleteComment(post.comment.commenter, post.comment.forumPost, post.comment.postTime).then(function(deletion){
+								res.json({
+									success : true
+								});
+							}, (error) => {
+								res.json({
+									success : false,
+									message : "Error: " + error.msg
+								});
+							});
+						} else {
+							res.json({
+								success : false,
+								message : "You don't have the power to do that"
+							});
+						}
+					});
+				} 
+			}, (error) => {
+				res.json({
+					success : false,
+					message : "Error: " + error.msg
+				});
+			}); 
+		}
+	}, (error) => {
+		res.json({
+			success : false,
+			message : "Error : " + error.msg
+		});
+	});
+	
+});
+
+/* Example request
+	{
+		authentication : "",
+		post : 123
+	}
+*/
+app.post('/forum/deletePost', (req,res) => {
+
+	var post = req.body;
+
+	console.log(JSON.stringify(post));
+
+	if(post.authentication == undefined) {
+		res.json({
+			success : false,
+			message : "Please sign in"
+		});
+		return;
+	}
+
+	database.authenticate(post.authentication).then(function(auth) {
+		if(!auth.success){
+			res.json({
+				success : false,
+				message : "Please log in!"
+			});
+		} else {
+			database.getForumPostDataWithID(post.post).then(function(data) {
+				if(data == undefined){
+					res.json({
+						success : false,
+						message : "Can't find such forum post"
+					});
+				} else {
+					database.isForumModerator(auth.databaseID).then(function(isModerator) {
+						if(isModerator || data.creator == auth.databaseID){
+							database.deletePost(data.postID).then(function(deletion){
+								res.json({
+									success : true
+								});
+							}, (error) => {
+								res.json({
+									success : false,
+									message : "Error: " + error.msg
+								});
+							});
+						} else {
+							res.json({
+								success : false,
+								message : "You don't have the power to do that"
+							});
+						}
+					});
+				} 
+			}, (error) => {
+				res.json({
+					success : false,
+					message : "Error: " + error.msg
+				});
+			}); 
+		}
+	}, (error) => {
+		res.json({
+			success : false,
+			message : "Error : " + error.msg
 		});
 	});
 	
@@ -448,7 +616,11 @@ app.get('/query/serverActivityChart/:timeframe', function(req, res){
 });
 app.get('/query/scanTimesDay', function(req, res){
 	res.set('Content-Type', 'text/plain');
-	database.getScanTimesDay(res);
+	database.getScanTimesDay().then(function(times){
+		res.send(times);
+	}, (error) => {
+		res.send(1);
+	});
 });
 
 //Redirect / to /app/

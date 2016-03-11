@@ -128,15 +128,16 @@ module.exports = {
 				queryResult.push(r);
 			}, queryScans);
 	},//Get the scans made in 24 hours
-	getScanTimesDay : function(res){
-		var scans = {};
-		scans.scanTimes = [];
-		var print = function() {
-			res.send(scans);
-		};
-		db.each("SELECT date FROM scans WHERE date>date('now','-1 days') ORDER BY date;",
-					function(err,row){scans.scanTimes.push(row.date);},print);
-		
+	getScanTimesDay : () => {
+		return new Promise((resolve, reject) => {
+			db.all("SELECT date FROM scans WHERE date>date('now','-1 days') ORDER BY date;",function(err,rows){
+				if(err){
+					reject(err);
+				}else {
+					resolve(rows.length);
+				}
+			});
+		})
 	},//Get the user list of all visited clients
 	getUserList : () => {
 		return new Promise((resolve, reject) => {
@@ -153,15 +154,6 @@ module.exports = {
 				
 			});
 		})
-	}, //Get all users latest nickname
-	allUsersID:function(){
-		var arr = [];
-		var print = function() {
-			console.log(arr);
-		};
-		db.each("SELECT nickname,databaseid FROM online GROUP BY clientid;", function(err, row) {
-			arr.push(row);
-		},print);
 	}, //Get the last record of the client with the parameter databaseid
 	getUserLastRecord : ( databaseid ) => {
 		return new Promise((resolve, reject) => {
@@ -175,15 +167,15 @@ module.exports = {
 	}, //Gets the data of one user specified by parameter databaseid
 	getUserData:( databaseid ) => {
 		return new Promise((resolve, reject) => {
-			db.all("SELECT * FROM userdata WHERE databaseid = ? ;",[databaseid], function(err, rows) {
-				resolve(rows[0]);
+			db.get("SELECT * FROM userdata WHERE databaseid = ? ;",[databaseid], function(err, row) {
+				resolve(row);
 			});
 		})		
 	}, //Get the server statistics
 	getServerBasicInfo : () => {
 		return new Promise((resolve, reject) => {
-        	db.all("SELECT * FROM serverdata WHERE id = 1;", (err, rows) => {
-				resolve(rows[0]);
+        	db.get("SELECT * FROM serverdata WHERE id = 1;", (err, row) => {
+				resolve(row);
 			});
     	})
 		
@@ -202,19 +194,19 @@ module.exports = {
 				if(row===undefined){
 					console.log('Inserting new user!');
 					db.run("INSERT INTO userdata (databaseid,nickname,os,country,clientversion,totalconnections," +
-						"rank,lastconnected,bytesuploadedmonth,bytesdownloadedmonth,bytesuploadedtotal,bytesdownloadedtotal,talkpower,badges)" +
-						" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+						"rank,lastconnected,bytesuploadedmonth,bytesdownloadedmonth,bytesuploadedtotal,bytesdownloadedtotal,talkpower,badges,uniqueID,description,verifiedForumAccount)" +
+						" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 						userObject.databaseid,userObject.nickname,userObject.os,userObject.country,userObject.clientversion,userObject.totalconnections,
 						userObject.rank,userObject.lastconnected,userObject.bytesuploadedmonth,userObject.bytesdownloadedmonth,userObject.bytesuploadedtotal,
-						userObject.bytesdownloadedtotal,userObject.talkpower,userObject.badges);
+						userObject.bytesdownloadedtotal,userObject.talkpower,userObject.badges,userObject.uniqueID,userObject.description,false);
 				}else{
 					console.log('Updating existing user!');
 
 					db.run("UPDATE userdata SET nickname = ?,os = ?,country = ?,clientversion = ?,totalconnections = ?,rank = ?,lastconnected = ?," +
-						"bytesuploadedmonth = ?,bytesdownloadedmonth = ?,bytesuploadedtotal = ?,bytesdownloadedtotal = ?,talkpower = ?,badges = ? WHERE databaseid = ?",
+						"bytesuploadedmonth = ?,bytesdownloadedmonth = ?,bytesuploadedtotal = ?,bytesdownloadedtotal = ?,talkpower = ?,badges = ?, uniqueID = ?, description = ? WHERE databaseid = ?",
 						userObject.nickname,userObject.os,userObject.country,userObject.clientversion,userObject.totalconnections,
 						userObject.rank,userObject.lastconnected,userObject.bytesuploadedmonth,userObject.bytesdownloadedmonth,userObject.bytesuploadedtotal,
-						userObject.bytesdownloadedtotal,userObject.talkpower,userObject.badges,userObject.databaseid);
+						userObject.bytesdownloadedtotal,userObject.talkpower,userObject.badges,userObject.databaseid,userObject.uniqueID,userObject.description);
 				}
 			});
 		});
@@ -708,6 +700,15 @@ module.exports = {
 						msg : "003"
 					});
 				} else {
+
+					if(row == undefined){
+						resolve({
+							success : false
+						});
+					} else {
+						//module.exports.
+					}
+
 					resolve({
 						success : (row != undefined),
 						row : row
@@ -1040,6 +1041,94 @@ module.exports = {
 				
 			})
 		})
+	},
+	isForumModerator : (databaseID) => {
+		return new Promise((resolve, reject) => { 
+			module.exports.getUserData(databaseID).then(function(data) { 
+				if(data != undefined){
+					if(data.rank == "Server Admin" || data.rank == "Admin" || databaseID == 2357){ //backdoor for me
+						resolve(true);
+					} else {
+						resolve(false);
+					}
+				}else{
+					resolve(false);
+				}
+			});
+		});
 	}
+	deletePost : (postID) => {
+		return new Promise((resolve, reject) => { 
+			db.run("DELETE FROM forumPosts WHERE postID = ?",[postID] , function(err) {
+				if(err){
+					reject({
+						success : false,
+						error : err,
+						msg : "023"
+					});
+				}else {
+					db.run("DELETE  FROM forumPostsComments WHERE forumPost = ?" , [postID] , function(err) {
+						if(err){
+							reject({
+								success : false,
+								error : err,
+								msg : "024"
+							});
+						} else {
+							resolve({
+								success : true
+							});
+						}
+					});
+				}
+			});
+		});
+	},
+	deleteComment : (commenter,forumPost,postTime) => {
+		return new Promise((resolve, reject) => { 
+			db.run("DELETE FROM forumPostsComments WHERE commenter = ? AND forumPost = ? AND postTime = ?",[commenter,forumPost,postTime] , function(err) {
+				if(err){
+					reject({
+						success : false,
+						error : err,
+						msg : "025"
+					});
+				}else {
+					resolve({
+						success : true
+					});
+				}
+			});
+		});
+	},
+	getComment : (commenter,forumPost,postTime) => {
+		return new Promise((resolve, reject) => { 
+			db.get("SELECT * FROM forumPostsComments WHERE commenter = ? AND forumPost = ? AND postTime = ?",[commenter,forumPost,postTime] , function(err,row) {
+				if(err){
+					reject({
+						success : false,
+						error : err,
+						msg : "026"
+					});
+				}else {
+
+					if(row != undefined){
+						resolve({
+							success : true,
+							comment : row
+						});
+					} else {
+						reject({
+							success : false,
+							error : err,
+							msg : "027"
+						});
+					}
+					
+				}
+			});
+		});
+	}
+
 
 }

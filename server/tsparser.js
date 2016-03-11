@@ -19,7 +19,7 @@ var database;
 
 var TIME_OF_QUERY = '';
 
-var NETWORK_DEBUG_LOGGING = false;
+var NETWORK_DEBUG_LOGGING = config.debug_network;
 
 var connected = false;
 
@@ -28,14 +28,14 @@ var sendCommand = function(command, args, cb) {
 	console.log('Sending command: ',command,args);
 	cl.send(command, args, function(err, response, rawResponse) {
 		if (err) {
-			console.log("err:", command, err);
+			console.log("Error: " + command + " " + JSON.stringify(args) + " " + JSON.stringify(err));
 		}else if(NETWORK_DEBUG_LOGGING){
 			console.log(util.inspect(response))
 		}
 		if(cb){
 			cb(response,err);
 		}else{
-			console.log("NO CALLBACK TO CALL")
+			console.log("SendCommand missing a callback! Doing nothing.");
 		}
 
 	});
@@ -46,7 +46,10 @@ var scanClients = function(callback){
 	sendCommand("clientlist", {}, function(response,err) {
 		
 		if(err){
-			console.log(util.inspect(err));
+			console.log(util.inspect({
+				error : err,
+				command : "clientlist"
+			}));
 			setTimeout(callback,TIME_BETWEEN_QUERIES);
 			return;
 		}
@@ -98,8 +101,9 @@ var handleClientList = function(clientlist,index,callback){
 		bytesuploadedtotal: '',
 		bytesdownloadedtotal: '',
 		talkpower : '',
-		badges : ''
-
+		badges : '',
+		uniqueID : '',
+		description : ''
 	};
 
 	var onlineRecordObject = {
@@ -120,7 +124,10 @@ var handleClientList = function(clientlist,index,callback){
 var clientInfo = function(userObject,onlineRecordObject,callback){
 	sendCommand("clientinfo", {clid: userObject.clid},function(response,err){
 		if(err){
-			console.log(util.inspect(err));
+			console.log(util.inspect({
+				error : err,
+				command : "clientinfo"
+			}));
 			setTimeout(callback,TIME_BETWEEN_QUERIES);
 			return;
 		}
@@ -141,6 +148,8 @@ var clientInfo = function(userObject,onlineRecordObject,callback){
 		userObject.bytesdownloadedtotal = response.client_total_bytes_downloaded;
 		userObject.talkpower = response.client_talk_power;
 		userObject.badges = response.client_badges;
+		userObject.uniqueID = response.client_unique_identifier;
+		userObject.description = response.client_description;
 
 
 		setTimeout(serverGroupByClientID,TIME_BETWEEN_QUERIES,userObject,callback);
