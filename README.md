@@ -1,6 +1,6 @@
 # TessuStats #
 
-Version 2.0.4
+Version 2.1.0
 
 http://tessustats.ovh/
 
@@ -28,6 +28,7 @@ config.time_between_queries = 1000; //milliseconds
 config.database_path = 'server/db';
 
 config.mode = "";
+config.debug_network = false;
 
 module.exports = config;
 
