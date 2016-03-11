@@ -39,6 +39,10 @@ module.exports = config;
 #!Shell
 
 docker build  -t herggu/tessustats . 
+
+
+Copy Database from container by 
+docker cp CONTAINER-ID:/tessustat/server/db db
 ```
 
 #### Installing without Docker ####
