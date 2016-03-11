@@ -14,14 +14,14 @@
             <div class="panel panel-default ">
                 <div class="panel-body bgcolor-dark color-white">
                     <div ng-show="!loggedInUser">
-                        <h2> Register / Reset password</h2>
-                        <p>If you are new and need to register an account, start by connecting to the osusearch Teamspeak server. Then copy and paste your Unique ID to the form and press Register.
-                        You can find your Teamspeak uniqueID from Teamspeak > Settings > Identities . Make sure you select the right one if you have multiple identities.
+                        <h2> New user / Reset password</h2>
+                        <p>If you are new or need to reset your password, start by connecting to the loungestats Teamspeak server. Then copy and paste your Unique ID to the form and press Proceed.
+                        You can find your Teamspeak uniqueID by pressing (CTRL + I) OR from Teamspeak > Settings > Identities .  <a class="color-red" href = "http://i.imgur.com/kF2fKn6.png">Where is it ?</a> Make sure you select the right one if you have multiple identities.
                         </p>
                         <form novalidate class="simple-form ">
                             <hr/>
                             Unique ID: <input class="color-black"type="text" ng-model="uniqueID" /><br /><hr/>
-                            <input type="submit" class="color-black" ng-click="registerAcc(uniqueID)" value="Register" />
+                            <input type="submit" class="color-black" ng-click="registerAcc(uniqueID)" value="Proceed" />
                         </form>
                         <hr/>
                         <h2> Login </h2>
