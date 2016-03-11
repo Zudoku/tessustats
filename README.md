@@ -28,6 +28,7 @@ config.time_between_queries = 1000; //milliseconds
 config.database_path = 'server/db';
 
 config.mode = "";
+config.debug_network = false;
 
 module.exports = config;
 
