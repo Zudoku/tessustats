@@ -71,7 +71,7 @@ angular.module('tessustats.controller.forumpost', [])
 			console.log(JSON.stringify(data));
 	    	if(data.success){
 	    		$scope.authentication = data.row;
-	    		//$scope.
+	    		$scope.forumModerator = data.forumModerator;
 	    		$scope.loggedInUser = true;
 	    		return true;
 	    	}else{
@@ -130,7 +130,7 @@ angular.module('tessustats.controller.forumpost', [])
 	};
 
 	$scope.canMonitorPost = function(){
-		if($scope.authentication != null && $scope.authentication.forumModerator){ //If moderator
+		if($scope.forumModerator){ //If moderator
 			return true;
 		} else if ($scope.authentication != null && $scope.post != undefined && $scope.authentication.databaseID == $scope.post.creator) { //If own post
 			return true
@@ -140,7 +140,7 @@ angular.module('tessustats.controller.forumpost', [])
 	};
 
 	$scope.canMonitorComment = function(comment){
-		if($scope.authentication != null && $scope.authentication.forumModerator){ //If moderator
+		if($scope.forumModerator){ //If moderator
 			return true;
 		} else if ($scope.authentication != null &&  $scope.authentication.databaseID == comment.commenter) { //If own comment
 			return true
@@ -192,7 +192,7 @@ angular.module('tessustats.controller.forumpost', [])
 		});
 	};
 
-
+	$scope.forumModerator = false;
 	$scope.nameBank = {};
 	$scope.updateData();
 	$scope.isLoggedIn();
