@@ -34,7 +34,7 @@
 	<th>Time online</th>
 	<th>Country </th>
 	</tr>
-	<tr class="clickable dark-table-hover"ng-class="user.textcolor" ng-repeat="user in shownusers" ng-click="selectuser(user.databaseid)">
+	<tr class="clickable dark-table-hover" ng-class="user.textcolor" ng-repeat="user in shownusers" ng-click="selectuser(user.databaseid)">
    		<td >{{getActivityRank(user.databaseid)}}.</td><td> {{user.nickname}}</td><td>{{getTimeFromSeconds(user.times * 5 * 60)}}</td> <td><span ng-click="selectCountry((user.country | uppercase ))"class="famfamfam-flag-{{user.country}}"></span></td>
 	</tr>
 </table>

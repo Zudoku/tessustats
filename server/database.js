@@ -706,13 +706,11 @@ module.exports = {
 							success : false
 						});
 					} else {
-						//module.exports.
+						resolve({
+							success : true,
+							row : row
+						});
 					}
-
-					resolve({
-						success : (row != undefined),
-						row : row
-					});
 				}
 
 			});
@@ -1031,7 +1029,6 @@ module.exports = {
 					var foundObject = rows.find(u => u.databaseid == databaseIDArray[x]);
 					result.push(foundObject);
 					if(x == databaseIDArray.length -1){
-						console.log(JSON.stringify(result));
 						resolve({
 							success : true,
 							ids : result
@@ -1056,10 +1053,10 @@ module.exports = {
 				}
 			});
 		});
-	}
+	},
 	deletePost : (postID) => {
 		return new Promise((resolve, reject) => { 
-			db.run("DELETE FROM forumPosts WHERE postID = ?",[postID] , function(err) {
+			db.run("DELETE FROM forumPosts WHERE ID = ?",[postID] , function(err) {
 				if(err){
 					reject({
 						success : false,

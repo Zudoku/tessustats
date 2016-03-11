@@ -17,7 +17,7 @@ angular.module('tessustats.controller.users', [])
 				for(var allusersIndex = 0 ; allusersIndex < data.userlist.length ; allusersIndex++){
 					if(data.userlist[allusersIndex].databaseid === handledClient.databaseid){
 						//Apply green color
-						data.userlist[allusersIndex].textcolor = 'success';
+						data.userlist[allusersIndex].textcolor = 'success-dark';
 					}
 				}
 			}

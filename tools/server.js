@@ -249,7 +249,7 @@ app.get('/query/forum/auth/:authguid', (req,res) => {
 
 	database.authenticate(authguid).then(function(result){
 		if(result.success){
-			database.isForumModerator(result.databaseID).then(function (data) {
+			database.isForumModerator(result.row.databaseID).then(function (data) {
 				result.forumModerator = data;
 				res.json(result);
 			}, (error) => {
@@ -273,7 +273,7 @@ app.get('/query/forum/auth/:authguid', (req,res) => {
 app.post('/query/forum/post/:postID', (req,res) => {
 
 	var postID = req.params.postID;
-	
+	var body = req.body;
 
 	Promise.all([
 		database.getForumPostDataWithID(postID),
@@ -296,7 +296,7 @@ app.post('/query/forum/post/:postID', (req,res) => {
 app.post('/forum/newPost', (req,res) => {
 
 	var post = req.body;
-	console.log(JSON.stringify(post));
+	console.log(req.ip + "tried to create a new post " + JSON.stringify(post));
 
 	//Validate forum post
 	if(post.category == undefined || post.category == ""){
@@ -355,7 +355,7 @@ app.post('/forum/newPost', (req,res) => {
 app.post('/forum/newComment', (req,res) => {
 
 	var commentData = req.body;
-	console.log(JSON.stringify(commentData));
+	console.log(req.ip + "tried to create a new comment " + JSON.stringify(commentData));
 
 	//Validate comment
 	if(commentData.comment == undefined || commentData.comment == ""){
@@ -440,8 +440,6 @@ app.post('/query/names', (req,res) => {
 
 	var ids = req.body.ids;
 
-	console.log(JSON.stringify(ids));
-
 	database.getUserNamesFromDatabaseIDs(ids).then(function(data) {
 		res.json(data);
 	}, (error) => {
@@ -466,8 +464,7 @@ app.post('/query/names', (req,res) => {
 app.post('/forum/deleteComment', (req,res) => {
 
 	var post = req.body;
-
-	console.log(JSON.stringify(post));
+	console.log(req.ip + "tried to delete comment " + JSON.stringify(post));
 
 	if(post.authentication == undefined) {
 		res.json({
@@ -498,8 +495,8 @@ app.post('/forum/deleteComment', (req,res) => {
 						message : "Can't find such comment"
 					});
 				} else {
-					database.isForumModerator(auth.databaseID).then(function(isModerator) {
-						if(isModerator || data.commenter == auth.databaseID){
+					database.isForumModerator(auth.row.databaseID).then(function(isModerator) {
+						if(isModerator || data.commenter == auth.row.databaseID){
 							database.deleteComment(post.comment.commenter, post.comment.forumPost, post.comment.postTime).then(function(deletion){
 								res.json({
 									success : true
@@ -544,7 +541,7 @@ app.post('/forum/deletePost', (req,res) => {
 
 	var post = req.body;
 
-	console.log(JSON.stringify(post));
+	console.log(req.ip + "tried to delete post " + JSON.stringify(post));
 
 	if(post.authentication == undefined) {
 		res.json({
@@ -568,9 +565,9 @@ app.post('/forum/deletePost', (req,res) => {
 						message : "Can't find such forum post"
 					});
 				} else {
-					database.isForumModerator(auth.databaseID).then(function(isModerator) {
-						if(isModerator || data.creator == auth.databaseID){
-							database.deletePost(data.postID).then(function(deletion){
+					database.isForumModerator(auth.row.databaseID).then(function(isModerator) {
+						if(isModerator || data.creator == auth.row.databaseID){
+							database.deletePost(data.ID).then(function(deletion){
 								res.json({
 									success : true
 								});

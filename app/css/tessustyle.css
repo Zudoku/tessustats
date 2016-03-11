@@ -121,3 +121,7 @@ body {
   margin-top: 5px !important;
   margin-bottom: 5px !important;
 }
+
+.success-dark{
+  background-color: #264d00 !important;
+}

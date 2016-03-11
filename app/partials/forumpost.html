@@ -9,7 +9,7 @@
                         <hr class="smallHR"/>
                         <div class="row">
                             <div class="col-xs-3">
-                                <strong>poster: {{getNameFor(post.creator)}} </strong>
+                                <strong>poster: <a class="color-white" href="/app/#/user/{{post.creator}}">{{getNameFor(post.creator)}} </a> </strong>
                             </div>
                             <div class="col-xs-3">
                                 <strong>created: {{getTime(post.created)}} </strong>
@@ -25,7 +25,10 @@
                         <hr class="smallHR"/>
 
                         <pre class=" color-black" style="white-space: pre-wrap;">{{post.content}}</pre>
-
+                        <div ng-show="canMonitorPost()">
+                            <strong><a style="margin-right: 10px;"class="clickable color-orange" ng-click="">Edit </span></a></strong>
+                            <strong><a class="clickable color-orange" ng-click="deletePost()">Remove </span></a></strong>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -44,6 +47,8 @@
                         <strong><a class="color-white" href="/app/#/user/{{comment.commenter}}">{{getNameFor(comment.commenter)}} </a></strong>
                         <pre class=" color-black" style="white-space: pre-wrap;">{{comment.comment}}</pre>
                         comment posted: {{getTime(comment.postTime)}}
+                        <strong><a ng-show="canMonitorComment(comment)" style="margin-right: 10px; margin-left: 10px;"class="clickable color-orange" ng-click="">Edit </span></a></strong>
+                        <strong><a ng-show="canMonitorComment(comment)" class="clickable color-orange" ng-click="deleteComment(comment)">Remove </span></a></strong>
                         <hr class="smallHR"/>
                     </div>
 

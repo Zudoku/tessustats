@@ -39,11 +39,11 @@ angular.module('tessustats.controller.forumpost', [])
 
 		var postCommentQuery = $http.post('/forum/newComment',commentObject);
 
-		postComment.success(function(data) {
+		postCommentQuery.success(function(data) {
 			$scope.sending = false;
-
 			if(data.success){
-				$location.url("/forum/post/" + data.postID);
+				$scope.newComment = "";
+				$scope.comments.push(data.commentData);
 			} else {
 				$scope.error = true;
 				$scope.errorMessage = data.message;
@@ -68,9 +68,10 @@ angular.module('tessustats.controller.forumpost', [])
 			return false;
 		}
 		var forumpostsResource = $http.get('/query/forum/auth/' + authGuid).success(function(data) {
-			
+			console.log(JSON.stringify(data));
 	    	if(data.success){
 	    		$scope.authentication = data.row;
+	    		//$scope.
 	    		$scope.loggedInUser = true;
 	    		return true;
 	    	}else{
@@ -126,7 +127,70 @@ angular.module('tessustats.controller.forumpost', [])
 	$scope.getTime = function(time){
 		var timeDate = new Date(time);
 		return timeDate.toLocaleString();
-	}
+	};
+
+	$scope.canMonitorPost = function(){
+		if($scope.authentication != null && $scope.authentication.forumModerator){ //If moderator
+			return true;
+		} else if ($scope.authentication != null && $scope.post != undefined && $scope.authentication.databaseID == $scope.post.creator) { //If own post
+			return true
+		} else {
+			return false;
+		}
+	};
+
+	$scope.canMonitorComment = function(comment){
+		if($scope.authentication != null && $scope.authentication.forumModerator){ //If moderator
+			return true;
+		} else if ($scope.authentication != null &&  $scope.authentication.databaseID == comment.commenter) { //If own comment
+			return true
+		} else {
+			return false;
+		}
+	};
+
+	$scope.deleteComment = function(comment){
+		if(comment == undefined) {
+			return;
+		}
+		if(!confirm("Are you sure you want to delete this comment?")){
+			return;
+		}
+
+		var deleteCommentBody = {
+			authentication : $scope.authentication.authguid,
+			comment : comment
+		};
+		var deleteCommentQuery = $http.post('/forum/deleteComment',deleteCommentBody).success(function(data) {
+	    	if(data.success){
+	    		$scope.comments.splice($scope.comments.indexOf(comment),1);
+	    		return ;
+	    	}else{
+	    		alert(JSON.stringify(data));
+	    	}
+		});
+
+	};
+
+	$scope.deletePost = function(){
+
+		if(!confirm("Are you sure you want to delete this post?")){
+			return;
+		}
+
+		var deletePostBody = {
+			authentication : $scope.authentication.authguid,
+			post : $scope.post.ID
+		};
+		var deletePostQuery = $http.post('/forum/deletePost',deletePostBody).success(function(data) {
+	    	if(data.success){
+	    		$location.url("/forum");
+	    		return ;
+	    	}else{
+	    		alert(JSON.stringify(data));
+	    	}
+		});
+	};
 
 
 	$scope.nameBank = {};
