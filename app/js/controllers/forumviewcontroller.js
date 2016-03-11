@@ -33,6 +33,7 @@ angular.module('tessustats.controller.forumView', [])
 			alert("Empty field: Unique ID");
 			return;
 		}
+		uniqueID = uniqueID.replace(/\//g, '__!__');
 
 		//Make HTTP POST request with that uniqueID
 		var registerQuery = $http.get('/registration/new/' + uniqueID).success(function(data) {
@@ -42,7 +43,7 @@ angular.module('tessustats.controller.forumView', [])
 
 	    	if(data.success == true){
 	    		//Move the 
-	    		$location.url("/registration/confirm/" + data.uniqueID + "/" + data.databaseID);
+	    		$location.url("/registration/confirm/" + uniqueID + "/" + data.databaseID);
 
 	    	}else{
 	    		alert("Error: " + data.msg);

@@ -197,6 +197,7 @@ app.get('/query/channelpage/:cid', (req,res) => {
 app.get('/registration/new/:uniqueID', (req,res) => {
 
 	var uniqueID = req.params.uniqueID;
+	uniqueID = uniqueID.replace(/__!__/g, '/');
 	console.log(req.ip + " tried to register " + uniqueID);
 
 	tsparser.loginIfNeeded().then(function(result){
@@ -214,6 +215,7 @@ app.get('/registration/new/:uniqueID', (req,res) => {
 app.get('/registration/confirm/:uniqueID/:databaseID/:authguid', (req,res) => {
 
 	var uniqueID = req.params.uniqueID;
+	uniqueID = uniqueID.replace(/__!__/g, '/');
 	var databaseID = req.params.databaseID;
 	var authguid = req.params.authguid;
 	console.log(req.ip + " tried to confirm register " + uniqueID + " " + authguid);

@@ -15,12 +15,17 @@
                 <div class="panel-body bgcolor-dark color-white">
                     <div ng-show="!loggedInUser">
                         <h2> New user / Reset password</h2>
-                        <p>If you are new or need to reset your password, start by connecting to the loungestats Teamspeak server. Then copy and paste your Unique ID to the form and press Proceed.
-                        You can find your Teamspeak uniqueID by pressing (CTRL + I) OR from Teamspeak > Settings > Identities .  <a class="color-red" href = "http://i.imgur.com/kF2fKn6.png">Where is it ?</a> Make sure you select the right one if you have multiple identities.
+                        <hr class="minHR"/>
+                        <p> <strong>Step 1. </strong><br>
+                        Locate your Teamspeak identity's Unique ID .
+                        You can find your Teamspeak Unique ID by pressing (CTRL + I) OR from Teamspeak > Settings > Identities .  <a class="color-red" href = "http://i.imgur.com/kF2fKn6.png">Where is it ?</a> Make sure you select the right one if you have multiple identities. <br>
+
+                        <strong>Step 2.</strong><br>
+                        Copy and paste the whole ID to the form below and press Proceed.
                         </p>
-                        <form novalidate class="simple-form ">
-                            <hr/>
-                            Unique ID: <input class="color-black"type="text" ng-model="uniqueID" /><br /><hr/>
+                        <form novalidate class="simple-form "> 
+                            <hr class="smallHR"/>
+                            Unique ID: <input style="width: 30%"class="color-black"type="text" ng-model="uniqueID" /><br /><hr class="smallHR"/>
                             <input type="submit" class="color-black" ng-click="registerAcc(uniqueID)" value="Proceed" />
                         </form>
                         <hr/>
