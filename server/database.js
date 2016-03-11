@@ -1091,8 +1091,35 @@ module.exports = {
 						msg : "025"
 					});
 				}else {
-					resolve({
-						success : true
+					db.get("SELECT comments FROM forumPosts WHERE ID = ?" ,[forumPost],function(err,row){
+						if(err){
+							reject({
+								success : false,
+								error : err,
+								msg : "026"
+							});
+						} else if (row == undefined){
+							reject({
+								success : false,
+								error : err,
+								msg : "027"
+							});
+						} else {
+							var commentsNow = row.comments - 1;
+							db.run("UPDATE forumPosts SET comments = ? WHERE ID = ?",[commentsNow,forumPost],function(err){
+								if(err){
+									reject({
+										success : false,
+										error : err,
+										msg : "028"
+									});
+								} else {
+									resolve({
+										success : true
+									});
+								}
+							});
+						}
 					});
 				}
 			});

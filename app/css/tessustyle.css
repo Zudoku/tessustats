@@ -122,6 +122,11 @@ body {
   margin-bottom: 5px !important;
 }
 
+.minHR {
+  margin-top: 1px !important;
+  margin-bottom: 1px !important;
+}
+
 .success-dark{
   background-color: #264d00 !important;
 }
