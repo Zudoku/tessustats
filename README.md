@@ -1,6 +1,6 @@
 # TessuStats #
 
-Version 2.0.4
+Version 2.1.0
 
 http://tessustats.ovh/
 
