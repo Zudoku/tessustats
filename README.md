@@ -38,7 +38,7 @@ module.exports = config;
 ```
 #!Shell
 
-docker build  -t herggu/tessustats . 
+docker build  -t herggu/tessustats --no-cache . 
 
 docker run -p 127.0.0.1:3700:3700 -d CONTAINER-ID
 ```
