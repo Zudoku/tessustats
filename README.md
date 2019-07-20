@@ -1,8 +1,11 @@
+# Disclaimer!
+## This project is very old and the code quality is terrible. This has been moved to Github from bitbucket for archival reasons
+
+
 # TessuStats #
 
 Version 2.1.0
 
-http://tessustats.ovh/
 
 TessuStats is a website / webapp that collects data from the HerGGu Teamspeak server and displays different statistics, graphs and information about how the server is operating. TessuStats is completely non-profit free website and is developed and maintained just for practice, portfolio and own fun.
 
